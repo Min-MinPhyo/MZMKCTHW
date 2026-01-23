@@ -1,17 +1,24 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import sqlite3
-from datetime import datetime
+from datetime import datetime, date
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
 DB_NAME = "database.db"
 
-INCOME_CATEGORIES = ["Salary", "Business", "Investments", "Rental Income", "Gifts", "Bonuses", "Refunds", "Other"]
-EXPENSE_CATEGORIES = ["Food & Dining", "Rent / Housing", "Transportation", "Health & Medical", 
-                      "Entertainment", "Education", "Shopping", "Travel", "Utilities", "Insurance", 
-                      "Investments", "Taxes", "Others"]
+# ---- Categories ----
+INCOME_CATEGORIES = [
+    "Salary", "Business", "Investments", "Rental Income",
+    "Gifts", "Bonuses", "Refunds", "Other"
+]
 
+EXPENSE_CATEGORIES = [
+    "Food & Dining", "Rent / Housing", "Transportation", "Health & Medical",
+    "Entertainment", "Education", "Shopping", "Travel", "Utilities",
+    "Insurance", "Investments", "Taxes", "Others"
+]
 
+# ---- Initialize Database ----
 def init_db():
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
@@ -46,12 +53,12 @@ def init_db():
 
 init_db()
 
-
+# ---- Home ----
 @app.route("/")
 def index():
     return redirect(url_for("login"))
 
-
+# ---- Register ----
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -69,7 +76,7 @@ def register():
             flash("Username already exists!", "danger")
     return render_template("register.html")
 
-
+# ---- Login ----
 @app.route("/login", methods=["GET","POST"])
 def login():
     if request.method == "POST":
@@ -88,13 +95,25 @@ def login():
             flash("Invalid credentials!", "danger")
     return render_template("login.html")
 
+# ---- Logout ----
+@app.route("/logout")
+def logout():
+    session.clear()
+    flash("Logged out!", "info")
+    return redirect(url_for("login"))
 
+# ---- Dashboard ----
 @app.route("/dashboard")
 def dashboard():
     if "user_id" not in session:
         return redirect(url_for("login"))
-
     user_id = session["user_id"]
+
+    # Date filter
+    start_date = request.args.get("start_date")
+    end_date = request.args.get("end_date")
+
+    # Pagination
     page = request.args.get("page", 1, type=int)
     per_page = 5
     offset = (page - 1) * per_page
@@ -102,42 +121,83 @@ def dashboard():
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
 
- 
-    cursor.execute("SELECT SUM(amount) FROM income WHERE user_id=?", (user_id,))
+    # Total income
+    income_query = "SELECT SUM(amount) FROM income WHERE user_id=?"
+    income_params = [user_id]
+    if start_date and end_date:
+        income_query += " AND date BETWEEN ? AND ?"
+        income_params += [start_date, end_date]
+    cursor.execute(income_query, income_params)
     total_income = cursor.fetchone()[0] or 0
 
-    cursor.execute("SELECT SUM(amount) FROM expenses WHERE user_id=?", (user_id,))
+    # Total expense
+    expense_query = "SELECT SUM(amount) FROM expenses WHERE user_id=?"
+    expense_params = [user_id]
+    if start_date and end_date:
+        expense_query += " AND date BETWEEN ? AND ?"
+        expense_params += [start_date, end_date]
+    cursor.execute(expense_query, expense_params)
     total_expense = cursor.fetchone()[0] or 0
 
     balance = total_income - total_expense
 
-    cursor.execute("SELECT id, category, amount, date, description FROM income WHERE user_id=? ORDER BY date DESC LIMIT ? OFFSET ?", (user_id, per_page, offset))
+    # Income records
+    income_select = "SELECT id, category, amount, date, description FROM income WHERE user_id=?"
+    income_params = [user_id]
+    if start_date and end_date:
+        income_select += " AND date BETWEEN ? AND ?"
+        income_params += [start_date, end_date]
+    income_select += " ORDER BY date DESC LIMIT ? OFFSET ?"
+    income_params += [per_page, offset]
+    cursor.execute(income_select, income_params)
     income_records = cursor.fetchall()
-    cursor.execute("SELECT COUNT(*) FROM income WHERE user_id=?", (user_id,))
-    total_income_records = cursor.fetchone()[0]
-    total_income_pages = (total_income_records + per_page - 1) // per_page
 
+    # Income pagination
+    count_income_query = "SELECT COUNT(*) FROM income WHERE user_id=?"
+    count_income_params = [user_id]
+    if start_date and end_date:
+        count_income_query += " AND date BETWEEN ? AND ?"
+        count_income_params += [start_date, end_date]
+    cursor.execute(count_income_query, count_income_params)
+    total_income_pages = (cursor.fetchone()[0] + per_page - 1) // per_page
 
-    cursor.execute("SELECT id, category, amount, date, description FROM expenses WHERE user_id=? ORDER BY date DESC LIMIT ? OFFSET ?", (user_id, per_page, offset))
+    # Expense records
+    expense_select = "SELECT id, category, amount, date, description FROM expenses WHERE user_id=?"
+    expense_params = [user_id]
+    if start_date and end_date:
+        expense_select += " AND date BETWEEN ? AND ?"
+        expense_params += [start_date, end_date]
+    expense_select += " ORDER BY date DESC LIMIT ? OFFSET ?"
+    expense_params += [per_page, offset]
+    cursor.execute(expense_select, expense_params)
     expense_records = cursor.fetchall()
-    cursor.execute("SELECT COUNT(*) FROM expenses WHERE user_id=?", (user_id,))
-    total_expense_records = cursor.fetchone()[0]
-    total_expense_pages = (total_expense_records + per_page - 1) // per_page
+
+    # Expense pagination
+    count_expense_query = "SELECT COUNT(*) FROM expenses WHERE user_id=?"
+    count_expense_params = [user_id]
+    if start_date and end_date:
+        count_expense_query += " AND date BETWEEN ? AND ?"
+        count_expense_params += [start_date, end_date]
+    cursor.execute(count_expense_query, count_expense_params)
+    total_expense_pages = (cursor.fetchone()[0] + per_page - 1) // per_page
 
     conn.close()
 
-    return render_template("dashboard.html",
-                           total_income=total_income,
-                           total_expense=total_expense,
-                           balance=balance,
-                           income_records=income_records,
-                           expense_records=expense_records,
-                           page=page,
-                           total_income_pages=total_income_pages,
-                           total_expense_pages=total_expense_pages)
+    return render_template(
+        "dashboard.html",
+        total_income=total_income,
+        total_expense=total_expense,
+        balance=balance,
+        income_records=income_records,
+        expense_records=expense_records,
+        page=page,
+        total_income_pages=total_income_pages,
+        total_expense_pages=total_expense_pages,
+        start_date=start_date,
+        end_date=end_date
+    )
 
-
-
+# ---- Add Income ----
 @app.route("/add_income", methods=["GET","POST"])
 def add_income():
     if "user_id" not in session:
@@ -146,34 +206,37 @@ def add_income():
         category = request.form["category"]
         amount = float(request.form["amount"])
         description = request.form["description"]
-        date = datetime.now().strftime("%Y-%m-%d")
+        date_input = request.form.get("date") or datetime.now().strftime("%Y-%m-%d")
         conn = sqlite3.connect(DB_NAME)
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO income(user_id,date,category,amount,description) VALUES(?,?,?,?,?)", (session["user_id"], date, category, amount, description))
+        cursor.execute(
+            "INSERT INTO income(user_id,date,category,amount,description) VALUES(?,?,?,?,?)",
+            (session["user_id"], date_input, category, amount, description)
+        )
         conn.commit()
         conn.close()
         flash("Income added successfully!", "success")
         return redirect(url_for("dashboard"))
-    return render_template("add_income.html", categories=INCOME_CATEGORIES)
+    return render_template("add_income.html", categories=INCOME_CATEGORIES, current_date=date.today().strftime("%Y-%m-%d"))
 
-
+# ---- Add Expense ----
 @app.route("/add_expense", methods=["GET","POST"])
 def add_expense():
     if "user_id" not in session:
         return redirect(url_for("login"))
-    user_id = session["user_id"]
     if request.method == "POST":
         category = request.form["category"]
         amount = float(request.form["amount"])
         description = request.form["description"]
-        date = datetime.now().strftime("%Y-%m-%d")
+        date_input = request.form.get("date") or datetime.now().strftime("%Y-%m-%d")
+
         conn = sqlite3.connect(DB_NAME)
         cursor = conn.cursor()
 
-       
-        cursor.execute("SELECT SUM(amount) FROM income WHERE user_id=?", (user_id,))
+        # Balance check
+        cursor.execute("SELECT SUM(amount) FROM income WHERE user_id=?", (session["user_id"],))
         total_income = cursor.fetchone()[0] or 0
-        cursor.execute("SELECT SUM(amount) FROM expenses WHERE user_id=?", (user_id,))
+        cursor.execute("SELECT SUM(amount) FROM expenses WHERE user_id=?", (session["user_id"],))
         total_expense = cursor.fetchone()[0] or 0
         available_balance = total_income - total_expense
 
@@ -186,14 +249,17 @@ def add_expense():
             conn.close()
             return redirect(url_for("add_expense"))
 
-        cursor.execute("INSERT INTO expenses(user_id,date,category,amount,description) VALUES(?,?,?,?,?)", (user_id,date,category,amount,description))
+        cursor.execute(
+            "INSERT INTO expenses(user_id,date,category,amount,description) VALUES(?,?,?,?,?)",
+            (session["user_id"], date_input, category, amount, description)
+        )
         conn.commit()
         conn.close()
         flash("Expense added successfully!", "success")
         return redirect(url_for("dashboard"))
-    return render_template("add_expense.html", categories=EXPENSE_CATEGORIES)
+    return render_template("add_expense.html", categories=EXPENSE_CATEGORIES, current_date=date.today().strftime("%Y-%m-%d"))
 
-
+# ---- Edit Income ----
 @app.route("/edit_income/<int:income_id>", methods=["GET","POST"])
 def edit_income(income_id):
     if "user_id" not in session:
@@ -204,12 +270,16 @@ def edit_income(income_id):
         category = request.form["category"]
         amount = float(request.form["amount"])
         description = request.form["description"]
-        cursor.execute("UPDATE income SET category=?, amount=?, description=? WHERE id=? AND user_id=?", (category, amount, description, income_id, session["user_id"]))
+        cursor.execute(
+            "UPDATE income SET category=?, amount=?, description=? WHERE id=? AND user_id=?",
+            (category, amount, description, income_id, session["user_id"])
+        )
         conn.commit()
         conn.close()
         flash("Income updated successfully!", "success")
         return redirect(url_for("dashboard"))
-    cursor.execute("SELECT category, amount, description FROM income WHERE id=? AND user_id=?", (income_id, session["user_id"]))
+    cursor.execute("SELECT category, amount, description FROM income WHERE id=? AND user_id=?",
+                   (income_id, session["user_id"]))
     record = cursor.fetchone()
     conn.close()
     if not record:
@@ -217,6 +287,7 @@ def edit_income(income_id):
         return redirect(url_for("dashboard"))
     return render_template("edit_income.html", categories=INCOME_CATEGORIES, record=record)
 
+# ---- Delete Income ----
 @app.route("/delete_income/<int:income_id>")
 def delete_income(income_id):
     if "user_id" not in session:
@@ -229,7 +300,7 @@ def delete_income(income_id):
     flash("Income deleted!", "success")
     return redirect(url_for("dashboard"))
 
-
+# ---- Edit Expense ----
 @app.route("/edit_expense/<int:expense_id>", methods=["GET","POST"])
 def edit_expense(expense_id):
     if "user_id" not in session:
@@ -240,7 +311,8 @@ def edit_expense(expense_id):
         category = request.form["category"]
         amount = float(request.form["amount"])
         description = request.form["description"]
-       
+
+        # Check available balance excluding this expense
         cursor.execute("SELECT SUM(amount) FROM income WHERE user_id=?", (session["user_id"],))
         total_income = cursor.fetchone()[0] or 0
         cursor.execute("SELECT SUM(amount) FROM expenses WHERE user_id=? AND id<>?", (session["user_id"], expense_id))
@@ -250,12 +322,18 @@ def edit_expense(expense_id):
             flash(f"Expense exceeds available balance ({available_balance})!", "danger")
             conn.close()
             return redirect(url_for("edit_expense", expense_id=expense_id))
-        cursor.execute("UPDATE expenses SET category=?, amount=?, description=? WHERE id=? AND user_id=?", (category, amount, description, expense_id, session["user_id"]))
+
+        cursor.execute(
+            "UPDATE expenses SET category=?, amount=?, description=? WHERE id=? AND user_id=?",
+            (category, amount, description, expense_id, session["user_id"])
+        )
         conn.commit()
         conn.close()
         flash("Expense updated successfully!", "success")
         return redirect(url_for("dashboard"))
-    cursor.execute("SELECT category, amount, description FROM expenses WHERE id=? AND user_id=?", (expense_id, session["user_id"]))
+
+    cursor.execute("SELECT category, amount, description FROM expenses WHERE id=? AND user_id=?",
+                   (expense_id, session["user_id"]))
     record = cursor.fetchone()
     conn.close()
     if not record:
@@ -263,7 +341,7 @@ def edit_expense(expense_id):
         return redirect(url_for("dashboard"))
     return render_template("edit_expense.html", categories=EXPENSE_CATEGORIES, record=record)
 
-
+# ---- Delete Expense ----
 @app.route("/delete_expense/<int:expense_id>")
 def delete_expense(expense_id):
     if "user_id" not in session:
@@ -276,13 +354,6 @@ def delete_expense(expense_id):
     flash("Expense deleted!", "success")
     return redirect(url_for("dashboard"))
 
-
-
-@app.route("/logout")
-def logout():
-    session.clear()
-    flash("Logged out!", "info")
-    return redirect(url_for("login"))
-
+# ---- Run App ----
 if __name__ == "__main__":
     app.run(debug=True)

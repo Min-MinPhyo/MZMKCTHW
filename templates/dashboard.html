@@ -1,87 +1,195 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1 class="text-2xl font-bold mb-4">Dashboard - {{ session.username }}</h1>
+<div class="max-w-6xl mx-auto">
 
-<div class="grid grid-cols-3 gap-4 mb-6">
-  <div class="p-4 bg-green-200 rounded text-center">Income: {{ total_income }}</div>
-  <div class="p-4 bg-red-200 rounded text-center">Expense: {{ total_expense }}</div>
-  <div class="p-4 bg-blue-200 rounded text-center">Balance: {{ balance }}</div>
-</div>
+  <!-- Title -->
+  <h1 class="text-2xl font-bold mb-6">
+    Dashboard - {{ session.username }}
+  </h1>
 
-<div class="flex gap-4 mb-6">
-  <a href="/add_income" class="bg-green-500 text-white p-2 rounded">Add Income</a>
-  <a href="/add_expense" class="bg-red-500 text-white p-2 rounded">Add Expense</a>
-  <a href="/logout" class="bg-gray-500 text-white p-2 rounded">Logout</a>
-</div>
+  <!-- ================= FILTER ================= -->
+  <form method="GET" action="{{ url_for('dashboard') }}" class="flex items-end gap-3 mb-6">
+    <div>
+      <label class="text-sm font-semibold">Start Date</label>
+      <input type="date" name="start_date" value="{{ start_date or '' }}"
+             class="border p-2 rounded w-40">
+    </div>
 
-<h2 class="text-xl font-bold mt-6 mb-2">Income Records</h2>
-<table class="w-full text-left border mb-4">
-  <tr class="bg-gray-200">
-    <th class="p-2">Date</th>
-    <th class="p-2">Category</th>
-    <th class="p-2">Amount</th>
-    <th class="p-2">Description</th>
-    <th class="p-2">Actions</th>
-  </tr>
-  {% for rec in income_records %}
-  <tr class="border-t">
-    <td class="p-2">{{ rec[3] }}</td>
-    <td class="p-2">{{ rec[1] }}</td>
-    <td class="p-2">{{ rec[2] }}</td>
-    <td class="p-2">{{ rec[4] }}</td>
-    <td class="p-2">
-      <a href="{{ url_for('edit_income', income_id=rec[0]) }}" class="text-blue-500 hover:underline mr-2">Edit</a>
-      <a href="{{ url_for('delete_income', income_id=rec[0]) }}" class="text-red-500 hover:underline" onclick="return confirm('Are you sure you want to delete this income?');">Delete</a>
-    </td>
-  </tr>
-  {% endfor %}
-</table>
+    <div>
+      <label class="text-sm font-semibold">End Date</label>
+      <input type="date" name="end_date" value="{{ end_date or '' }}"
+             class="border p-2 rounded w-40">
+    </div>
 
-<!-- Income Pagination -->
-<div class="flex gap-2 mb-6">
-  {% for p in range(1, total_income_pages+1) %}
-    {% if p == page %}
-      <span class="px-2 py-1 bg-blue-500 text-white rounded">{{ p }}</span>
-    {% else %}
-      <a href="{{ url_for('dashboard', page=p) }}" class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-400">{{ p }}</a>
+    <button type="submit"
+            class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded h-10">
+      Filter
+    </button>
+
+    <a href="{{ url_for('dashboard') }}"
+       class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded h-10 flex items-center">
+      Reset
+    </a>
+  </form>
+
+  <!-- ================= SUMMARY ================= -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div class="bg-green-200 p-4 rounded text-center font-semibold">
+      Income: {{ total_income }}
+    </div>
+    <div class="bg-red-200 p-4 rounded text-center font-semibold">
+      Expense: {{ total_expense }}
+    </div>
+    <div class="bg-blue-200 p-4 rounded text-center font-semibold">
+      Balance: {{ balance }}
+    </div>
+  </div>
+
+  <!-- ================= ACTION BUTTONS ================= -->
+  <div class="flex gap-3 mb-8">
+    <a href="{{ url_for('add_income') }}"
+       class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">
+      Add Income
+    </a>
+    <a href="{{ url_for('add_expense') }}"
+       class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">
+      Add Expense
+    </a>
+    <a href="{{ url_for('logout') }}"
+       class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
+      Logout
+    </a>
+  </div>
+
+  <!-- ================= INCOME TABLE ================= -->
+  <h2 class="text-xl font-bold mb-3">Income Records</h2>
+
+  <table class="w-full border mb-4">
+    <thead class="bg-gray-200">
+      <tr>
+        <th class="p-2 text-left">Date</th>
+        <th class="p-2 text-left">Category</th>
+        <th class="p-2 text-left">Amount</th>
+        <th class="p-2 text-left">Description</th>
+        <th class="p-2 text-left">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for rec in income_records %}
+      <tr class="border-t">
+        <td class="p-2">{{ rec[3] }}</td>
+        <td class="p-2">{{ rec[1] }}</td>
+        <td class="p-2">{{ rec[2] }}</td>
+        <td class="p-2">{{ rec[4] }}</td>
+        <td class="p-2">
+          <a href="{{ url_for('edit_income', income_id=rec[0]) }}"
+             class="text-blue-500 hover:underline mr-2">Edit</a>
+          <a href="{{ url_for('delete_income', income_id=rec[0]) }}"
+             class="text-red-500 hover:underline"
+             onclick="return confirm('Delete this income?');">
+             Delete
+          </a>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="5" class="p-4 text-center text-gray-500">
+          No income records found
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Income Pagination -->
+  {% if total_income_pages > 1 %}
+  <div class="flex justify-center gap-2 mb-10">
+    {% if page > 1 %}
+    <a href="{{ url_for('dashboard', page=page-1, start_date=start_date, end_date=end_date) }}"
+       class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400">Prev</a>
     {% endif %}
-  {% endfor %}
-</div>
 
-<h2 class="text-xl font-bold mt-6 mb-2">Expense Records</h2>
-<table class="w-full text-left border mb-4">
-  <tr class="bg-gray-200">
-    <th class="p-2">Date</th>
-    <th class="p-2">Category</th>
-    <th class="p-2">Amount</th>
-    <th class="p-2">Description</th>
-    <th class="p-2">Actions</th>
-  </tr>
-  {% for rec in expense_records %}
-  <tr class="border-t">
-    <td class="p-2">{{ rec[3] }}</td>
-    <td class="p-2">{{ rec[1] }}</td>
-    <td class="p-2">{{ rec[2] }}</td>
-    <td class="p-2">{{ rec[4] }}</td>
-    <td class="p-2">
-      <a href="{{ url_for('edit_expense', expense_id=rec[0]) }}" class="text-blue-500 hover:underline mr-2">Edit</a>
-      <a href="{{ url_for('delete_expense', expense_id=rec[0]) }}" class="text-red-500 hover:underline" onclick="return confirm('Are you sure you want to delete this expense?');">Delete</a>
-    </td>
-  </tr>
-  {% endfor %}
-</table>
+    {% for p in range(1, total_income_pages + 1) %}
+      {% if p == page %}
+      <span class="px-3 py-1 bg-blue-500 text-white rounded">{{ p }}</span>
+      {% else %}
+      <a href="{{ url_for('dashboard', page=p, start_date=start_date, end_date=end_date) }}"
+         class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">{{ p }}</a>
+      {% endif %}
+    {% endfor %}
 
-<!-- Expense Pagination -->
-<div class="flex gap-2 mb-4">
-  {% for p in range(1, total_expense_pages+1) %}
-    {% if p == page %}
-      <span class="px-2 py-1 bg-blue-500 text-white rounded">{{ p }}</span>
-    {% else %}
-      <a href="{{ url_for('dashboard', page=p) }}" class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-400">{{ p }}</a>
+    {% if page < total_income_pages %}
+    <a href="{{ url_for('dashboard', page=page+1, start_date=start_date, end_date=end_date) }}"
+       class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400">Next</a>
     {% endif %}
-  {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- ================= EXPENSE TABLE ================= -->
+  <h2 class="text-xl font-bold mb-3">Expense Records</h2>
+
+  <table class="w-full border mb-4">
+    <thead class="bg-gray-200">
+      <tr>
+        <th class="p-2 text-left">Date</th>
+        <th class="p-2 text-left">Category</th>
+        <th class="p-2 text-left">Amount</th>
+        <th class="p-2 text-left">Description</th>
+        <th class="p-2 text-left">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for rec in expense_records %}
+      <tr class="border-t">
+        <td class="p-2">{{ rec[3] }}</td>
+        <td class="p-2">{{ rec[1] }}</td>
+        <td class="p-2">{{ rec[2] }}</td>
+        <td class="p-2">{{ rec[4] }}</td>
+        <td class="p-2">
+          <a href="{{ url_for('edit_expense', expense_id=rec[0]) }}"
+             class="text-blue-500 hover:underline mr-2">Edit</a>
+          <a href="{{ url_for('delete_expense', expense_id=rec[0]) }}"
+             class="text-red-500 hover:underline"
+             onclick="return confirm('Delete this expense?');">
+             Delete
+          </a>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="5" class="p-4 text-center text-gray-500">
+          No expense records found
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Expense Pagination -->
+  {% if total_expense_pages > 1 %}
+  <div class="flex justify-center gap-2 mb-10">
+    {% if page > 1 %}
+    <a href="{{ url_for('dashboard', page=page-1, start_date=start_date, end_date=end_date) }}"
+       class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400">Prev</a>
+    {% endif %}
+
+    {% for p in range(1, total_expense_pages + 1) %}
+      {% if p == page %}
+      <span class="px-3 py-1 bg-red-500 text-white rounded">{{ p }}</span>
+      {% else %}
+      <a href="{{ url_for('dashboard', page=p, start_date=start_date, end_date=end_date) }}"
+         class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">{{ p }}</a>
+      {% endif %}
+    {% endfor %}
+
+    {% if page < total_expense_pages %}
+    <a href="{{ url_for('dashboard', page=page+1, start_date=start_date, end_date=end_date) }}"
+       class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400">Next</a>
+    {% endif %}
+  </div>
+  {% endif %}
+
 </div>
 
-{% endblock %} 
-
+{% endblock %}
