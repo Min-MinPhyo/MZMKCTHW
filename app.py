@@ -198,15 +198,37 @@ def dashboard():
     )
 
 # ---- Add Income ----
+# @app.route("/add_income", methods=["GET","POST"])
+# def add_income():
+#     if "user_id" not in session:
+#         return redirect(url_for("login"))
+#     if request.method == "POST":
+#         category = request.form["category"]
+#         amount = float(request.form["amount"])
+#         description = request.form["description"]
+#         date_input = request.form.get("date") or datetime.now().strftime("%Y-%m-%d")
+#         conn = sqlite3.connect(DB_NAME)
+#         cursor = conn.cursor()
+#         cursor.execute(
+#             "INSERT INTO income(user_id,date,category,amount,description) VALUES(?,?,?,?,?)",
+#             (session["user_id"], date_input, category, amount, description)
+#         )
+#         conn.commit()
+#         conn.close()
+#         flash("Income added successfully!", "success")
+#         return redirect(url_for("dashboard"))
+#     return render_template("add_income.html", categories=INCOME_CATEGORIES, current_date=date.today().strftime("%Y-%m-%d"))
 @app.route("/add_income", methods=["GET","POST"])
 def add_income():
     if "user_id" not in session:
         return redirect(url_for("login"))
+
     if request.method == "POST":
         category = request.form["category"]
         amount = float(request.form["amount"])
         description = request.form["description"]
         date_input = request.form.get("date") or datetime.now().strftime("%Y-%m-%d")
+
         conn = sqlite3.connect(DB_NAME)
         cursor = conn.cursor()
         cursor.execute(
@@ -215,15 +237,61 @@ def add_income():
         )
         conn.commit()
         conn.close()
+
         flash("Income added successfully!", "success")
         return redirect(url_for("dashboard"))
-    return render_template("add_income.html", categories=INCOME_CATEGORIES, current_date=date.today().strftime("%Y-%m-%d"))
+
+    return render_template(
+        "income_form.html",
+        mode="add",
+        categories=INCOME_CATEGORIES,
+        current_date=date.today().strftime("%Y-%m-%d")
+    )
 
 # ---- Add Expense ----
-@app.route("/add_expense", methods=["GET","POST"])
+# @app.route("/add_expense", methods=["GET","POST"])
+# def add_expense():
+#     if "user_id" not in session:
+#         return redirect(url_for("login"))
+#     if request.method == "POST":
+#         category = request.form["category"]
+#         amount = float(request.form["amount"])
+#         description = request.form["description"]
+#         date_input = request.form.get("date") or datetime.now().strftime("%Y-%m-%d")
+
+#         conn = sqlite3.connect(DB_NAME)
+#         cursor = conn.cursor()
+
+#         # Balance check
+#         cursor.execute("SELECT SUM(amount) FROM income WHERE user_id=?", (session["user_id"],))
+#         total_income = cursor.fetchone()[0] or 0
+#         cursor.execute("SELECT SUM(amount) FROM expenses WHERE user_id=?", (session["user_id"],))
+#         total_expense = cursor.fetchone()[0] or 0
+#         available_balance = total_income - total_expense
+
+#         if total_income == 0:
+#             flash("Add income first!", "danger")
+#             conn.close()
+#             return redirect(url_for("add_expense"))
+#         if amount > available_balance:
+#             flash(f"Expense exceeds available balance ({available_balance})!", "danger")
+#             conn.close()
+#             return redirect(url_for("add_expense"))
+
+#         cursor.execute(
+#             "INSERT INTO expenses(user_id,date,category,amount,description) VALUES(?,?,?,?,?)",
+#             (session["user_id"], date_input, category, amount, description)
+#         )
+#         conn.commit()
+#         conn.close()
+#         flash("Expense added successfully!", "success")
+#         return redirect(url_for("dashboard"))
+#     return render_template("add_expense.html", categories=EXPENSE_CATEGORIES, current_date=date.today().strftime("%Y-%m-%d"))
+@app.route("/add_expense", methods=["GET", "POST"])
 def add_expense():
     if "user_id" not in session:
         return redirect(url_for("login"))
+
     if request.method == "POST":
         category = request.form["category"]
         amount = float(request.form["amount"])
@@ -233,35 +301,63 @@ def add_expense():
         conn = sqlite3.connect(DB_NAME)
         cursor = conn.cursor()
 
-        # Balance check
-        cursor.execute("SELECT SUM(amount) FROM income WHERE user_id=?", (session["user_id"],))
+        # ---- BALANCE CHECK ----
+        cursor.execute(
+            "SELECT SUM(amount) FROM income WHERE user_id=?",
+            (session["user_id"],)
+        )
         total_income = cursor.fetchone()[0] or 0
-        cursor.execute("SELECT SUM(amount) FROM expenses WHERE user_id=?", (session["user_id"],))
+
+        cursor.execute(
+            "SELECT SUM(amount) FROM expenses WHERE user_id=?",
+            (session["user_id"],)
+        )
         total_expense = cursor.fetchone()[0] or 0
+
         available_balance = total_income - total_expense
 
         if total_income == 0:
             flash("Add income first!", "danger")
             conn.close()
             return redirect(url_for("add_expense"))
+
         if amount > available_balance:
-            flash(f"Expense exceeds available balance ({available_balance})!", "danger")
+            flash(
+                f"Expense exceeds available balance ({available_balance})!",
+                "danger"
+            )
             conn.close()
             return redirect(url_for("add_expense"))
 
+        # ---- INSERT EXPENSE ----
         cursor.execute(
-            "INSERT INTO expenses(user_id,date,category,amount,description) VALUES(?,?,?,?,?)",
+            """
+            INSERT INTO expenses (user_id, date, category, amount, description)
+            VALUES (?, ?, ?, ?, ?)
+            """,
             (session["user_id"], date_input, category, amount, description)
         )
+
         conn.commit()
         conn.close()
+
         flash("Expense added successfully!", "success")
         return redirect(url_for("dashboard"))
-    return render_template("add_expense.html", categories=EXPENSE_CATEGORIES, current_date=date.today().strftime("%Y-%m-%d"))
+
+    # ---- GET REQUEST ----
+    return render_template(
+        "expense_form.html",
+        categories=EXPENSE_CATEGORIES,
+        current_date=date.today().strftime("%Y-%m-%d"),
+        mode="add"
+    )
+
+
+
 
 # ---- Edit Income ----
-@app.route("/edit_income/<int:income_id>", methods=["GET","POST"])
-def edit_income(income_id):
+# @app.route("/edit_income/<int:income_id>", methods=["GET","POST"])
+# def edit_income(income_id):
     if "user_id" not in session:
         return redirect(url_for("login"))
     conn = sqlite3.connect(DB_NAME)
@@ -286,6 +382,51 @@ def edit_income(income_id):
         flash("Record not found!", "danger")
         return redirect(url_for("dashboard"))
     return render_template("edit_income.html", categories=INCOME_CATEGORIES, record=record)
+@app.route("/edit_income/<int:income_id>", methods=["GET","POST"])
+def edit_income(income_id):
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    if request.method == "POST":
+        category = request.form["category"]
+        amount = float(request.form["amount"])
+        description = request.form["description"]
+        date_input = request.form.get("date")
+
+        cursor.execute("""
+            UPDATE income
+            SET date=?, category=?, amount=?, description=?
+            WHERE id=? AND user_id=?
+        """, (date_input, category, amount, description, income_id, session["user_id"]))
+
+        conn.commit()
+        conn.close()
+
+        flash("Income updated successfully!", "success")
+        return redirect(url_for("dashboard"))
+
+    cursor.execute("""
+        SELECT date, category, amount, description
+        FROM income
+        WHERE id=? AND user_id=?
+    """, (income_id, session["user_id"]))
+
+    record = cursor.fetchone()
+    conn.close()
+
+    if not record:
+        flash("Record not found!", "danger")
+        return redirect(url_for("dashboard"))
+
+    return render_template(
+        "income_form.html",
+        mode="edit",
+        categories=INCOME_CATEGORIES,
+        record=record
+    )
 
 # ---- Delete Income ----
 @app.route("/delete_income/<int:income_id>")
@@ -301,45 +442,124 @@ def delete_income(income_id):
     return redirect(url_for("dashboard"))
 
 # ---- Edit Expense ----
-@app.route("/edit_expense/<int:expense_id>", methods=["GET","POST"])
+# @app.route("/edit_expense/<int:expense_id>", methods=["GET","POST"])
+# def edit_expense(expense_id):
+#     if "user_id" not in session:
+#         return redirect(url_for("login"))
+#     conn = sqlite3.connect(DB_NAME)
+#     cursor = conn.cursor()
+#     if request.method == "POST":
+#         category = request.form["category"]
+#         amount = float(request.form["amount"])
+#         description = request.form["description"]
+
+#         # Check available balance excluding this expense
+#         cursor.execute("SELECT SUM(amount) FROM income WHERE user_id=?", (session["user_id"],))
+#         total_income = cursor.fetchone()[0] or 0
+#         cursor.execute("SELECT SUM(amount) FROM expenses WHERE user_id=? AND id<>?", (session["user_id"], expense_id))
+#         total_expense_except_current = cursor.fetchone()[0] or 0
+#         available_balance = total_income - total_expense_except_current
+#         if amount > available_balance:
+#             flash(f"Expense exceeds available balance ({available_balance})!", "danger")
+#             conn.close()
+#             return redirect(url_for("edit_expense", expense_id=expense_id))
+
+#         cursor.execute(
+#             "UPDATE expenses SET category=?, amount=?, description=? WHERE id=? AND user_id=?",
+#             (category, amount, description, expense_id, session["user_id"])
+#         )
+#         conn.commit()
+#         conn.close()
+#         flash("Expense updated successfully!", "success")
+#         return redirect(url_for("dashboard"))
+
+#     cursor.execute("SELECT category, amount, description FROM expenses WHERE id=? AND user_id=?",
+#                    (expense_id, session["user_id"]))
+#     record = cursor.fetchone()
+#     conn.close()
+#     if not record:
+#         flash("Record not found!", "danger")
+#         return redirect(url_for("dashboard"))
+#     return render_template("edit_expense.html", categories=EXPENSE_CATEGORIES, record=record)
+
+@app.route("/edit_expense/<int:expense_id>", methods=["GET", "POST"])
 def edit_expense(expense_id):
     if "user_id" not in session:
         return redirect(url_for("login"))
+
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
+
     if request.method == "POST":
         category = request.form["category"]
         amount = float(request.form["amount"])
         description = request.form["description"]
 
-        # Check available balance excluding this expense
-        cursor.execute("SELECT SUM(amount) FROM income WHERE user_id=?", (session["user_id"],))
+        # ---- BALANCE CHECK (exclude current expense) ----
+        cursor.execute(
+            "SELECT SUM(amount) FROM income WHERE user_id=?",
+            (session["user_id"],)
+        )
         total_income = cursor.fetchone()[0] or 0
-        cursor.execute("SELECT SUM(amount) FROM expenses WHERE user_id=? AND id<>?", (session["user_id"], expense_id))
-        total_expense_except_current = cursor.fetchone()[0] or 0
-        available_balance = total_income - total_expense_except_current
-        if amount > available_balance:
-            flash(f"Expense exceeds available balance ({available_balance})!", "danger")
-            conn.close()
-            return redirect(url_for("edit_expense", expense_id=expense_id))
 
         cursor.execute(
-            "UPDATE expenses SET category=?, amount=?, description=? WHERE id=? AND user_id=?",
+            "SELECT SUM(amount) FROM expenses WHERE user_id=? AND id<>?",
+            (session["user_id"], expense_id)
+        )
+        total_expense_except_current = cursor.fetchone()[0] or 0
+
+        available_balance = total_income - total_expense_except_current
+
+        if amount > available_balance:
+            flash(
+                f"Expense exceeds available balance ({available_balance})!",
+                "danger"
+            )
+            conn.close()
+            return redirect(
+                url_for("edit_expense", expense_id=expense_id)
+            )
+
+        # ---- UPDATE EXPENSE ----
+        cursor.execute(
+            """
+            UPDATE expenses
+            SET category=?, amount=?, description=?
+            WHERE id=? AND user_id=?
+            """,
             (category, amount, description, expense_id, session["user_id"])
         )
+
         conn.commit()
         conn.close()
+
         flash("Expense updated successfully!", "success")
         return redirect(url_for("dashboard"))
 
-    cursor.execute("SELECT category, amount, description FROM expenses WHERE id=? AND user_id=?",
-                   (expense_id, session["user_id"]))
+    # ---- GET REQUEST (LOAD RECORD) ----
+    cursor.execute(
+        """
+        SELECT category, amount, description
+        FROM expenses
+        WHERE id=? AND user_id=?
+        """,
+        (expense_id, session["user_id"])
+    )
     record = cursor.fetchone()
     conn.close()
+
     if not record:
         flash("Record not found!", "danger")
         return redirect(url_for("dashboard"))
-    return render_template("edit_expense.html", categories=EXPENSE_CATEGORIES, record=record)
+
+    return render_template(
+        "expense_form.html",
+        categories=EXPENSE_CATEGORIES,
+        record=record,
+        mode="edit"
+    )
+
+
 
 # ---- Delete Expense ----
 @app.route("/delete_expense/<int:expense_id>")

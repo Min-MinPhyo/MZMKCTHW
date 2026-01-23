@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-md mx-auto bg-white p-6 rounded shadow">
+
+    <!-- Dynamic Title -->
+    <h1 class="text-2xl font-bold mb-4 text-center">
+        {% if mode == "edit" %}
+            Edit Expense
+        {% else %}
+            Add Expense
+        {% endif %}
+    </h1>
+
+    <form method="POST">
+
+        <!-- Date (ADD MODE ONLY) -->
+        {% if mode == "add" %}
+            <label class="block mb-2 font-semibold">Date</label>
+            <input
+                type="date"
+                name="date"
+                value="{{ current_date }}"
+                class="w-full p-2 border rounded mb-3"
+                required
+            >
+        {% endif %}
+
+        <!-- Category -->
+        <label class="block mb-2 font-semibold">Category</label>
+        <select name="category" class="w-full p-2 border rounded mb-3" required>
+            <option value="">Select Category</option>
+            {% for cat in categories %}
+                <option value="{{ cat }}"
+                    {% if mode == "edit" and record[0] == cat %}selected{% endif %}
+                >
+                    {{ cat }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <!-- Amount -->
+        <label class="block mb-2 font-semibold">Amount</label>
+        <input
+            type="number"
+            step="0.01"
+            name="amount"
+            value="{% if mode == 'edit' %}{{ record[1] }}{% endif %}"
+            class="w-full p-2 border rounded mb-3"
+            required
+        >
+
+        <!-- Description -->
+        <label class="block mb-2 font-semibold">Description</label>
+        <input
+            type="text"
+            name="description"
+            value="{% if mode == 'edit' %}{{ record[2] }}{% endif %}"
+            class="w-full p-2 border rounded mb-4"
+            required
+        >
+
+        <!-- Submit Button -->
+        <button
+            type="submit"
+            class="w-full text-white p-2 rounded
+                {% if mode == 'edit' %}
+                    bg-blue-500 hover:bg-blue-600
+                {% else %}
+                    bg-red-500 hover:bg-red-600
+                {% endif %}
+            "
+        >
+            {% if mode == "edit" %}
+                Update Expense
+            {% else %}
+                Add Expense
+            {% endif %}
+        </button>
+    </form>
+
+    <!-- Back -->
+    <p class="mt-4 text-center">
+        <a href="{{ url_for('dashboard') }}" class="text-blue-500 hover:underline">
+            Back to Dashboard
+        </a>
+    </p>
+
+</div>
+
+{% endblock %}
