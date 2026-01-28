@@ -232,30 +232,87 @@ def register():
 #     return render_template("login.html")
 
 # test login 
+# @app.route("/login", methods=["GET", "POST"])
+# def login():
+#     if request.method == "POST":
+#         username = request.form["username"].strip()
+#         password = request.form["password"].strip()
+       
+
+#         conn = sqlite3.connect(DB_NAME)
+#         cursor = conn.cursor()
+#         cursor.execute(
+#             "SELECT id, username, avatar FROM users WHERE username=? AND password=?",
+#             (username, password)
+#         )
+#         user = cursor.fetchone()
+#         conn.close()
+
+#         if user and check_password_hash(user["password"], password):
+#             session["user_id"] = user["id"]
+#             session["username"] = user["username"]
+#             flash("Login successful!", "success")
+#             return redirect(url_for("dashboard"))
+        
+#         else:
+#             flash("Username or password incorrect!", "danger")
+#             return redirect(url_for("login"))
+
+#     return render_template("login.html")
+
+# test login update
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         username = request.form["username"].strip()
         password = request.form["password"].strip()
+        avatar_file = request.files.get("avatar")  # optional avatar upload
 
+        # --- Fetch user by username ---
         conn = sqlite3.connect(DB_NAME)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users WHERE username=?", (username,))
         user = cursor.fetchone()
-        conn.close()
 
-        if user and check_password_hash(user["password"], password):
-            session["user_id"] = user["id"]
-            session["username"] = user["username"]
-            flash("Login successful!", "success")
-            return redirect(url_for("dashboard"))
-        else:
-            flash("Username or password incorrect!", "danger")
+        if not user:
+            conn.close()
+            flash("Invalid username or password!", "danger")
             return redirect(url_for("login"))
 
-    return render_template("login.html")
+        # --- Verify password ---
+        if not check_password_hash(user["password"], password):
+            conn.close()
+            flash("Invalid username or password!", "danger")
+            return redirect(url_for("login"))
 
+        user_id = user["id"]
+        filename = user["avatar"]  # existing avatar in DB
+
+        # --- Handle new avatar upload ---
+        if avatar_file and avatar_file.filename != "":
+            if allowed_file(avatar_file.filename):
+                filename = secure_filename(avatar_file.filename)
+                avatar_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+                avatar_file.save(avatar_path)
+
+                # Update avatar filename in DB
+                cursor.execute("UPDATE users SET avatar=? WHERE id=?", (filename, user_id))
+                conn.commit()
+            else:
+                flash("Invalid avatar file type!", "warning")
+
+        conn.close()
+
+        # --- Store session info ---
+        session["user_id"] = user_id
+        session["username"] = user["username"]
+        session["avatar"] = filename
+
+        flash(f"Welcome back, {user['username']}!", "success")
+        return redirect(url_for("dashboard"))
+
+    return render_template("login.html")
 # ---- Logout ----
 @app.route("/logout")
 def logout():
@@ -456,6 +513,93 @@ def add_expense():
         mode="add",
         show_confirm=False
     )
+
+
+# add expense test // test expense not working
+# @app.route("/add_expense", methods=["GET", "POST"])
+# def add_expense():
+#     if "user_id" not in session:
+#         return redirect(url_for("login"))
+
+#     conn = sqlite3.connect(DB_NAME)
+#     cursor = conn.cursor()
+
+#     if request.method == "POST":
+#         category = request.form.get("category", "").strip()
+#         amount_str = request.form.get("amount", "0").strip()
+#         description = request.form.get("description", "").strip()
+#         date_input = request.form.get("date", date.today().strftime("%Y-%m-%d"))
+#         confirm = request.form.get("confirm")  # Checkbox confirm
+
+#         # Validate amount
+#         try:
+#             amount = float(amount_str)
+#             if amount <= 0:
+#                 raise ValueError
+#         except ValueError:
+#             flash("Please enter a valid positive amount!", "danger")
+#             conn.close()
+#             return render_template(
+#                 "expense_form.html",
+#                 categories=EXPENSE_CATEGORIES,
+#                 current_date=date_input,
+#                 mode="add",
+#                 show_confirm=False,
+#                 form_data=request.form
+#             )
+
+#         # Calculate available balance
+#         cursor.execute("SELECT SUM(amount) FROM income WHERE user_id=?", (session["user_id"],))
+#         total_income = cursor.fetchone()[0] or 0
+
+#         cursor.execute("SELECT SUM(amount) FROM expenses WHERE user_id=?", (session["user_id"],))
+#         total_expense = cursor.fetchone()[0] or 0
+
+#         available_balance = total_income - total_expense
+
+#         # BLOCK if expense exceeds balance
+#         if amount > available_balance:
+#             flash(f"Expense exceeds available balance ({available_balance})!", "danger")
+#             conn.close()
+#             return redirect(url_for("add_expense"))
+
+#         # CONFIRM if using all balance
+#         if amount == available_balance and confirm != "yes":
+#             flash("This expense will use ALL your remaining balance. Please confirm.", "warning")
+#             conn.close()
+#             return render_template(
+#                 "expense_form.html",
+#                 categories=EXPENSE_CATEGORIES,
+#                 current_date=date_input,
+#                 mode="add",
+#                 show_confirm=True,
+#                 form_data=request.form
+#             )
+
+#         # INSERT expense
+#         cursor.execute(
+#             "INSERT INTO expenses(user_id, date, category, amount, description) VALUES (?, ?, ?, ?, ?)",
+#             (session["user_id"], date_input, category, amount, description)
+#         )
+#         conn.commit()
+#         conn.close()
+
+#         flash("Expense added successfully!", "success")
+#         return redirect(url_for("dashboard"))
+
+#     # GET request
+#     conn.close()
+#     return render_template(
+#         "expense_form.html",
+#         categories=EXPENSE_CATEGORIES,
+#         current_date=date.today().strftime("%Y-%m-%d"),
+#         mode="add",
+#         show_confirm=False,
+#         form_data=None
+#     )
+
+
+
 # edit-income
 @app.route("/edit_income/<int:income_id>", methods=["GET","POST"])
 def edit_income(income_id):
