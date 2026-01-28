@@ -1,0 +1,1627 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-5xl mx-auto">
+
+  <h1 class="text-2xl font-bold mb-6 text-center">
+    Income & Expense Charts
+  </h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <!-- Income Chart -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="font-semibold text-center mb-3 text-green-600">
+        Income by Category
+      </h2>
+      <canvas id="incomeChart"></canvas>
+    </div>
+
+    <!-- Expense Chart -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="font-semibold text-center mb-3 text-red-600">
+        Expense by Category
+      </h2>
+      <canvas id="expenseChart"></canvas>
+    </div>
+
+  </div>
+
+  <div class="text-center mt-6">
+    <a href="{{ url_for('dashboard') }}"
+       class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
+      Back to Dashboard
+    </a>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+new Chart(document.getElementById("incomeChart"), {
+  type: "pie",
+  data: {
+    labels: {{ income_labels | safe }},
+    datasets: [{
+      data: {{ income_values | safe }},
+      backgroundColor: [
+        "#16a34a","#22c55e","#4ade80","#86efac","#bbf7d0"
+      ]
+    }]
+  }
+});
+
+new Chart(document.getElementById("expenseChart"), {
+  type: "pie",
+  data: {
+    labels: {{ expense_labels | safe }},
+    datasets: [{
+      data: {{ expense_values | safe }},
+      backgroundColor: [
+        "#dc2626","#ef4444","#f87171","#fca5a5","#fecaca"
+      ]
+    }]
+  }
+});
+</script>
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//code 2 working 
+
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-5xl mx-auto">
+
+  <h1 class="text-2xl font-bold mb-6 text-center">
+    Income & Expense Charts
+  </h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <!-- Income Chart -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="font-semibold text-center mb-3 text-green-600">
+        Income by Category
+      </h2>
+      <canvas id="incomeChart"></canvas>
+    </div>
+
+    <!-- Expense Chart -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="font-semibold text-center mb-3 text-red-600">
+        Expense by Category
+      </h2>
+      <canvas id="expenseChart"></canvas>
+    </div>
+
+  </div>
+
+  <div class="text-center mt-6">
+    <a href="{{ url_for('dashboard') }}"
+       class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
+      Back to Dashboard
+    </a>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+/* ---------- COLOR LOGIC ---------- */
+
+// Income color shades (GREEN)
+function incomeColor(amount) {
+  if (amount > 2000000) return "#15803d";   // dark green
+  if (amount > 300000)  return "#22c55e";   // medium green
+  return "#86efac";                         // light green
+}
+
+// Expense color shades (RED)
+function expenseColor(amount) {
+  if (amount > 2000000) return "#991b1b";   // dark red
+  if (amount > 300000)  return "#ef4444";   // medium red
+  return "#fca5a5";                         // light red
+}
+
+/* ---------- INCOME CHART ---------- */
+const incomeLabels = {{ income_labels | safe }};
+const incomeValues = {{ income_values | safe }};
+const incomeColors = incomeValues.map(v => incomeColor(v));
+
+new Chart(document.getElementById("incomeChart"), {
+  type: "pie",
+  data: {
+    labels: incomeLabels,
+    datasets: [{
+      data: incomeValues,
+      backgroundColor: incomeColors
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { position: "bottom" }
+    }
+  }
+});
+
+/* ---------- EXPENSE CHART ---------- */
+const expenseLabels = {{ expense_labels | safe }};
+const expenseValues = {{ expense_values | safe }};
+const expenseColors = expenseValues.map(v => expenseColor(v));
+
+new Chart(document.getElementById("expenseChart"), {
+  type: "pie",
+  data: {
+    labels: expenseLabels,
+    datasets: [{
+      data: expenseValues,
+      backgroundColor: expenseColors
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { position: "bottom" }
+    }
+  }
+});
+</script>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+====================code 3=======================
+
+
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-5xl mx-auto">
+
+  <h1 class="text-2xl font-bold mb-4 text-center">
+    Income & Expense Charts
+  </h1>
+
+  <!-- DATE FILTER -->
+  <form method="POST" class="flex flex-wrap gap-4 justify-center mb-6">
+    <input type="date" name="start_date"
+           value="{{ start_date or '' }}"
+           class="border p-2 rounded">
+
+    <input type="date" name="end_date"
+           value="{{ end_date or '' }}"
+           class="border p-2 rounded">
+
+    <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+      Filter
+    </button>
+  </form>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <!-- Income Chart -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="font-semibold text-center mb-3 text-green-600">
+        Income by Category
+      </h2>
+      <canvas id="incomeChart"></canvas>
+    </div>
+
+    <!-- Expense Chart -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="font-semibold text-center mb-3 text-red-600">
+        Expense by Category
+      </h2>
+      <canvas id="expenseChart"></canvas>
+    </div>
+
+  </div>
+
+  <div class="text-center mt-6">
+    <a href="{{ url_for('dashboard') }}"
+       class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
+      Back to Dashboard
+    </a>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+/* ---------- COLOR LOGIC ---------- */
+function incomeColor(amount) {
+  if (amount > 2000000) return "#15803d";
+  if (amount > 300000)  return "#22c55e";
+  return "#86efac";
+}
+
+function expenseColor(amount) {
+  if (amount > 2000000) return "#991b1b";
+  if (amount > 300000)  return "#ef4444";
+  return "#fca5a5";
+}
+
+/* ---------- INCOME CHART ---------- */
+const incomeLabels = {{ income_labels | safe }};
+const incomeValues = {{ income_values | safe }};
+const incomeColors = incomeValues.map(v => incomeColor(v));
+
+new Chart(document.getElementById("incomeChart"), {
+  type: "pie",
+  data: {
+    labels: incomeLabels,
+    datasets: [{
+      data: incomeValues,
+      backgroundColor: incomeColors
+    }]
+  },
+  options: {
+    plugins: { legend: { position: "bottom" } }
+  }
+});
+
+/* ---------- EXPENSE CHART ---------- */
+const expenseLabels = {{ expense_labels | safe }};
+const expenseValues = {{ expense_values | safe }};
+const expenseColors = expenseValues.map(v => expenseColor(v));
+
+new Chart(document.getElementById("expenseChart"), {
+  type: "pie",
+  data: {
+    labels: expenseLabels,
+    datasets: [{
+      data: expenseValues,
+      backgroundColor: expenseColors
+    }]
+  },
+  options: {
+    plugins: { legend: { position: "bottom" } }
+  }
+});
+</script>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+=================bar chart =================
+
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-6xl mx-auto">
+
+  <h1 class="text-2xl font-bold mb-4 text-center">
+    Income & Expense Analysis
+  </h1>
+
+  <!-- ================= FILTER ================= -->
+  <form method="POST"
+        class="flex flex-wrap gap-3 justify-center items-end mb-6">
+
+    <div>
+      <label class="text-sm font-semibold">Start Date</label>
+      <input type="date" name="start_date"
+             value="{{ start_date or '' }}"
+             class="border p-2 rounded w-40">
+    </div>
+
+    <div>
+      <label class="text-sm font-semibold">End Date</label>
+      <input type="date" name="end_date"
+             value="{{ end_date or '' }}"
+             class="border p-2 rounded w-40">
+    </div>
+
+    <button type="submit"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded h-10">
+      Filter
+    </button>
+
+    <a href="{{ url_for('charts') }}"
+       class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded h-10 flex items-center">
+      Reset
+    </a>
+
+  </form>
+
+  <!-- ================= CHARTS ================= -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <!-- INCOME BAR -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-center font-semibold mb-3 text-green-600">
+        Income by Category
+      </h2>
+      <canvas id="incomeChart"></canvas>
+    </div>
+
+    <!-- EXPENSE BAR -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-center font-semibold mb-3 text-red-600">
+        Expense by Category
+      </h2>
+      <canvas id="expenseChart"></canvas>
+    </div>
+
+  </div>
+
+  <div class="text-center mt-6">
+    <a href="{{ url_for('dashboard') }}"
+       class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded">
+      Back to Dashboard
+    </a>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+/* ================= COLOR RULES ================= */
+function incomeColor(amount) {
+  if (amount > 2000000) return "#15803d";  // dark green
+  if (amount > 300000)  return "#22c55e";  // green
+  return "#86efac";                        // light green
+}
+
+function expenseColor(amount) {
+  if (amount > 2000000) return "#991b1b";  // dark red
+  if (amount > 300000)  return "#ef4444";  // red
+  return "#fca5a5";                        // light red
+}
+
+/* ================= INCOME BAR CHART ================= */
+const incomeLabels = {{ income_labels | safe }};
+const incomeValues = {{ income_values | safe }};
+const incomeColors = incomeValues.map(v => incomeColor(v));
+
+new Chart(document.getElementById("incomeChart"), {
+  type: "bar",
+  data: {
+    labels: incomeLabels,
+    datasets: [{
+      label: "Income Amount",
+      data: incomeValues,
+      backgroundColor: incomeColors,
+      borderRadius: 6
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { beginAtZero: true }
+    }
+  }
+});
+
+/* ================= EXPENSE BAR CHART ================= */
+const expenseLabels = {{ expense_labels | safe }};
+const expenseValues = {{ expense_values | safe }};
+const expenseColors = expenseValues.map(v => expenseColor(v));
+
+new Chart(document.getElementById("expenseChart"), {
+  type: "bar",
+  data: {
+    labels: expenseLabels,
+    datasets: [{
+      label: "Expense Amount",
+      data: expenseValues,
+      backgroundColor: expenseColors,
+      borderRadius: 6
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { beginAtZero: true }
+    }
+  }
+});
+</script>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+===============pie chart ===============
+
+
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-5xl mx-auto">
+
+  <h1 class="text-2xl font-bold mb-4 text-center">
+    Income & Expense Charts
+  </h1>
+
+  <!-- DATE FILTER -->
+  <form method="POST" class="flex flex-wrap gap-4 justify-center mb-6">
+    <input type="date" name="start_date"
+           value="{{ start_date or '' }}"
+           class="border p-2 rounded">
+
+    <input type="date" name="end_date"
+           value="{{ end_date or '' }}"
+           class="border p-2 rounded">
+
+    <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+      Filter
+    </button>
+  </form>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <!-- Income Chart -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="font-semibold text-center mb-3 text-green-600">
+        Income by Category
+      </h2>
+      <canvas id="incomeChart"></canvas>
+    </div>
+
+    <!-- Expense Chart -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="font-semibold text-center mb-3 text-red-600">
+        Expense by Category
+      </h2>
+      <canvas id="expenseChart"></canvas>
+    </div>
+
+  </div>
+
+  <div class="text-center mt-6">
+    <a href="{{ url_for('dashboard') }}"
+       class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
+      Back to Dashboard
+    </a>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+/* ---------- COLOR LOGIC ---------- */
+function incomeColor(amount) {
+  if (amount > 2000000) return "#15803d";
+  if (amount > 300000)  return "#22c55e";
+  return "#86efac";
+}
+
+function expenseColor(amount) {
+  if (amount > 2000000) return "#991b1b";
+  if (amount > 300000)  return "#ef4444";
+  return "#fca5a5";
+}
+
+/* ---------- INCOME CHART ---------- */
+const incomeLabels = {{ income_labels | safe }};
+const incomeValues = {{ income_values | safe }};
+const incomeColors = incomeValues.map(v => incomeColor(v));
+
+new Chart(document.getElementById("incomeChart"), {
+  type: "pie",
+  data: {
+    labels: incomeLabels,
+    datasets: [{
+      data: incomeValues,
+      backgroundColor: incomeColors
+    }]
+  },
+  options: {
+    plugins: { legend: { position: "bottom" } }
+  }
+});
+
+/* ---------- EXPENSE CHART ---------- */
+const expenseLabels = {{ expense_labels | safe }};
+const expenseValues = {{ expense_values | safe }};
+const expenseColors = expenseValues.map(v => expenseColor(v));
+
+new Chart(document.getElementById("expenseChart"), {
+  type: "pie",
+  data: {
+    labels: expenseLabels,
+    datasets: [{
+      data: expenseValues,
+      backgroundColor: expenseColors
+    }]
+  },
+  options: {
+    plugins: { legend: { position: "bottom" } }
+  }
+});
+</script>
+
+{% endblock %}
+
+
+
+
+===============expense===========
+
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<div class="max-w-md mx-auto bg-white p-6 rounded shadow">
+
+    <!-- Dynamic Title -->
+    <h1 class="text-2xl font-bold mb-4 text-center">
+        {% if mode == "edit" %}
+            Edit Expense
+        {% else %}
+            Add Expense
+        {% endif %}
+    </h1>
+
+    <form method="POST">
+
+        <!-- Date (ADD MODE ONLY) -->
+        {% if mode == "add" %}
+            <label class="block mb-2 font-semibold">Date</label>
+            <input
+                type="date"
+                name="date"
+                value="{{ current_date }}"
+                class="w-full p-2 border rounded mb-3"
+                required
+            >
+        {% endif %}
+
+        <!-- Category -->
+        <label class="block mb-2 font-semibold">Category</label>
+        <select name="category" class="w-full p-2 border rounded mb-3" required>
+            <option value="">Select Category</option>
+            {% for cat in categories %}
+                <option value="{{ cat }}"
+                    {% if mode == "edit" and record[0] == cat %}selected{% endif %}
+                >
+                    {{ cat }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <!-- Amount -->
+        <label class="block mb-2 font-semibold">Amount</label>
+        <input
+            type="number"
+            step="0.01"
+            name="amount"
+            value="{% if mode == 'edit' %}{{ record[1] }}{% endif %}"
+            class="w-full p-2 border rounded mb-3"
+            required
+        >
+
+        <!-- Description -->
+        <label class="block mb-2 font-semibold">Description</label>
+        <input
+            type="text"
+            name="description"
+            value="{% if mode == 'edit' %}{{ record[2] }}{% endif %}"
+            class="w-full p-2 border rounded mb-4"
+            required
+        >
+
+        <!-- Submit Button -->
+        <button
+            type="submit"
+            class="w-full text-white p-2 rounded
+                {% if mode == 'edit' %}
+                    bg-blue-500 hover:bg-blue-600
+                {% else %}
+                    bg-red-500 hover:bg-red-600
+                {% endif %}
+            "
+        >
+            {% if mode == "edit" %}
+                Update Expense
+            {% else %}
+                Add Expense
+            {% endif %}
+        </button>
+    </form>
+
+    <!-- Back -->
+    <p class="mt-4 text-center">
+        <a href="{{ url_for('dashboard') }}" class="text-blue-500 hover:underline">
+            Back to Dashboard
+        </a>
+    </p>
+
+</div>
+
+{% endblock %}
+
+
+
+================real working in register=============
+
+{% extends "base.html" %} {% block content %}
+<div class="max-w-md mx-auto bg-white p-6 rounded shadow">
+  <h1 class="text-2xl font-bold mb-4 text-center">Register</h1>
+  <form method="POST">
+    <input
+      type="text"
+      name="username"
+      placeholder="Username"
+      class="w-full p-2 border rounded mb-3"
+      required
+    />
+    <input
+      type="email"
+      name="email"
+      placeholder="Username"
+      class="w-full p-2 border rounded mb-3"
+      required
+    />
+    <input
+      type="password"
+      name="password"
+      placeholder="Password"
+      class="w-full p-2 border rounded mb-3"
+      required
+    />
+    <input
+      type="file"
+      name="avator"
+      placeholder="Username"
+      class="w-full p-2 border rounded mb-3"
+      required
+    />
+
+    <button
+      type="submit"
+      class="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600"
+    >
+      Register
+    </button>
+  </form>
+  <p class="mt-4 text-center text-sm">
+    Already have an account?
+    <a href="/login" class="text-blue-500 hover:underline">Login</a>
+  </p>
+</div>
+{% endblock %}
+
+
+
+
+
+================chart perfect=================
+
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-6xl mx-auto">
+
+  <h1 class="text-2xl font-bold mb-4 text-center">
+    Income & Expense Analysis
+  </h1>
+
+  <!-- ================= FILTER ================= -->
+  <form method="POST"
+        class="flex flex-wrap gap-3 justify-center items-end mb-6">
+
+    <div>
+      <label class="text-sm font-semibold">Start Date</label>
+      <input type="date" name="start_date"
+             value="{{ start_date or '' }}"
+             class="border p-2 rounded w-40">
+    </div>
+
+    <div>
+      <label class="text-sm font-semibold">End Date</label>
+      <input type="date" name="end_date"
+             value="{{ end_date or '' }}"
+             class="border p-2 rounded w-40">
+    </div>
+
+    <button type="submit"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded h-10">
+      Filter
+    </button>
+
+    <a href="{{ url_for('charts') }}"
+       class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded h-10 flex items-center">
+      Reset
+    </a>
+
+  </form>
+
+  <!-- ================= CHARTS ================= -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <!-- INCOME BAR -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-center font-semibold mb-3 text-green-600">
+        Income by Category
+      </h2>
+      <canvas id="incomeChart"></canvas>
+    </div>
+
+    <!-- EXPENSE BAR -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-center font-semibold mb-3 text-red-600">
+        Expense by Category
+      </h2>
+      <canvas id="expenseChart"></canvas>
+    </div>
+
+  </div>
+
+  <div class="text-center mt-6">
+    <a href="{{ url_for('dashboard') }}"
+       class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded">
+      Back to Dashboard
+    </a>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+/* ================= COLOR RULES ================= */
+function incomeColor(amount) {
+  if (amount > 2000000) return "#15803d";  // dark green
+  if (amount > 300000)  return "#22c55e";  // green
+  return "#86efac";                        // light green
+}
+
+function expenseColor(amount) {
+  if (amount > 2000000) return "#991b1b";  // dark red
+  if (amount > 300000)  return "#ef4444";  // red
+  return "#fca5a5";                        // light red
+}
+
+/* ================= INCOME BAR CHART ================= */
+const incomeLabels = {{ income_labels | safe }};
+const incomeValues = {{ income_values | safe }};
+const incomeColors = incomeValues.map(v => incomeColor(v));
+
+new Chart(document.getElementById("incomeChart"), {
+  type: "bar",
+  data: {
+    labels: incomeLabels,
+    datasets: [{
+      label: "Income Amount",
+      data: incomeValues,
+      backgroundColor: incomeColors,
+      borderRadius: 6
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { beginAtZero: true }
+    }
+  }
+});
+
+/* ================= EXPENSE BAR CHART ================= */
+const expenseLabels = {{ expense_labels | safe }};
+const expenseValues = {{ expense_values | safe }};
+const expenseColors = expenseValues.map(v => expenseColor(v));
+
+new Chart(document.getElementById("expenseChart"), {
+  type: "bar",
+  data: {
+    labels: expenseLabels,
+    datasets: [{
+      label: "Expense Amount",
+      data: expenseValues,
+      backgroundColor: expenseColors,
+      borderRadius: 6
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { beginAtZero: true }
+    }
+  }
+});
+</script>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+==================dashboard complete and more perfect ================
+
+
+{% extends "base.html" %} {% block content %}
+
+<div class="max-w-6xl mx-auto">
+  <!-- Title -->
+  <h1 class="text-2xl font-bold mb-6">Dashboard - {{ session.username }}</h1>
+
+  <!-- ================= FILTER ================= -->
+  <form
+    method="GET"
+    action="{{ url_for('dashboard') }}"
+    class="flex items-end gap-3 mb-6"
+  >
+    <div>
+      <label class="text-sm font-semibold">Start Date</label>
+      <input
+        type="date"
+        name="start_date"
+        value="{{ start_date or '' }}"
+        class="border p-2 rounded w-40"
+      />
+    </div>
+
+    <div>
+      <label class="text-sm font-semibold">End Date</label>
+      <input
+        type="date"
+        name="end_date"
+        value="{{ end_date or '' }}"
+        class="border p-2 rounded w-40"
+      />
+    </div>
+
+    <button
+      type="submit"
+      class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded h-10"
+    >
+      Filter
+    </button>
+
+    <a
+      href="{{ url_for('dashboard') }}"
+      class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded h-10 flex items-center"
+    >
+      Reset
+    </a>
+  </form>
+
+  <!-- ================= SUMMARY ================= -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div class="bg-green-200 p-4 rounded text-center font-semibold">
+      Income: {{ total_income }}
+    </div>
+    <div class="bg-red-200 p-4 rounded text-center font-semibold">
+      Expense: {{ total_expense }}
+    </div>
+    <div class="bg-blue-200 p-4 rounded text-center font-semibold">
+      Balance: {{ balance }}
+    </div>
+  </div>
+
+  <!-- ================= ACTION BUTTONS ================= -->
+  <div class="flex gap-3 mb-8">
+    <a
+      href="{{ url_for('add_income') }}"
+      class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+    >
+      Add Income
+    </a>
+    <a
+      href="{{ url_for('add_expense') }}"
+      class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+    >
+      Add Expense
+    </a>
+    <a
+      href="{{ url_for('logout') }}"
+      class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+    >
+      Logout
+    </a>
+
+     <a
+      href="{{ url_for('charts') }}"
+      class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+    >
+      Chart By View
+    </a>
+
+    <a
+      href="{{ url_for('download_report_pdf', start_date=start_date, end_date=end_date) }}"
+      class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+    >
+      Download PDF Report
+    </a>
+  </div>
+
+  <!-- ================= INCOME TABLE ================= -->
+  <h2 class="text-xl font-bold mb-3">Income Records</h2>
+
+  <table class="w-full border mb-4">
+    <thead class="bg-gray-200">
+      <tr>
+        <th class="p-2 text-left">Date</th>
+        <th class="p-2 text-left">Category</th>
+        <th class="p-2 text-left">Amount</th>
+        <th class="p-2 text-left">Description</th>
+        <th class="p-2 text-left">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for rec in income_records %}
+      <tr class="border-t">
+        <td class="p-2">{{ rec[3] }}</td>
+        <td class="p-2">{{ rec[1] }}</td>
+        <td class="p-2">{{ rec[2] }}</td>
+        <td class="p-2">{{ rec[4] }}</td>
+        <td class="p-2">
+          <a
+            href="{{ url_for('edit_income', income_id=rec[0]) }}"
+            class="text-blue-500 hover:underline mr-2"
+            >Edit</a
+          >
+          <a
+            href="{{ url_for('delete_income', income_id=rec[0]) }}"
+            class="text-red-500 hover:underline"
+            onclick="return confirm('Delete this income?');"
+          >
+            Delete
+          </a>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="5" class="p-4 text-center text-gray-500">
+          No income records found
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Income Pagination -->
+  {% if total_income_pages > 1 %}
+  <div class="flex justify-center gap-2 mb-10">
+    {% if page > 1 %}
+    <a
+      href="{{ url_for('dashboard', page=page-1, start_date=start_date, end_date=end_date) }}"
+      class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400"
+      >Prev</a
+    >
+    {% endif %} {% for p in range(1, total_income_pages + 1) %} {% if p == page
+    %}
+    <span class="px-3 py-1 bg-blue-500 text-white rounded">{{ p }}</span>
+    {% else %}
+    <a
+      href="{{ url_for('dashboard', page=p, start_date=start_date, end_date=end_date) }}"
+      class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+      >{{ p }}</a
+    >
+    {% endif %} {% endfor %} {% if page < total_income_pages %}
+    <a
+      href="{{ url_for('dashboard', page=page+1, start_date=start_date, end_date=end_date) }}"
+      class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400"
+      >Next</a
+    >
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <!-- ================= EXPENSE TABLE ================= -->
+  <h2 class="text-xl font-bold mb-3">Expense Records</h2>
+
+  <table class="w-full border mb-4">
+    <thead class="bg-gray-200">
+      <tr>
+        <th class="p-2 text-left">Date</th>
+        <th class="p-2 text-left">Category</th>
+        <th class="p-2 text-left">Amount</th>
+        <th class="p-2 text-left">Description</th>
+        <th class="p-2 text-left">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for rec in expense_records %}
+      <tr class="border-t">
+        <td class="p-2">{{ rec[3] }}</td>
+        <td class="p-2">{{ rec[1] }}</td>
+        <td class="p-2">{{ rec[2] }}</td>
+        <td class="p-2">{{ rec[4] }}</td>
+        <td class="p-2">
+          <a
+            href="{{ url_for('edit_expense', expense_id=rec[0]) }}"
+            class="text-blue-500 hover:underline mr-2"
+            >Edit</a
+          >
+          <a
+            href="{{ url_for('delete_expense', expense_id=rec[0]) }}"
+            class="text-red-500 hover:underline"
+            onclick="return confirm('Delete this expense?');"
+          >
+            Delete
+          </a>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="5" class="p-4 text-center text-gray-500">
+          No expense records found
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Expense Pagination -->
+  {% if total_expense_pages > 1 %}
+  <div class="flex justify-center gap-2 mb-10">
+    {% if page > 1 %}
+    <a
+      href="{{ url_for('dashboard', page=page-1, start_date=start_date, end_date=end_date) }}"
+      class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400"
+      >Prev</a
+    >
+    {% endif %} {% for p in range(1, total_expense_pages + 1) %} {% if p == page
+    %}
+    <span class="px-3 py-1 bg-red-500 text-white rounded">{{ p }}</span>
+    {% else %}
+    <a
+      href="{{ url_for('dashboard', page=p, start_date=start_date, end_date=end_date) }}"
+      class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+      >{{ p }}</a
+    >
+    {% endif %} {% endfor %} {% if page < total_expense_pages %}
+    <a
+      href="{{ url_for('dashboard', page=page+1, start_date=start_date, end_date=end_date) }}"
+      class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400"
+      >Next</a
+    >
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}
+
+
+
+=====================comlete dashboard one ===================
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-7xl mx-auto p-4">
+
+  <!-- ================= TITLE ================= -->
+  <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">
+    Dashboard - {{ session.username }}
+  </h1>
+
+  <!-- ================= FILTER FORM ================= -->
+  <div class="bg-white p-4 rounded-lg shadow-md mb-6">
+    <form method="GET" action="{{ url_for('dashboard') }}" class="flex flex-wrap gap-4 items-end justify-center">
+
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold mb-1">Start Date</label>
+        <input type="date" name="start_date" value="{{ start_date or '' }}"
+               class="border border-gray-300 p-2 rounded w-40 focus:outline-none focus:ring-2 focus:ring-blue-400">
+      </div>
+
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold mb-1">End Date</label>
+        <input type="date" name="end_date" value="{{ end_date or '' }}"
+               class="border border-gray-300 p-2 rounded w-40 focus:outline-none focus:ring-2 focus:ring-blue-400">
+      </div>
+
+      <button type="submit"
+              class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded shadow transition-colors">
+        Filter
+      </button>
+
+      <a href="{{ url_for('dashboard') }}"
+         class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded shadow transition-colors flex items-center justify-center">
+        Reset
+      </a>
+
+    </form>
+  </div>
+
+  <!-- ================= SUMMARY CARDS ================= -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded shadow hover:shadow-lg transition-shadow">
+      <h3 class="text-gray-700 font-semibold mb-1">Total Income</h3>
+      <p class="text-2xl font-bold text-green-700">{{ total_income | default(0) }}</p>
+    </div>
+    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded shadow hover:shadow-lg transition-shadow">
+      <h3 class="text-gray-700 font-semibold mb-1">Total Expense</h3>
+      <p class="text-2xl font-bold text-red-700">{{ total_expense | default(0) }}</p>
+    </div>
+    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded shadow hover:shadow-lg transition-shadow">
+      <h3 class="text-gray-700 font-semibold mb-1">Balance</h3>
+      <p class="text-2xl font-bold text-blue-700">{{ balance | default(0) }}</p>
+    </div>
+  </div>
+
+  <!-- ================= ACTION BUTTONS ================= -->
+  <div class="flex flex-wrap gap-3 mb-8 justify-center">
+    <a href="{{ url_for('add_income') }}"
+       class="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded shadow transition-colors">
+      Add Income
+    </a>
+    <a href="{{ url_for('add_expense') }}"
+       class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded shadow transition-colors">
+      Add Expense
+    </a>
+    <a href="{{ url_for('charts') }}"
+       class="bg-purple-500 hover:bg-purple-600 text-white px-5 py-2 rounded shadow transition-colors">
+      View Charts
+    </a>
+    <a href="{{ url_for('download_report_pdf', start_date=start_date, end_date=end_date) }}"
+       class="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded shadow transition-colors">
+      Download PDF
+    </a>
+    <a href="{{ url_for('logout') }}"
+       class="bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded shadow transition-colors">
+      Logout
+    </a>
+  </div>
+
+  <!-- ================= INCOME TABLE ================= -->
+  <div class="overflow-x-auto mb-8">
+    <h2 class="text-xl font-bold mb-3">Income Records</h2>
+    <table class="min-w-full border-collapse table-auto">
+      <thead class="bg-gray-200">
+        <tr>
+          <th class="p-3 text-left text-gray-700">Date</th>
+          <th class="p-3 text-left text-gray-700">Category</th>
+          <th class="p-3 text-left text-gray-700">Amount</th>
+          <th class="p-3 text-left text-gray-700">Description</th>
+          <th class="p-3 text-left text-gray-700">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for rec in income_records %}
+        <tr class="border-b hover:bg-green-50 transition-colors">
+          <td class="p-3">{{ rec[3] }}</td>
+          <td class="p-3">{{ rec[1] }}</td>
+          <td class="p-3 text-green-700 font-semibold">{{ rec[2] }}</td>
+          <td class="p-3">{{ rec[4] }}</td>
+          <td class="p-3 space-x-2">
+            <a href="{{ url_for('edit_income', income_id=rec[0]) }}"
+               class="text-blue-600 hover:underline">Edit</a>
+            <a href="{{ url_for('delete_income', income_id=rec[0]) }}"
+               class="text-red-600 hover:underline"
+               onclick="return confirm('Delete this income?');">Delete</a>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="5" class="p-4 text-center text-gray-500">No income records found</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ================= EXPENSE TABLE ================= -->
+  <div class="overflow-x-auto mb-8">
+    <h2 class="text-xl font-bold mb-3">Expense Records</h2>
+    <table class="min-w-full border-collapse table-auto">
+      <thead class="bg-gray-200">
+        <tr>
+          <th class="p-3 text-left text-gray-700">Date</th>
+          <th class="p-3 text-left text-gray-700">Category</th>
+          <th class="p-3 text-left text-gray-700">Amount</th>
+          <th class="p-3 text-left text-gray-700">Description</th>
+          <th class="p-3 text-left text-gray-700">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for rec in expense_records %}
+        <tr class="border-b hover:bg-red-50 transition-colors">
+          <td class="p-3">{{ rec[3] }}</td>
+          <td class="p-3">{{ rec[1] }}</td>
+          <td class="p-3 text-red-700 font-semibold">{{ rec[2] }}</td>
+          <td class="p-3">{{ rec[4] }}</td>
+          <td class="p-3 space-x-2">
+            <a href="{{ url_for('edit_expense', expense_id=rec[0]) }}"
+               class="text-blue-600 hover:underline">Edit</a>
+            <a href="{{ url_for('delete_expense', expense_id=rec[0]) }}"
+               class="text-red-600 hover:underline"
+               onclick="return confirm('Delete this expense?');">Delete</a>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="5" class="p-4 text-center text-gray-500">No expense records found</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ================= PAGINATION ================= -->
+  {% if total_income_pages > 1 or total_expense_pages > 1 %}
+  <div class="flex justify-center gap-2 mb-10 flex-wrap">
+
+    {% for p in range(1, max(total_income_pages, total_expense_pages) + 1) %}
+      {% if p == page %}
+        <span class="px-3 py-1 bg-blue-500 text-white rounded shadow">{{ p }}</span>
+      {% else %}
+        <a href="{{ url_for('dashboard', page=p, start_date=start_date, end_date=end_date) }}"
+           class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 shadow">{{ p }}</a>
+      {% endif %}
+    {% endfor %}
+
+  </div>
+  {% endif %}
+
+</div>
+
+{% endblock %}
+
+
+============expense-form===========
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-md mx-auto bg-white p-6 rounded shadow">
+
+  <h1 class="text-2xl font-bold mb-4 text-center">Add Expense</h1>
+
+  <form method="POST">
+
+    <label class="block font-semibold mb-1">Date</label>
+    <input type="date" name="date"
+           value="{{ form_data.date if form_data else current_date }}"
+           class="w-full p-2 border rounded mb-3" required>
+
+    <label class="block font-semibold mb-1">Category</label>
+    <select name="category" class="w-full p-2 border rounded mb-3" required>
+      {% for cat in categories %}
+      <option value="{{ cat }}"
+        {% if form_data and form_data.category == cat %}selected{% endif %}>
+        {{ cat }}
+      </option>
+      {% endfor %}
+    </select>
+
+    <label class="block font-semibold mb-1">Amount</label>
+    <input type="number" step="0.01" name="amount"
+           value="{{ form_data.amount if form_data else '' }}"
+           class="w-full p-2 border rounded mb-3" required>
+
+    <label class="block font-semibold mb-1">Description</label>
+    <input type="text" name="description"
+           value="{{ form_data.description if form_data else '' }}"
+           class="w-full p-2 border rounded mb-4" required>
+
+    {% if show_confirm %}
+    <!-- CONFIRM CHECKBOX -->
+    <div class="bg-yellow-100 border border-yellow-400 p-3 rounded mb-4">
+      <p class="text-sm text-yellow-800 font-semibold">
+        ⚠ This will use ALL your remaining balance.
+      </p>
+      <label class="flex items-center mt-2">
+        <input type="checkbox" name="confirm" value="yes" class="mr-2" required>
+        Yes, I understand and want to continue
+      </label>
+    </div>
+    {% endif %}
+
+    <button type="submit"
+            class="w-full bg-red-500 hover:bg-red-600 text-white p-2 rounded">
+      Add Expense
+    </button>
+
+  </form>
+
+  <p class="mt-4 text-center">
+    <a href="{{ url_for('dashboard') }}"
+       class="text-blue-500 hover:underline">
+       Back to Dashboard
+    </a>
+  </p>
+
+</div>
+
+{% endblock %}
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-md mx-auto bg-white p-6 rounded shadow">
+
+  <h1 class="text-2xl font-bold mb-4 text-center">Add Expense</h1>
+
+  <form method="POST">
+
+    <label class="block font-semibold mb-1">Date</label>
+    <input type="date" name="date"
+           value="{{ form_data.date if form_data else current_date }}"
+           class="w-full p-2 border rounded mb-3" required>
+
+    <label class="block font-semibold mb-1">Category</label>
+    <select name="category" class="w-full p-2 border rounded mb-3" required>
+      {% for cat in categories %}
+      <option value="{{ cat }}"
+        {% if form_data and form_data.category == cat %}selected{% endif %}>
+        {{ cat }}
+      </option>
+      {% endfor %}
+    </select>
+
+    <label class="block font-semibold mb-1">Amount</label>
+    <input type="number" step="0.01" name="amount"
+           value="{{ form_data.amount if form_data else '' }}"
+           class="w-full p-2 border rounded mb-3" required>
+
+    <label class="block font-semibold mb-1">Description</label>
+    <input type="text" name="description"
+           value="{{ form_data.description if form_data else '' }}"
+           class="w-full p-2 border rounded mb-4" required>
+
+    {% if show_confirm %}
+    <!-- CONFIRM CHECKBOX -->
+    <div class="bg-yellow-100 border border-yellow-400 p-3 rounded mb-4">
+      <p class="text-sm text-yellow-800 font-semibold">
+        ⚠ This will use ALL your remaining balance.
+      </p>
+      <label class="flex items-center mt-2">
+        <input type="checkbox" name="confirm" value="yes" class="mr-2" required>
+        Yes, I understand and want to continue
+      </label>
+    </div>
+    {% endif %}
+
+    <button type="submit"
+            class="w-full bg-red-500 hover:bg-red-600 text-white p-2 rounded">
+      Add Expense
+    </button>
+
+  </form>
+
+  <p class="mt-4 text-center">
+    <a href="{{ url_for('dashboard') }}"
+       class="text-blue-500 hover:underline">
+       Back to Dashboard
+    </a>
+  </p>
+
+</div>
+
+{% endblock %}
+
+
+
+
+=====================complete cart ============
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-6xl mx-auto p-4">
+
+  <!-- Title -->
+  <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">
+    Income & Expense Analysis
+  </h1>
+
+  <!-- ================= FILTER FORM ================= -->
+  <form method="POST"
+        class="flex flex-wrap justify-center items-end gap-4 mb-8">
+
+    <div class="flex flex-col">
+      <label class="text-sm font-semibold mb-1">Start Date</label>
+      <input type="date" name="start_date"
+             value="{{ start_date or '' }}"
+             class="border border-gray-300 p-2 rounded w-40 focus:outline-none focus:ring-2 focus:ring-blue-400">
+    </div>
+
+    <div class="flex flex-col">
+      <label class="text-sm font-semibold mb-1">End Date</label>
+      <input type="date" name="end_date"
+             value="{{ end_date or '' }}"
+             class="border border-gray-300 p-2 rounded w-40 focus:outline-none focus:ring-2 focus:ring-blue-400">
+    </div>
+
+    <button type="submit"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded shadow-md transition-colors">
+      Filter
+    </button>
+
+    <a href="{{ url_for('charts') }}"
+       class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded shadow-md transition-colors flex items-center justify-center">
+      Reset
+    </a>
+
+  </form>
+
+  <!-- ================= CHART CARDS ================= -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <!-- INCOME CARD -->
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+      <h2 class="text-center text-xl font-semibold mb-4 text-green-600">
+        Income by Category
+      </h2>
+      <canvas id="incomeChart"></canvas>
+    </div>
+
+    <!-- EXPENSE CARD -->
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+      <h2 class="text-center text-xl font-semibold mb-4 text-red-600">
+        Expense by Category
+      </h2>
+      <canvas id="expenseChart"></canvas>
+    </div>
+
+  </div>
+
+  <!-- ================= BACK BUTTON ================= -->
+  <div class="text-center mt-8">
+    <a href="{{ url_for('dashboard') }}"
+       class="bg-gray-600 hover:bg-gray-700 text-white px-5 py-2 rounded shadow-md transition-colors">
+      Back to Dashboard
+    </a>
+  </div>
+
+</div>
+
+<!-- ================= CHART.JS ================= -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+/* ================= COLOR FUNCTIONS ================= */
+function getIncomeColor(amount) {
+  if (amount > 2000000) return "#166534"; // dark green
+  if (amount > 300000)  return "#22c55e"; // green
+  return "#bbf7d0";                        // light green
+}
+
+function getExpenseColor(amount) {
+  if (amount > 2000000) return "#7f1d1d"; // dark red
+  if (amount > 300000)  return "#ef4444"; // red
+  return "#fecaca";                        // light red
+}
+
+/* ================= INCOME BAR CHART ================= */
+const incomeLabels = {{ income_labels | safe }};
+const incomeValues = {{ income_values | safe }};
+const incomeColors = incomeValues.map(v => getIncomeColor(v));
+
+new Chart(document.getElementById("incomeChart"), {
+  type: "bar",
+  data: {
+    labels: incomeLabels,
+    datasets: [{
+      label: "Income",
+      data: incomeValues,
+      backgroundColor: incomeColors,
+      borderRadius: 8
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: { 
+        callbacks: { 
+          label: ctx => `Amount: ${ctx.raw.toLocaleString()} MMK`
+        }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          callback: value => value.toLocaleString() // format y-axis with commas
+        },
+        grid: { color: "#e5e7eb" }
+      },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+/* ================= EXPENSE BAR CHART ================= */
+const expenseLabels = {{ expense_labels | safe }};
+const expenseValues = {{ expense_values | safe }};
+const expenseColors = expenseValues.map(v => getExpenseColor(v));
+
+new Chart(document.getElementById("expenseChart"), {
+  type: "bar",
+  data: {
+    labels: expenseLabels,
+    datasets: [{
+      label: "Expense",
+      data: expenseValues,
+      backgroundColor: expenseColors,
+      borderRadius: 8
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: { 
+        callbacks: { 
+          label: ctx => `Amount: ${ctx.raw.toLocaleString()} MMK`
+        }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: { callback: value => value.toLocaleString() },
+        grid: { color: "#e5e7eb" }
+      },
+      x: { grid: { display: false } }
+    }
+  }
+});
+</script>
+
+{% endblock %}
+
+
+
+

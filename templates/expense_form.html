@@ -1,90 +1,82 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="max-w-md mx-auto bg-white p-6 rounded shadow">
+<div class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-lg mt-10">
 
-    <!-- Dynamic Title -->
-    <h1 class="text-2xl font-bold mb-4 text-center">
-        {% if mode == "edit" %}
-            Edit Expense
-        {% else %}
-            Add Expense
-        {% endif %}
-    </h1>
+  <!-- Title -->
+  <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">
+    Add Expense
+  </h1>
 
-    <form method="POST">
+  <form method="POST" class="space-y-5">
 
-        <!-- Date (ADD MODE ONLY) -->
-        {% if mode == "add" %}
-            <label class="block mb-2 font-semibold">Date</label>
-            <input
-                type="date"
-                name="date"
-                value="{{ current_date }}"
-                class="w-full p-2 border rounded mb-3"
-                required
-            >
-        {% endif %}
+    <!-- Date -->
+    <div class="flex flex-col">
+      <label class="text-gray-700 font-semibold mb-1">Date</label>
+      <input type="date" name="date"
+             value="{{ form_data.date if form_data else current_date }}"
+             class="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-400">
+    </div>
 
-        <!-- Category -->
-        <label class="block mb-2 font-semibold">Category</label>
-        <select name="category" class="w-full p-2 border rounded mb-3" required>
-            <option value="">Select Category</option>
-            {% for cat in categories %}
-                <option value="{{ cat }}"
-                    {% if mode == "edit" and record[0] == cat %}selected{% endif %}
-                >
-                    {{ cat }}
-                </option>
-            {% endfor %}
-        </select>
+    <!-- Category -->
+    <div class="flex flex-col">
+      <label class="text-gray-700 font-semibold mb-1">Category</label>
+      <select name="category"
+              class="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-400">
+        {% for cat in categories %}
+        <option value="{{ cat }}" {% if form_data and form_data.category == cat %}selected{% endif %}>
+          {{ cat }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
 
-        <!-- Amount -->
-        <label class="block mb-2 font-semibold">Amount</label>
-        <input
-            type="number"
-            step="0.01"
-            name="amount"
-            value="{% if mode == 'edit' %}{{ record[1] }}{% endif %}"
-            class="w-full p-2 border rounded mb-3"
-            required
-        >
+    <!-- Amount -->
+    <div class="flex flex-col">
+      <label class="text-gray-700 font-semibold mb-1">Amount</label>
+      <input type="number" step="0.01" name="amount"
+             value="{{ form_data.amount if form_data else '' }}"
+             placeholder="Enter amount in MMK"
+             class="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-400">
+    </div>
 
-        <!-- Description -->
-        <label class="block mb-2 font-semibold">Description</label>
-        <input
-            type="text"
-            name="description"
-            value="{% if mode == 'edit' %}{{ record[2] }}{% endif %}"
-            class="w-full p-2 border rounded mb-4"
-            required
-        >
+    <!-- Description -->
+    <div class="flex flex-col">
+      <label class="text-gray-700 font-semibold mb-1">Description</label>
+      <input type="text" name="description"
+             value="{{ form_data.description if form_data else '' }}"
+             placeholder="Optional note"
+             class="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-400">
+    </div>
 
-        <!-- Submit Button -->
-        <button
-            type="submit"
-            class="w-full text-white p-2 rounded
-                {% if mode == 'edit' %}
-                    bg-blue-500 hover:bg-blue-600
-                {% else %}
-                    bg-red-500 hover:bg-red-600
-                {% endif %}
-            "
-        >
-            {% if mode == "edit" %}
-                Update Expense
-            {% else %}
-                Add Expense
-            {% endif %}
-        </button>
-    </form>
+    <!-- Confirm Warning -->
+    {% if show_confirm %}
+    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded shadow-inner">
+      <p class="text-yellow-800 font-semibold mb-2">
+        ⚠ Warning: This will use all your remaining balance.
+      </p>
+      <label class="flex items-center gap-2 text-gray-700">
+        <input type="checkbox" name="confirm" value="yes" class="w-4 h-4 border-gray-300 rounded" required>
+        Yes, I understand and want to continue
+      </label>
+    </div>
+    {% endif %}
 
-    <!-- Back -->
-    <p class="mt-4 text-center">
-        <a href="{{ url_for('dashboard') }}" class="text-blue-500 hover:underline">
-            Back to Dashboard
-        </a>
-    </p>
+    <!-- Submit Button -->
+    <button type="submit"
+            class="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg font-semibold shadow-md transition-colors">
+      Add Expense
+    </button>
+
+  </form>
+
+  <!-- Back to Dashboard -->
+  <p class="mt-6 text-center">
+    <a href="{{ url_for('dashboard') }}"
+       class="text-blue-500 hover:text-blue-700 font-medium transition-colors">
+      ← Back to Dashboard
+    </a>
+  </p>
 
 </div>
 
