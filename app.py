@@ -15,7 +15,7 @@ from io import BytesIO
 import sqlite3
 from datetime import date
 
-from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
@@ -95,6 +95,46 @@ def index():
     return redirect(url_for("login"))
 
 #register
+# EMAIL_REGEX = re.compile(r"^[\w\.-]+@[\w\.-]+\.\w+$")
+# @app.route("/register", methods=["GET", "POST"])
+# def register():
+#     if request.method == "POST":
+#         username = request.form["username"].strip()
+#         email = request.form["email"].strip()
+#         password = request.form["password"].strip()
+
+#         # ---- Validation ----
+#         if not username or not email or not password:
+#             flash("All fields are required!", "danger")
+#             return render_template("register.html")
+
+#         if not EMAIL_REGEX.match(email):
+#             flash("Invalid email format!", "danger")
+#             return render_template("register.html")
+
+#         if len(password) < 6:
+#             flash("Password must be at least 6 characters long!", "danger")
+#             return render_template("register.html")
+
+#         # ---- Save to database ----
+#         try:
+#             conn = sqlite3.connect(DB_NAME)
+#             cursor = conn.cursor()
+#             cursor.execute(
+#                 "INSERT INTO users(username, email, password) VALUES (?, ?, ?)",
+#                 (username, email, password)
+#             )
+#             conn.commit()
+#             conn.close()
+#             flash("Registration successful! Please login.", "success")
+#             return redirect(url_for("login"))
+#         except sqlite3.IntegrityError:
+#             flash("Username or email already exists!", "danger")
+#             return render_template("register.html")
+
+#     return render_template("register.html")
+
+# test register
 EMAIL_REGEX = re.compile(r"^[\w\.-]+@[\w\.-]+\.\w+$")
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -116,18 +156,22 @@ def register():
             flash("Password must be at least 6 characters long!", "danger")
             return render_template("register.html")
 
-        # ---- Save to database ----
+        # ---- Save to database with password hash ----
         try:
+            hashed_password = generate_password_hash(password)  # 🔑 hash password
+
             conn = sqlite3.connect(DB_NAME)
             cursor = conn.cursor()
             cursor.execute(
                 "INSERT INTO users(username, email, password) VALUES (?, ?, ?)",
-                (username, email, password)
+                (username, email, hashed_password)
             )
             conn.commit()
             conn.close()
+
             flash("Registration successful! Please login.", "success")
             return redirect(url_for("login"))
+
         except sqlite3.IntegrityError:
             flash("Username or email already exists!", "danger")
             return render_template("register.html")
@@ -136,57 +180,81 @@ def register():
 
 
 # login data 
+# @app.route("/login", methods=["GET", "POST"])
+# def login():
+#     if request.method == "POST":
+#         username = request.form["username"]
+#         password = request.form["password"]
+#         avatar_file = request.files.get("avatar")
+
+#         conn = sqlite3.connect(DB_NAME)
+#         cursor = conn.cursor()
+#         cursor.execute(
+#             "SELECT id, username, avatar FROM users WHERE username=? AND password=?",
+#             (username, password)
+#         )
+#         user = cursor.fetchone()
+
+#         if user:
+#             user_id = user[0]
+#             filename = user[2]  # existing avatar filename
+
+#             # Handle new avatar upload
+#             if avatar_file and avatar_file.filename != "":
+#                 from werkzeug.utils import secure_filename
+#                 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
+#                 if "." in avatar_file.filename and avatar_file.filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS:
+#                     filename = secure_filename(avatar_file.filename)
+#                     avatar_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+#                     avatar_file.save(avatar_path)
+
+#                     # Update database with new avatar filename
+#                     cursor.execute(
+#                         "UPDATE users SET avatar=? WHERE id=?",
+#                         (filename, user_id)
+#                     )
+#                     conn.commit()
+
+#             conn.close()
+
+#             # Store session info
+#             session["user_id"] = user_id
+#             session["username"] = user[1]
+#             session["avatar"] = filename
+
+#             flash(f"Welcome back, {user[1]}!", "success")
+#             return redirect(url_for("dashboard"))
+
+#         else:
+#             conn.close()
+#             flash("Invalid username or password!", "danger")
+
+#     return render_template("login.html")
+
+# test login 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
-        avatar_file = request.files.get("avatar")
+        username = request.form["username"].strip()
+        password = request.form["password"].strip()
 
         conn = sqlite3.connect(DB_NAME)
+        conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
-        cursor.execute(
-            "SELECT id, username, avatar FROM users WHERE username=? AND password=?",
-            (username, password)
-        )
+        cursor.execute("SELECT * FROM users WHERE username=?", (username,))
         user = cursor.fetchone()
+        conn.close()
 
-        if user:
-            user_id = user[0]
-            filename = user[2]  # existing avatar filename
-
-            # Handle new avatar upload
-            if avatar_file and avatar_file.filename != "":
-                from werkzeug.utils import secure_filename
-                ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
-                if "." in avatar_file.filename and avatar_file.filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS:
-                    filename = secure_filename(avatar_file.filename)
-                    avatar_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
-                    avatar_file.save(avatar_path)
-
-                    # Update database with new avatar filename
-                    cursor.execute(
-                        "UPDATE users SET avatar=? WHERE id=?",
-                        (filename, user_id)
-                    )
-                    conn.commit()
-
-            conn.close()
-
-            # Store session info
-            session["user_id"] = user_id
-            session["username"] = user[1]
-            session["avatar"] = filename
-
-            flash(f"Welcome back, {user[1]}!", "success")
+        if user and check_password_hash(user["password"], password):
+            session["user_id"] = user["id"]
+            session["username"] = user["username"]
+            flash("Login successful!", "success")
             return redirect(url_for("dashboard"))
-
         else:
-            conn.close()
-            flash("Invalid username or password!", "danger")
+            flash("Username or password incorrect!", "danger")
+            return redirect(url_for("login"))
 
     return render_template("login.html")
-
 
 # ---- Logout ----
 @app.route("/logout")
@@ -798,25 +866,67 @@ def edit_profile():
     return render_template("edit_profile.html", user=user)
 
 # update profile
+# @app.route("/profile/update", methods=["POST"])
+# def update_profile():
+#     if "user_id" not in session:
+#         return redirect(url_for("login"))
+
+#     user_id = session["user_id"]
+
+#     username = request.form["username"]
+#     old_password = request.form["old_password"]
+#     new_password = request.form["new_password"]
+
+#     conn = sqlite3.connect(DB_NAME)
+#     conn.row_factory = sqlite3.Row
+#     cursor = conn.cursor()
+
+#     cursor.execute(
+#         "SELECT password FROM users WHERE id=?",
+#         (user_id,)
+#     )
+#     user = cursor.fetchone()
+
+#     if not user or not check_password_hash(user["password"], old_password):
+#         conn.close()
+#         flash("Old password is incorrect!", "danger")
+#         return redirect(url_for("edit_profile"))
+
+#     # Update username
+#     cursor.execute(
+#         "UPDATE users SET username=? WHERE id=?",
+#         (username, user_id)
+#     )
+
+#     # Update password only if new password entered
+#     if new_password.strip():
+#         hashed_password = generate_password_hash(new_password)
+#         cursor.execute(
+#             "UPDATE users SET password=? WHERE id=?",
+#             (hashed_password, user_id)
+#         )
+
+#     conn.commit()
+#     conn.close()
+
+#     flash("Profile updated successfully!", "success")
+#     return redirect(url_for("profile"))
+
+# update profile test
 @app.route("/profile/update", methods=["POST"])
 def update_profile():
     if "user_id" not in session:
         return redirect(url_for("login"))
 
     user_id = session["user_id"]
-
-    username = request.form["username"]
-    old_password = request.form["old_password"]
-    new_password = request.form["new_password"]
+    username = request.form["username"].strip()
+    old_password = request.form["old_password"].strip()
+    new_password = request.form["new_password"].strip()
 
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
-
-    cursor.execute(
-        "SELECT password FROM users WHERE id=?",
-        (user_id,)
-    )
+    cursor.execute("SELECT password FROM users WHERE id=?", (user_id,))
     user = cursor.fetchone()
 
     if not user or not check_password_hash(user["password"], old_password):
@@ -825,18 +935,12 @@ def update_profile():
         return redirect(url_for("edit_profile"))
 
     # Update username
-    cursor.execute(
-        "UPDATE users SET username=? WHERE id=?",
-        (username, user_id)
-    )
+    cursor.execute("UPDATE users SET username=? WHERE id=?", (username, user_id))
 
-    # Update password only if new password entered
-    if new_password.strip():
+    # Update password if new one entered
+    if new_password:
         hashed_password = generate_password_hash(new_password)
-        cursor.execute(
-            "UPDATE users SET password=? WHERE id=?",
-            (hashed_password, user_id)
-        )
+        cursor.execute("UPDATE users SET password=? WHERE id=?", (hashed_password, user_id))
 
     conn.commit()
     conn.close()
