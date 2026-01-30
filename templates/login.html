@@ -1,16 +1,17 @@
-{% extends "base.html" %}
-{% block content %}
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-100 via-blue-50 to-white p-6">
-  <div class="w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 border border-gray-200">
-    
+{% extends "base.html" %} {% block content %}
+<div
+  class="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-100 via-blue-50 to-white p-6"
+>
+  <div
+    class="w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 border border-gray-200"
+  >
     <!-- ================= TITLE ================= -->
     <h1 class="text-3xl font-extrabold text-center text-gray-900 mb-8">
-      Login to Your Account
+      Login to Your Business Account
     </h1>
 
     <!-- ================= FORM ================= -->
     <form method="POST" enctype="multipart/form-data" class="space-y-6">
-      
       <!-- Username -->
       <div>
         <label class="block text-gray-700 font-semibold mb-2">Username</label>
@@ -37,7 +38,9 @@
 
       <!-- Avatar Upload -->
       <div>
-        <label class="block text-gray-700 font-semibold mb-2">Update Profile Image (optional)</label>
+        <label class="block text-gray-700 font-semibold mb-2"
+          >Update Profile Image (optional)</label
+        >
         <input
           type="file"
           name="avatar"
@@ -58,16 +61,19 @@
     <!-- ================= REGISTER LINK ================= -->
     <p class="mt-6 text-center text-gray-600 text-sm">
       Don't have an account?
-      <a href="/register" class="text-green-500 font-semibold hover:underline hover:text-green-600 transition">
+      <a
+        href="/register"
+        class="text-green-500 font-semibold hover:underline hover:text-green-600 transition"
+      >
         Register
       </a>
     </p>
 
     <!-- ================= FOOTER INFO ================= -->
     <p class="mt-4 text-center text-gray-400 text-xs">
-      By logging in, you agree to our <a href="#" class="underline hover:text-blue-500">Terms & Conditions</a>.
+      By logging in, you agree to our
+      <a href="#" class="underline hover:text-blue-500">Terms & Conditions</a>.
     </p>
-    
   </div>
 </div>
 {% endblock %}

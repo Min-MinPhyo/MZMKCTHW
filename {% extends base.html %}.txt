@@ -1886,3 +1886,1262 @@ new Chart(document.getElementById("expenseChart"), {
 
 
 
+
+
+
+
+===================complete dashboard html show result final (test dashboard for)============
+{% extends "base.html" %} {% block content %}
+
+<div class="max-w-7xl mx-auto p-6 space-y-8">
+  <!-- ================= HEADER ================= -->
+  <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-4">
+      {% if session.avatar %}
+      <a href="{{ url_for('profile') }}">
+        <img
+          src="{{ url_for('static', filename='uploads/' + session.avatar) }}"
+          class="w-16 h-16 rounded-full border-2 border-blue-400 shadow hover:ring-2 hover:ring-blue-500 transition cursor-pointer"
+        />
+      </a>
+      {% else %}
+      <a href="{{ url_for('profile') }}">
+        <div
+          class="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center border-2 border-gray-400 shadow cursor-pointer hover:ring-2 hover:ring-blue-400 transition"
+        >
+          <span class="text-gray-600 font-bold">N/A</span>
+        </div>
+      </a>
+      {% endif %}
+      <div>
+        <h1 class="text-3xl font-bold text-gray-800">
+          Welcome, {{ session.username }}
+        </h1>
+        <p class="text-gray-500">Here's your income and expense overview</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= FILTER ================= -->
+  <div
+    class="bg-white p-4 rounded-lg shadow flex flex-wrap gap-4 items-end justify-between"
+  >
+    <form
+      method="GET"
+      action="{{ url_for('dashboard') }}"
+      class="flex flex-wrap gap-4 items-end"
+    >
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold text-gray-700">Start Date</label>
+        <input
+          type="date"
+          name="start_date"
+          value="{{ start_date or '' }}"
+          class="border p-2 rounded w-40 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+        />
+      </div>
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold text-gray-700">End Date</label>
+        <input
+          type="date"
+          name="end_date"
+          value="{{ end_date or '' }}"
+          class="border p-2 rounded w-40 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+        />
+      </div>
+      <button
+        type="submit"
+        class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded shadow transition"
+      >
+        Filter
+      </button>
+      <a
+        href="{{ url_for('dashboard') }}"
+        class="bg-gray-400 hover:bg-gray-500 text-white px-5 py-2 rounded shadow transition flex items-center justify-center"
+      >
+        Reset
+      </a>
+    </form>
+  </div>
+
+  <!-- ================= SUMMARY CARDS ================= -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+    <div
+      class="bg-green-50 p-5 rounded-lg shadow-lg border-l-4 border-green-500 hover:shadow-xl transition"
+    >
+      <h3 class="text-gray-700 font-semibold mb-2">Total Income</h3>
+      <p class="text-3xl font-bold text-green-700">
+        {{ total_income | default(0) }}
+      </p>
+    </div>
+    <div
+      class="bg-red-50 p-5 rounded-lg shadow-lg border-l-4 border-red-500 hover:shadow-xl transition"
+    >
+      <h3 class="text-gray-700 font-semibold mb-2">Total Expense</h3>
+      <p class="text-3xl font-bold text-red-700">
+        {{ total_expense | default(0) }}
+      </p>
+    </div>
+    <div
+      class="bg-blue-50 p-5 rounded-lg shadow-lg border-l-4 border-blue-500 hover:shadow-xl transition"
+    >
+      <h3 class="text-gray-700 font-semibold mb-2">Balance</h3>
+      <p class="text-3xl font-bold text-blue-700">{{ balance | default(0) }}</p>
+    </div>
+  </div>
+
+  <!-- ================= ACTION BUTTONS ================= -->
+  <div class="flex flex-wrap gap-3">
+    <a
+      href="{{ url_for('add_income') }}"
+      class="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded shadow transition transform hover:scale-105"
+    >
+      Add Income
+    </a>
+    <a
+      href="{{ url_for('add_expense') }}"
+      class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded shadow transition transform hover:scale-105"
+    >
+      Add Expense
+    </a>
+    <a
+      href="{{ url_for('charts') }}"
+      class="bg-purple-500 hover:bg-purple-600 text-white px-5 py-2 rounded shadow transition transform hover:scale-105"
+    >
+      Charts
+    </a>
+    <a
+      href="{{ url_for('download_report_pdf', start_date=start_date, end_date=end_date) }}"
+      class="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded shadow transition transform hover:scale-105"
+    >
+      PDF Report
+    </a>
+    <a
+      href="{{ url_for('logout') }}"
+      class="bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded shadow transition transform hover:scale-105"
+    >
+      Logout
+    </a>
+  </div>
+
+  <!-- ================= RECORDS TABLE ================= -->
+  {% for table, records, color in [('Income', income_records, 'green'),
+  ('Expense', expense_records, 'red')] %}
+  <div class="overflow-x-auto bg-white rounded-lg shadow p-4">
+    <h2 class="text-xl font-bold mb-3">{{ table }} Records</h2>
+    <table class="min-w-full border-collapse text-sm">
+      <thead class="bg-gray-100 sticky top-0">
+        <tr>
+          <th class="p-3 text-left">Date</th>
+          <th class="p-3 text-left">Category</th>
+          <th class="p-3 text-left">Amount</th>
+          <th class="p-3 text-left">Description</th>
+          <th class="p-3 text-left">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for rec in records %}
+        <tr class="border-b hover:bg-{{ color }}-50 transition-colors">
+          <td class="p-2">{{ rec[3] }}</td>
+          <td class="p-2">{{ rec[1] }}</td>
+          <td class="p-2 font-semibold text-{{ color }}-700">{{ rec[2] }}</td>
+          <td class="p-2">{{ rec[4] }}</td>
+          <td class="p-2">
+            <div class="flex flex-wrap gap-2">
+              <a
+                href="{{ url_for('edit_' + table|lower, **{table|lower + '_id': rec[0]}) }}"
+                class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm font-medium transition transform hover:scale-105"
+              >
+                Edit
+              </a>
+              <a
+                href="{{ url_for('delete_' + table|lower, **{table|lower + '_id': rec[0]}) }}"
+                onclick="return confirm('Delete this {{ table|lower }}?');"
+                class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm font-medium transition transform hover:scale-105"
+              >
+                Delete
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="5" class="p-4 text-center text-gray-500">
+            No {{ table|lower }} records found
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    {% set total_pages = total_income_pages if table == 'Income' else
+    total_expense_pages %} {% if total_pages > 1 %}
+    <div class="flex justify-center gap-2 mt-4 flex-wrap">
+      {% if page > 1 %}
+      <a
+        href="{{ url_for('dashboard', page=page-1, start_date=start_date, end_date=end_date) }}"
+        class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 transition"
+        >Prev</a
+      >
+      {% endif %} {% for p in range(1, total_pages + 1) %} {% if p == page %}
+      <span class="px-3 py-1 bg-blue-500 text-white rounded shadow"
+        >{{ p }}</span
+      >
+      {% else %}
+      <a
+        href="{{ url_for('dashboard', page=p, start_date=start_date, end_date=end_date) }}"
+        class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 transition"
+        >{{ p }}</a
+      >
+      {% endif %} {% endfor %} {% if page < total_pages %}
+      <a
+        href="{{ url_for('dashboard', page=page+1, start_date=start_date, end_date=end_date) }}"
+        class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 transition"
+        >Next</a
+      >
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}
+
+
+
+
+
+===================complete dashboard html show result final (test dashboard route for)  (currently use in) ============
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-7xl mx-auto p-6 space-y-8">
+
+  <!-- ================= HEADER ================= -->
+  <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-4">
+      {% if session.avatar %}
+      <a href="{{ url_for('profile') }}">
+        <img src="{{ url_for('static', filename='uploads/' + session.avatar) }}"
+          class="w-16 h-16 rounded-full border-2 border-blue-400 shadow hover:ring-2 hover:ring-blue-500 transition cursor-pointer" />
+      </a>
+      {% else %}
+      <a href="{{ url_for('profile') }}">
+        <div
+          class="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center border-2 border-gray-400 shadow cursor-pointer hover:ring-2 hover:ring-blue-400 transition">
+          <span class="text-gray-600 font-bold">N/A</span>
+        </div>
+      </a>
+      {% endif %}
+      <div>
+        <h1 class="text-3xl font-bold text-gray-800">Welcome, {{ session.username }}</h1>
+        <p class="text-gray-500">Here's your income and expense overview</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= FILTER ================= -->
+  <div class="bg-white p-4 rounded-lg shadow flex flex-col md:flex-row gap-4 items-end justify-between">
+    <form method="GET" action="{{ url_for('dashboard') }}" class="flex flex-wrap gap-4 items-end">
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold text-gray-700">Start Date</label>
+        <input type="date" name="start_date" value="{{ start_date or '' }}"
+          class="border p-2 rounded w-40 focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+      </div>
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold text-gray-700">End Date</label>
+        <input type="date" name="end_date" value="{{ end_date or '' }}"
+          class="border p-2 rounded w-40 focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+      </div>
+      <button type="submit"
+        class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded shadow transition">Filter</button>
+      <a href="{{ url_for('dashboard') }}"
+        class="bg-gray-400 hover:bg-gray-500 text-white px-5 py-2 rounded shadow transition flex items-center justify-center">Reset</a>
+    </form>
+
+    <!-- Quick filter buttons -->
+    <div class="flex gap-2 mt-2 md:mt-0">
+      <a href="{{ url_for('dashboard', filter='weekly') }}"
+        class="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded shadow transition">Weekly</a>
+      <a href="{{ url_for('dashboard', filter='monthly') }}"
+        class="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded shadow transition">Monthly</a>
+      <a href="{{ url_for('dashboard', filter='yearly') }}"
+        class="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded shadow transition">Yearly</a>
+    </div>
+  </div>
+
+  <!-- ================= SUMMARY CARDS ================= -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+    <div class="bg-green-50 p-5 rounded-lg shadow-lg border-l-4 border-green-500 hover:shadow-xl transition">
+      <h3 class="text-gray-700 font-semibold mb-2">Total Income</h3>
+      <p class="text-3xl font-bold text-green-700">{{ total_income | default(0) }}</p>
+    </div>
+    <div class="bg-red-50 p-5 rounded-lg shadow-lg border-l-4 border-red-500 hover:shadow-xl transition">
+      <h3 class="text-gray-700 font-semibold mb-2">Total Expense</h3>
+      <p class="text-3xl font-bold text-red-700">{{ total_expense | default(0) }}</p>
+    </div>
+    <div class="bg-blue-50 p-5 rounded-lg shadow-lg border-l-4 border-blue-500 hover:shadow-xl transition">
+      <h3 class="text-gray-700 font-semibold mb-2">Balance</h3>
+      <p class="text-3xl font-bold text-blue-700">{{ balance | default(0) }}</p>
+    </div>
+  </div>
+
+  <!-- ================= ACTION BUTTONS ================= -->
+  <div class="flex flex-wrap gap-3">
+    <a href="{{ url_for('add_income') }}"
+      class="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded shadow transition transform hover:scale-105">Add
+      Income</a>
+    <a href="{{ url_for('add_expense') }}"
+      class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded shadow transition transform hover:scale-105">Add
+      Expense</a>
+    <a href="{{ url_for('charts') }}"
+      class="bg-purple-500 hover:bg-purple-600 text-white px-5 py-2 rounded shadow transition transform hover:scale-105">Charts</a>
+    <a href="{{ url_for('download_report_pdf', start_date=start_date, end_date=end_date) }}"
+      class="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded shadow transition transform hover:scale-105">PDF
+      Report</a>
+    <a href="{{ url_for('logout') }}"
+      class="bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded shadow transition transform hover:scale-105">Logout</a>
+  </div>
+
+  <!-- ================= RECORDS TABLE ================= -->
+  {% for table, records, color in [('Income', income_records, 'green'), ('Expense', expense_records, 'red')] %}
+  <div class="overflow-x-auto bg-white rounded-lg shadow p-4">
+    <h2 class="text-xl font-bold mb-3">{{ table }} Records</h2>
+    <table class="min-w-full border-collapse text-sm">
+      <thead class="bg-gray-100 sticky top-0">
+        <tr>
+          <th class="p-3 text-left">Date</th>
+          <th class="p-3 text-left">Category</th>
+          <th class="p-3 text-left">Amount</th>
+          <th class="p-3 text-left">Description</th>
+          <th class="p-3 text-left">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for rec in records %}
+        <tr class="border-b hover:bg-{{ color }}-50 transition-colors">
+          <td class="p-2">{{ rec[3] }}</td>
+          <td class="p-2">{{ rec[1] }}</td>
+          <td class="p-2 font-semibold text-{{ color }}-700">{{ rec[2] }}</td>
+          <td class="p-2">{{ rec[4] }}</td>
+          <td class="p-2">
+            <div class="flex flex-wrap gap-2">
+              <a href="{{ url_for('edit_' + table|lower, **{table|lower + '_id': rec[0]}) }}"
+                class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm font-medium transition transform hover:scale-105">Edit</a>
+              <a href="{{ url_for('delete_' + table|lower, **{table|lower + '_id': rec[0]}) }}"
+                onclick="return confirm('Delete this {{ table|lower }}?');"
+                class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm font-medium transition transform hover:scale-105">Delete</a>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="5" class="p-4 text-center text-gray-500">No {{ table|lower }} records found</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    {% set total_pages = total_income_pages if table == 'Income' else total_expense_pages %}
+    {% if total_pages > 1 %}
+    <div class="flex justify-center gap-2 mt-4 flex-wrap">
+      {% if page > 1 %}
+      <a href="{{ url_for('dashboard', page=page-1, start_date=start_date, end_date=end_date, filter=filter_type) }}"
+        class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 transition">Prev</a>
+      {% endif %}
+      {% for p in range(1, total_pages + 1) %}
+      {% if p == page %}
+      <span class="px-3 py-1 bg-blue-500 text-white rounded shadow">{{ p }}</span>
+      {% else %}
+      <a href="{{ url_for('dashboard', page=p, start_date=start_date, end_date=end_date, filter=filter_type) }}"
+        class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 transition">{{ p }}</a>
+      {% endif %}
+      {% endfor %}
+      {% if page < total_pages %}
+      <a href="{{ url_for('dashboard', page=page+1, start_date=start_date, end_date=end_date, filter=filter_type) }}"
+        class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 transition">Next</a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+
+</div>
+{% endblock %}
+
+===================complete dashboard html show result final (test dashboard route for)  (currently use in 1) ============
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-6 space-y-10">
+
+  <!-- ================= HEADER ================= -->
+  <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-6 text-white shadow-lg">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-4">
+        {% if session.avatar %}
+        <a href="{{ url_for('profile') }}">
+          <img src="{{ url_for('static', filename='uploads/' + session.avatar) }}"
+            class="w-16 h-16 rounded-full border-4 border-white shadow-lg hover:scale-105 transition" />
+        </a>
+        {% else %}
+        <a href="{{ url_for('profile') }}">
+          <div class="w-16 h-16 rounded-full bg-white/30 flex items-center justify-center border-2 border-white shadow">
+            <span class="font-bold">N/A</span>
+          </div>
+        </a>
+        {% endif %}
+        <div>
+          <h1 class="text-3xl font-bold">Welcome, {{ session.username }}</h1>
+          <p class="text-white/80">Income & Expense Dashboard</p>
+        </div>
+      </div>
+
+      <a href="{{ url_for('logout') }}"
+        class="bg-white text-blue-600 px-5 py-2 rounded-lg font-semibold shadow hover:bg-gray-100 transition">
+        Logout
+      </a>
+    </div>
+  </div>
+
+  <!-- ================= FILTER ================= -->
+  <div class="bg-white rounded-xl shadow p-5 flex flex-col lg:flex-row gap-6 justify-between">
+    <form method="GET" action="{{ url_for('dashboard') }}"
+      class="flex flex-wrap gap-4 items-end">
+
+      <div>
+        <label class="text-sm font-semibold text-gray-600">Start Date</label>
+        <input type="date" name="start_date" value="{{ start_date or '' }}"
+          class="mt-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 outline-none">
+      </div>
+
+      <div>
+        <label class="text-sm font-semibold text-gray-600">End Date</label>
+        <input type="date" name="end_date" value="{{ end_date or '' }}"
+          class="mt-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 outline-none">
+      </div>
+
+      <button
+        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow transition">
+        Apply
+      </button>
+
+      <a href="{{ url_for('dashboard') }}"
+        class="bg-gray-200 hover:bg-gray-300 px-6 py-2 rounded-lg transition">
+        Reset
+      </a>
+    </form>
+
+    <!-- Quick Filter Dropdown -->
+    <form method="GET" action="{{ url_for('dashboard') }}">
+      <input type="hidden" name="start_date" value="{{ start_date or '' }}">
+      <input type="hidden" name="end_date" value="{{ end_date or '' }}">
+
+      <label class="text-sm font-semibold text-gray-600">Quick Filter</label>
+      <select name="filter" onchange="this.form.submit()"
+        class="mt-1 w-44 border rounded-lg px-4 py-2 bg-indigo-600 text-white shadow hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-400">
+        <option value="" {% if not filter_type %}selected{% endif %} class="text-black bg-white">All</option>
+        <option value="weekly" {% if filter_type=='weekly' %}selected{% endif %} class="text-black bg-white">Weekly</option>
+        <option value="monthly" {% if filter_type=='monthly' %}selected{% endif %} class="text-black bg-white">Monthly</option>
+        <option value="yearly" {% if filter_type=='yearly' %}selected{% endif %} class="text-black bg-white">Yearly</option>
+      </select>
+    </form>
+  </div>
+
+  <!-- ================= SUMMARY CARDS ================= -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-green-100 rounded-xl p-6 shadow hover:shadow-xl transition">
+      <h3 class="text-gray-700 font-semibold">Total Income</h3>
+      <p class="text-4xl font-bold text-green-700 mt-2">{{ total_income }}</p>
+    </div>
+    <div class="bg-red-100 rounded-xl p-6 shadow hover:shadow-xl transition">
+      <h3 class="text-gray-700 font-semibold">Total Expense</h3>
+      <p class="text-4xl font-bold text-red-700 mt-2">{{ total_expense }}</p>
+    </div>
+    <div class="bg-blue-100 rounded-xl p-6 shadow hover:shadow-xl transition">
+      <h3 class="text-gray-700 font-semibold">Balance</h3>
+      <p class="text-4xl font-bold text-blue-700 mt-2">{{ balance }}</p>
+    </div>
+  </div>
+
+  <!-- ================= ACTION BUTTONS ================= -->
+  <div class="flex flex-wrap gap-4">
+    <a href="{{ url_for('add_income') }}"
+      class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl shadow font-semibold transition">
+      + Add Income
+    </a>
+    <a href="{{ url_for('add_expense') }}"
+      class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl shadow font-semibold transition">
+      + Add Expense
+    </a>
+    <a href="{{ url_for('charts') }}"
+      class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl shadow font-semibold transition">
+      Charts
+    </a>
+    <a href="{{ url_for('download_report_pdf', start_date=start_date, end_date=end_date) }}"
+      class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl shadow font-semibold transition">
+      PDF Report
+    </a>
+  </div>
+
+  <!-- ================= RECORD TABLES ================= -->
+  {% for table, records, color in [('Income', income_records, 'green'), ('Expense', expense_records, 'red')] %}
+  <div class="bg-white rounded-xl shadow p-6">
+    <h2 class="text-2xl font-bold mb-4">{{ table }} Records</h2>
+
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="p-3 text-left">Date</th>
+            <th class="p-3 text-left">Category</th>
+            <th class="p-3 text-left">Amount</th>
+            <th class="p-3 text-left">Description</th>
+            <th class="p-3 text-left">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for rec in records %}
+          <tr class="border-b hover:bg-{{ color }}-50 transition">
+            <td class="p-2">{{ rec[3] }}</td>
+            <td class="p-2">{{ rec[1] }}</td>
+            <td class="p-2 font-semibold text-{{ color }}-700">{{ rec[2] }}</td>
+            <td class="p-2">{{ rec[4] }}</td>
+            <td class="p-2 flex gap-2">
+              <a href="{{ url_for('edit_' + table|lower, **{table|lower + '_id': rec[0]}) }}"
+                class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Edit</a>
+              <a href="{{ url_for('delete_' + table|lower, **{table|lower + '_id': rec[0]}) }}"
+                onclick="return confirm('Delete this {{ table|lower }}?');"
+                class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">Delete</a>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="5" class="text-center text-gray-500 py-4">No records found</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endfor %}
+
+</div>
+{% endblock %}
+
+
+
+===================complete dashboard html show result final (test dashboard route for)  (currently use in 2) ============
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-6 space-y-10">
+
+  <!-- ================= HEADER ================= -->
+  <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-6 text-white shadow-lg">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-4">
+        {% if session.avatar %}
+        <a href="{{ url_for('profile') }}">
+          <img src="{{ url_for('static', filename='uploads/' + session.avatar) }}"
+            class="w-16 h-16 rounded-full border-4 border-white shadow-lg hover:scale-105 transition" />
+        </a>
+        {% else %}
+        <a href="{{ url_for('profile') }}">
+          <div class="w-16 h-16 rounded-full bg-white/30 flex items-center justify-center border-2 border-white shadow">
+            <span class="font-bold">N/A</span>
+          </div>
+        </a>
+        {% endif %}
+        <div>
+          <h1 class="text-3xl font-bold">Welcome, {{ session.username }}</h1>
+          <p class="text-white/80">Income & Expense Dashboard</p>
+        </div>
+      </div>
+
+      <a href="{{ url_for('logout') }}"
+        class="bg-white text-blue-600 px-5 py-2 rounded-lg font-semibold shadow hover:bg-gray-100 transition">
+        Logout
+      </a>
+    </div>
+  </div>
+
+  <!-- ================= FILTER ================= -->
+  <div class="bg-white rounded-xl shadow p-5 flex flex-col lg:flex-row gap-6 justify-between">
+    <form method="GET" action="{{ url_for('dashboard') }}"
+      class="flex flex-wrap gap-4 items-end">
+
+      <div>
+        <label class="text-sm font-semibold text-gray-600">Start Date</label>
+        <input type="date" name="start_date" value="{{ start_date or '' }}"
+          class="mt-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 outline-none">
+      </div>
+
+      <div>
+        <label class="text-sm font-semibold text-gray-600">End Date</label>
+        <input type="date" name="end_date" value="{{ end_date or '' }}"
+          class="mt-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 outline-none">
+      </div>
+
+      <button
+        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow transition">
+        Apply
+      </button>
+
+      <a href="{{ url_for('dashboard') }}"
+        class="bg-gray-200 hover:bg-gray-300 px-6 py-2 rounded-lg transition">
+        Reset
+      </a>
+    </form>
+
+    <!-- Quick Filter Dropdown -->
+    <form method="GET" action="{{ url_for('dashboard') }}">
+      <input type="hidden" name="start_date" value="{{ start_date or '' }}">
+      <input type="hidden" name="end_date" value="{{ end_date or '' }}">
+
+      <label class="text-sm font-semibold text-gray-600">Quick Filter</label>
+      <select name="filter" onchange="this.form.submit()"
+        class="mt-1 w-44 border rounded-lg px-4 py-2 bg-indigo-600 text-white shadow hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-400">
+        <option value="" {% if not filter_type %}selected{% endif %} class="text-black bg-white">All</option>
+        <option value="weekly" {% if filter_type=='weekly' %}selected{% endif %} class="text-black bg-white">Weekly</option>
+        <option value="monthly" {% if filter_type=='monthly' %}selected{% endif %} class="text-black bg-white">Monthly</option>
+        <option value="yearly" {% if filter_type=='yearly' %}selected{% endif %} class="text-black bg-white">Yearly</option>
+      </select>
+    </form>
+  </div>
+
+  <!-- ================= SUMMARY CARDS ================= -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-green-100 rounded-xl p-6 shadow hover:shadow-xl transition">
+      <h3 class="text-gray-700 font-semibold">Total Income</h3>
+      <p class="text-4xl font-bold text-green-700 mt-2">{{ total_income }}</p>
+    </div>
+    <div class="bg-red-100 rounded-xl p-6 shadow hover:shadow-xl transition">
+      <h3 class="text-gray-700 font-semibold">Total Expense</h3>
+      <p class="text-4xl font-bold text-red-700 mt-2">{{ total_expense }}</p>
+    </div>
+    <div class="bg-blue-100 rounded-xl p-6 shadow hover:shadow-xl transition">
+      <h3 class="text-gray-700 font-semibold">Balance</h3>
+      <p class="text-4xl font-bold text-blue-700 mt-2">{{ balance }}</p>
+    </div>
+  </div>
+
+  <!-- ================= ACTION BUTTONS ================= -->
+  <div class="flex flex-wrap gap-4">
+    <a href="{{ url_for('add_income') }}"
+      class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl shadow font-semibold transition">
+      + Add Income
+    </a>
+    <a href="{{ url_for('add_expense') }}"
+      class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl shadow font-semibold transition">
+      + Add Expense
+    </a>
+    <a href="{{ url_for('charts') }}"
+      class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl shadow font-semibold transition">
+      Charts
+    </a>
+    <a href="{{ url_for('download_report_pdf', start_date=start_date, end_date=end_date) }}"
+      class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl shadow font-semibold transition">
+      PDF Report
+    </a>
+  </div>
+
+  <!-- ================= RECORD TABLES ================= -->
+  {% for table, records, color in [('Income', income_records, 'green'), ('Expense', expense_records, 'red')] %}
+  <div class="bg-white rounded-xl shadow p-6">
+    <h2 class="text-2xl font-bold mb-4">{{ table }} Records</h2>
+
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="p-3 text-left">Date</th>
+            <th class="p-3 text-left">Category</th>
+            <th class="p-3 text-left">Amount</th>
+            <th class="p-3 text-left">Description</th>
+            <th class="p-3 text-left">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for rec in records %}
+          <tr class="border-b hover:bg-{{ color }}-50 transition">
+            <td class="p-2">{{ rec[3] }}</td>
+            <td class="p-2">{{ rec[1] }}</td>
+            <td class="p-2 font-semibold text-{{ color }}-700">{{ rec[2] }}</td>
+            <td class="p-2">{{ rec[4] }}</td>
+            <td class="p-2 flex gap-2">
+              <a href="{{ url_for('edit_' + table|lower, **{table|lower + '_id': rec[0]}) }}"
+                class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Edit</a>
+              <a href="{{ url_for('delete_' + table|lower, **{table|lower + '_id': rec[0]}) }}"
+                onclick="return confirm('Delete this {{ table|lower }}?');"
+                class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">Delete</a>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="5" class="text-center text-gray-500 py-4">No records found</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endfor %}
+
+</div>
+{% endblock %}
+
+===================complete dashboard html show result final (test dashboard updated route for)============
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-7xl mx-auto p-6 space-y-8">
+
+  <!-- ================= HEADER ================= -->
+  <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-4">
+      {% if session.avatar %}
+      <a href="{{ url_for('profile') }}">
+        <img src="{{ url_for('static', filename='uploads/' + session.avatar) }}"
+          class="w-16 h-16 rounded-full border-2 border-blue-400 shadow hover:ring-2 hover:ring-blue-500 transition cursor-pointer" />
+      </a>
+      {% else %}
+      <a href="{{ url_for('profile') }}">
+        <div
+          class="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center border-2 border-gray-400 shadow cursor-pointer hover:ring-2 hover:ring-blue-400 transition">
+          <span class="text-gray-600 font-bold">N/A</span>
+        </div>
+      </a>
+      {% endif %}
+      <div>
+        <h1 class="text-3xl font-bold text-gray-800">Welcome, {{ session.username }}</h1>
+        <p class="text-gray-500">Here's your income and expense overview</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= FILTER ================= -->
+  <div class="bg-white p-4 rounded-lg shadow flex flex-col md:flex-row gap-4 items-end justify-between">
+    <form method="GET" action="{{ url_for('dashboard') }}" class="flex flex-wrap gap-4 items-end">
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold text-gray-700">Start Date</label>
+        <input type="date" name="start_date" value="{{ start_date or '' }}"
+          class="border p-2 rounded w-40 focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+      </div>
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold text-gray-700">End Date</label>
+        <input type="date" name="end_date" value="{{ end_date or '' }}"
+          class="border p-2 rounded w-40 focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+      </div>
+      <button type="submit"
+        class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded shadow transition">Filter</button>
+      <a href="{{ url_for('dashboard') }}"
+        class="bg-gray-400 hover:bg-gray-500 text-white px-5 py-2 rounded shadow transition flex items-center justify-center">Reset</a>
+    </form>
+
+    <!-- Quick filter buttons -->
+    <div class="flex gap-2 mt-2 md:mt-0">
+      <a href="{{ url_for('dashboard', filter='weekly') }}"
+        class="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded shadow transition">Weekly</a>
+      <a href="{{ url_for('dashboard', filter='monthly') }}"
+        class="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded shadow transition">Monthly</a>
+      <a href="{{ url_for('dashboard', filter='yearly') }}"
+        class="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded shadow transition">Yearly</a>
+    </div>
+  </div>
+
+  <!-- ================= SUMMARY CARDS ================= -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+    <div class="bg-green-50 p-5 rounded-lg shadow-lg border-l-4 border-green-500 hover:shadow-xl transition">
+      <h3 class="text-gray-700 font-semibold mb-2">Total Income</h3>
+      <p class="text-3xl font-bold text-green-700">{{ total_income | default(0) }}</p>
+    </div>
+    <div class="bg-red-50 p-5 rounded-lg shadow-lg border-l-4 border-red-500 hover:shadow-xl transition">
+      <h3 class="text-gray-700 font-semibold mb-2">Total Expense</h3>
+      <p class="text-3xl font-bold text-red-700">{{ total_expense | default(0) }}</p>
+    </div>
+    <div class="bg-blue-50 p-5 rounded-lg shadow-lg border-l-4 border-blue-500 hover:shadow-xl transition">
+      <h3 class="text-gray-700 font-semibold mb-2">Balance</h3>
+      <p class="text-3xl font-bold text-blue-700">{{ balance | default(0) }}</p>
+    </div>
+  </div>
+
+  <!-- ================= ACTION BUTTONS ================= -->
+  <div class="flex flex-wrap gap-3">
+    <a href="{{ url_for('add_income') }}"
+      class="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded shadow transition transform hover:scale-105">Add
+      Income</a>
+    <a href="{{ url_for('add_expense') }}"
+      class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded shadow transition transform hover:scale-105">Add
+      Expense</a>
+    <a href="{{ url_for('charts') }}"
+      class="bg-purple-500 hover:bg-purple-600 text-white px-5 py-2 rounded shadow transition transform hover:scale-105">Charts</a>
+    <a href="{{ url_for('download_report_pdf', start_date=start_date, end_date=end_date) }}"
+      class="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded shadow transition transform hover:scale-105">PDF
+      Report</a>
+    <a href="{{ url_for('logout') }}"
+      class="bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded shadow transition transform hover:scale-105">Logout</a>
+  </div>
+
+  <!-- ================= RECORDS TABLE ================= -->
+  {% for table, records, color in [('Income', income_records, 'green'), ('Expense', expense_records, 'red')] %}
+  <div class="overflow-x-auto bg-white rounded-lg shadow p-4">
+    <h2 class="text-xl font-bold mb-3">{{ table }} Records</h2>
+    <table class="min-w-full border-collapse text-sm">
+      <thead class="bg-gray-100 sticky top-0">
+        <tr>
+          <th class="p-3 text-left">Date</th>
+          <th class="p-3 text-left">Category</th>
+          <th class="p-3 text-left">Amount</th>
+          <th class="p-3 text-left">Description</th>
+          <th class="p-3 text-left">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for rec in records %}
+        <tr class="border-b hover:bg-{{ color }}-50 transition-colors">
+          <td class="p-2">{{ rec[3] }}</td>
+          <td class="p-2">{{ rec[1] }}</td>
+          <td class="p-2 font-semibold text-{{ color }}-700">{{ rec[2] }}</td>
+          <td class="p-2">{{ rec[4] }}</td>
+          <td class="p-2">
+            <div class="flex flex-wrap gap-2">
+              <a href="{{ url_for('edit_' + table|lower, **{table|lower + '_id': rec[0]}) }}"
+                class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm font-medium transition transform hover:scale-105">Edit</a>
+              <a href="{{ url_for('delete_' + table|lower, **{table|lower + '_id': rec[0]}) }}"
+                onclick="return confirm('Delete this {{ table|lower }}?');"
+                class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm font-medium transition transform hover:scale-105">Delete</a>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="5" class="p-4 text-center text-gray-500">No {{ table|lower }} records found</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    {% set total_pages = total_income_pages if table == 'Income' else total_expense_pages %}
+    {% if total_pages > 1 %}
+    <div class="flex justify-center gap-2 mt-4 flex-wrap">
+      {% if page > 1 %}
+      <a href="{{ url_for('dashboard', page=page-1, start_date=start_date, end_date=end_date, filter=filter_type) }}"
+        class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 transition">Prev</a>
+      {% endif %}
+      {% for p in range(1, total_pages + 1) %}
+      {% if p == page %}
+      <span class="px-3 py-1 bg-blue-500 text-white rounded shadow">{{ p }}</span>
+      {% else %}
+      <a href="{{ url_for('dashboard', page=p, start_date=start_date, end_date=end_date, filter=filter_type) }}"
+        class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 transition">{{ p }}</a>
+      {% endif %}
+      {% endfor %}
+      {% if page < total_pages %}
+      <a href="{{ url_for('dashboard', page=page+1, start_date=start_date, end_date=end_date, filter=filter_type) }}"
+        class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 transition">Next</a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+
+</div>
+{% endblock %}
+
+
+
+
+/base.html (working)
+/dashboard.html(dark-mode(main div , total(i,e,b)))
+
+
+
+
+
+
+
+===================chart route for currently use in ======================
+{% extends "base.html" %} {% block content %}
+
+<div class="max-w-7xl mx-auto p-6 space-y-8">
+  <!-- ================= HEADER ================= -->
+  <div class="text-center mb-8">
+    <h1 class="text-4xl font-bold text-gray-800 mb-2">
+      Income & Expense Analysis
+    </h1>
+    <p class="text-gray-500 text-lg">
+      Visualize your financial activity by category
+    </p>
+  </div>
+
+  <!-- ================= FILTER FORM ================= -->
+  <form
+    method="POST"
+    class="flex flex-wrap justify-center items-end gap-4 mb-10"
+  >
+    <div class="flex flex-col">
+      <label class="text-sm font-semibold text-gray-700 mb-1">Start Date</label>
+      <input
+        type="date"
+        name="start_date"
+        value="{{ start_date or '' }}"
+        class="border border-gray-300 p-2 rounded w-44 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      />
+    </div>
+
+    <div class="flex flex-col">
+      <label class="text-sm font-semibold text-gray-700 mb-1">End Date</label>
+      <input
+        type="date"
+        name="end_date"
+        value="{{ end_date or '' }}"
+        class="border border-gray-300 p-2 rounded w-44 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      />
+    </div>
+
+    <button
+      type="submit"
+      class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded shadow-md transition transform hover:scale-105"
+    >
+      Filter
+    </button>
+
+    <a
+      href="{{ url_for('charts') }}"
+      class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded shadow-md transition transform hover:scale-105 flex items-center justify-center"
+    >
+      Reset
+    </a>
+  </form>
+
+  <!-- ================= CHART CARDS ================= -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- INCOME CHART -->
+    <div
+      class="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition transform hover:scale-105"
+    >
+      <h2 class="text-center text-xl font-semibold mb-4 text-green-600">
+        Income by Category
+      </h2>
+      <canvas id="incomeChart" class="rounded-lg"></canvas>
+    </div>
+
+    <!-- EXPENSE CHART -->
+    <div
+      class="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition transform hover:scale-105"
+    >
+      <h2 class="text-center text-xl font-semibold mb-4 text-red-600">
+        Expense by Category
+      </h2>
+      <canvas id="expenseChart" class="rounded-lg"></canvas>
+    </div>
+  </div>
+
+  <!-- ================= TOTALS SUMMARY ================= -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-10">
+    <div
+      class="bg-green-50 p-6 rounded-xl shadow-lg border-l-4 border-green-500 text-center transition hover:shadow-2xl"
+    >
+      <h3 class="text-gray-700 font-semibold mb-2">Total Income</h3>
+      <p class="text-3xl font-bold text-green-700">
+        {{ total_income | default(0) }}
+      </p>
+    </div>
+    <div
+      class="bg-red-50 p-6 rounded-xl shadow-lg border-l-4 border-red-500 text-center transition hover:shadow-2xl"
+    >
+      <h3 class="text-gray-700 font-semibold mb-2">Total Expense</h3>
+      <p class="text-3xl font-bold text-red-700">
+        {{ total_expense | default(0) }}
+      </p>
+    </div>
+    <div
+      class="bg-blue-50 p-6 rounded-xl shadow-lg border-l-4 border-blue-500 text-center transition hover:shadow-2xl"
+    >
+      <h3 class="text-gray-700 font-semibold mb-2">Balance</h3>
+      <p class="text-3xl font-bold text-blue-700">{{ balance | default(0) }}</p>
+    </div>
+  </div>
+
+  <!-- ================= BACK BUTTON ================= -->
+  <div class="text-center mt-8">
+    <a
+      href="{{ url_for('dashboard') }}"
+      class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded shadow-md transition transform hover:scale-105"
+    >
+      Back to Dashboard
+    </a>
+  </div>
+</div>
+
+<!-- ================= CHART.JS ================= -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  /* ================= COLOR FUNCTIONS ================= */
+  function getIncomeColor(amount) {
+    if (amount > 2000000) return "#166534"; // dark green
+    if (amount > 300000)  return "#22c55e"; // green
+    return "#bbf7d0";                        // light green
+  }
+
+  function getExpenseColor(amount) {
+    if (amount > 2000000) return "#7f1d1d"; // dark red
+    if (amount > 300000)  return "#ef4444"; // red
+    return "#fecaca";                        // light red
+  }
+
+  /* ================= INCOME BAR CHART ================= */
+  const incomeLabels = {{ income_labels | safe }};
+  const incomeValues = {{ income_values | safe }};
+  const incomeColors = incomeValues.map(v => getIncomeColor(v));
+
+  new Chart(document.getElementById("incomeChart"), {
+    type: "bar",
+    data: {
+      labels: incomeLabels,
+      datasets: [{
+        label: "Income",
+        data: incomeValues,
+        backgroundColor: incomeColors,
+        borderRadius: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => `Amount: ${ctx.raw.toLocaleString()} MMK` } }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { callback: value => value.toLocaleString() },
+          grid: { color: "#e5e7eb" }
+        },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+
+  /* ================= EXPENSE BAR CHART ================= */
+  const expenseLabels = {{ expense_labels | safe }};
+  const expenseValues = {{ expense_values | safe }};
+  const expenseColors = expenseValues.map(v => getExpenseColor(v));
+
+  new Chart(document.getElementById("expenseChart"), {
+    type: "bar",
+    data: {
+      labels: expenseLabels,
+      datasets: [{
+        label: "Expense",
+        data: expenseValues,
+        backgroundColor: expenseColors,
+        borderRadius: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => `Amount: ${ctx.raw.toLocaleString()} MMK` } }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { callback: value => value.toLocaleString() },
+          grid: { color: "#e5e7eb" }
+        },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+</script>
+
+{% endblock %}
+
+
+
+===================quiz updated route for=============
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-md mx-auto bg-white p-6 rounded-2xl shadow-lg mt-10">
+    <h2 class="text-3xl font-bold mb-2 text-center">🧠 Quiz Game</h2>
+
+    <p class="text-gray-600 mb-4 text-center">
+        Question {{ current }} / {{ total }}
+    </p>
+
+    <div class="bg-gray-50 rounded-lg p-4 mb-4 shadow-inner text-center">
+        <h3 class="text-xl font-semibold">{{ question.question }}</h3>
+    </div>
+
+    <form method="POST" class="space-y-3">
+        {% for opt in question.options %}
+        <label class="block p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition flex items-center gap-3">
+            <input type="radio" name="option" value="{{ opt }}" required class="accent-blue-600">
+            <span>{{ opt }}</span>
+        </label>
+        {% endfor %}
+
+        <button class="w-full bg-blue-600 text-white py-2 rounded-lg mt-4 font-semibold hover:bg-blue-700 transition">
+            Next
+        </button>
+    </form>
+
+    <!-- Progress bar -->
+    {% set percent = (current / total) * 100 %}
+    <div class="w-full bg-gray-200 h-3 rounded-full mt-6 overflow-hidden">
+        <div class="h-3 bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-500"
+             style="width: {{ percent }}%"></div>
+    </div>
+    <p class="text-sm text-gray-500 mt-1 text-center">{{ percent|round(0) }}% completed</p>
+</div>
+
+{% endblock %}
+
+
+========================quiz updated 1 route for (currently use in) ==================
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-md mx-auto bg-white p-6 rounded-2xl shadow-lg mt-10">
+    <h2 class="text-3xl font-bold mb-2 text-center">🧠 Quiz Game</h2>
+
+    <p class="text-gray-600 mb-4 text-center">
+        Question {{ current }} / {{ total }}
+    </p>
+
+    <div class="bg-gray-50 rounded-lg p-4 mb-4 shadow-inner text-center">
+        <h3 class="text-xl font-semibold">{{ question.question }}</h3>
+    </div>
+
+    <form method="POST" class="space-y-3">
+        {% for opt in question.options %}
+        <label class="block p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition flex items-center gap-3">
+            <input type="radio" name="option" value="{{ opt }}" required class="accent-blue-600">
+            <span>{{ opt }}</span>
+        </label>
+        {% endfor %}
+
+        <button class="w-full bg-blue-600 text-white py-2 rounded-lg mt-4 font-semibold hover:bg-blue-700 transition">
+            Next
+        </button>
+    </form>
+
+    <!-- Progress bar -->
+    {% set percent = (current / total) * 100 %}
+    <div class="w-full bg-gray-200 h-3 rounded-full mt-6 overflow-hidden">
+        <div class="h-3 bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-500"
+             style="width: {{ percent }}%"></div>
+    </div>
+    <p class="text-sm text-gray-500 mt-1 text-center">{{ percent|round(0) }}% completed</p>
+</div>
+
+<!-- Prevent browser back navigation -->
+<script>
+    history.pushState(null, document.title, location.href);
+    window.addEventListener('popstate', function () {
+        history.pushState(null, document.title, location.href);
+    });
+</script>
+
+<!-- Prevent caching -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+
+{% endblock %}
+
+
+
+CherryMin
+cherrymin@14
+
+
+# quiz updated (currently use in yes)
+{% extends "base.html" %}
+{% block content %}
+
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 to-blue-50 px-4 py-10">
+
+    <div class="max-w-lg w-full bg-white rounded-3xl shadow-2xl p-8 relative overflow-hidden">
+
+        <!-- Header -->
+        <div class="text-center mb-6">
+            <h2 class="text-4xl font-extrabold text-gray-800 mb-2 animate__animated animate__fadeInDown">🧠 Quiz Game</h2>
+            <p class="text-gray-500 text-lg animate__animated animate__fadeInDown animate__delay-1s">
+                Question {{ current }} of {{ total }}
+            </p>
+        </div>
+
+        <!-- Question Card -->
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 shadow-inner mb-6 animate__animated animate__fadeIn">
+            <h3 class="text-xl font-semibold text-gray-700 text-center">{{ question.question }}</h3>
+        </div>
+
+        <!-- Options -->
+        <form method="POST" class="space-y-4 animate__animated animate__fadeInUp animate__delay-1s">
+            {% for opt in question.options %}
+            <label class="flex items-center gap-3 p-4 rounded-xl border border-gray-200 cursor-pointer hover:bg-blue-100 hover:scale-105 transition-transform duration-200 shadow-sm bg-white">
+                <input type="radio" name="option" value="{{ opt }}" required class="accent-blue-600 w-5 h-5">
+                <span class="text-gray-700 font-medium">{{ opt }}</span>
+            </label>
+            {% endfor %}
+
+            <!-- Button Container -->
+<div class="flex flex-col sm:flex-row gap-4 mt-4">
+
+    <!-- Next Question Button -->
+    <button type="submit"
+        class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg hover:bg-blue-700 hover:scale-105 transition-all duration-300">
+        Next Question
+    </button>
+
+    <!-- Back Button -->
+    <a href="{{ url_for('dashboard') }}"
+       class="flex-1 py-3 bg-gray-500 text-white font-bold rounded-xl shadow-lg hover:bg-gray-600 hover:scale-105 transition-all duration-300 text-center">
+        Quit
+    </a>
+
+</div>
+
+
+           
+        </form>
+
+        <!-- Progress Bar -->
+        <div class="mt-6">
+            {% set percent = (current / total) * 100 %}
+            <div class="relative h-4 bg-gray-200 rounded-full overflow-hidden">
+                <div class="absolute top-0 left-0 h-4 bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-500" style="width: {{ percent }}%"></div>
+            </div>
+            <p class="text-center text-sm text-gray-500 mt-1">{{ percent|round(0) }}% completed</p>
+        </div>
+
+        <!-- Optional: Back button -->
+        {% if current > 1 %}
+        <div class="mt-4 text-center">
+            <a href="{{ url_for('quiz_reset') }}" 
+               class="inline-block px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 hover:scale-105 transition-transform duration-200">
+                🔙 Restart Quiz
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- Decorative Circles -->
+        <div class="absolute -top-16 -left-16 w-32 h-32 bg-indigo-200 rounded-full opacity-30 blur-3xl"></div>
+        <div class="absolute -bottom-20 -right-20 w-40 h-40 bg-blue-300 rounded-full opacity-30 blur-3xl"></div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+
+
+
+
