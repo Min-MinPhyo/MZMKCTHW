@@ -264,12 +264,6 @@ QUIZ_QUESTIONS = [
     "options": ["Andaman Sea", "Red Sea", "Black Sea", "Mediterranean Sea"],
     "answer": "Andaman Sea"
 },
-{
-    "question": "Who is Myanmar's military leader?",
-    "options": ["Min Aung Hlaing", "Win Myint", "Aung San Suu Kyi", "U Nu"],
-    "answer": "Min Aung Hlaing"
-},
-
 # ================= WORLD =================
 {
     "question": "Which country has the largest economy in the world?",

@@ -116,89 +116,132 @@
   </div>
 
   <!-- ================= TABLES ================= -->
-  {% for table, records, color, total_pages in [('Income', income_records, 'green', total_income_pages),
-                                                ('Expense', expense_records, 'red', total_expense_pages)] %}
-  <div class="bg-white rounded-xl shadow p-6 mb-6">
-    <h2 class="text-2xl font-bold mb-4">{{ table }} Records</h2>
+  {% for table, records, color, total_pages in [
+    ('Income', income_records, 'green', total_income_pages),
+    ('Expense', expense_records, 'red', total_expense_pages)
+] %}
+<div class="bg-white rounded-xl shadow p-6 mb-6">
 
-    <div class="overflow-x-auto">
-      <table class="min-w-full text-sm">
-        <thead class="bg-gray-100">
-          <tr>
-            <th class="p-3 text-left">Date</th>
-            <th class="p-3 text-left">Category</th>
-            <th class="p-3 text-left">Amount</th>
-            <th class="p-3 text-left">Description</th>
-            <th class="p-3 text-left">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for rec in records %}
-          <tr class="border-b hover:bg-{{ color }}-50 transition">
-            <td class="p-2">{{ rec[3] }}</td>
-            <td class="p-2">{{ rec[1] }}</td>
-            <td class="p-2 font-semibold text-{{ color }}-700">{{ rec[2] }}</td>
-            <td class="p-2">{{ rec[4] }}</td>
-            <td class="p-2 flex gap-2">
+  <h2 class="text-2xl font-bold mb-4">{{ table }} Records</h2>
+
+  <div class="overflow-x-auto">
+    <table class="min-w-full table-fixed text-sm">
+
+      <!-- TABLE HEADER -->
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="p-3 w-32 text-left">Date</th>
+          <th class="p-3 w-32 text-left">Category</th>
+          <th class="p-3 w-28 text-left">Amount</th>
+          <th class="p-3 w-[320px] text-left">Description</th>
+          <th class="p-3 w-36 text-center">Action</th>
+        </tr>
+      </thead>
+
+      <!-- TABLE BODY -->
+      <tbody>
+        {% for rec in records %}
+        <tr class="border-b hover:bg-{{ color }}-50 transition">
+
+          <!-- Date -->
+          <td class="p-2">{{ rec[3] }}</td>
+
+          <!-- Category -->
+          <td class="p-2">{{ rec[1] }}</td>
+
+          <!-- Amount -->
+          <td class="p-2 font-semibold text-{{ color }}-700">
+            {{ rec[2] }}
+          </td>
+
+          <!-- Description (FIXED SIZE) -->
+          <!--<td class="p-2 max-w-[320px] truncate" title="{{ rec[4] }}">
+            {{ rec[4][:50] }}{% if rec[4]|length > 50 %}...{% endif %}
+          </td>-->
+          <td class="p-2 max-w-[320px] relative group">
+  <!-- Short description -->
+  <div class="truncate cursor-pointer text-gray-700 hover:text-blue-600 font-medium"
+       onclick="openDescModal(`{{ rec[4]|e }}`)">
+    {{ rec[4][:50] }}{% if rec[4]|length > 50 %}...{% endif %}
+  </div>
+
+  <!-- Tooltip on hover -->
+  {% if rec[4]|length > 50 %}
+  <div
+    class="absolute left-0 top-full mt-1 hidden group-hover:block
+           bg-gray-900 text-white text-sm rounded-lg px-3 py-2 shadow-lg w-64 z-50
+           transition-all duration-200 transform scale-95 group-hover:scale-100 opacity-0 group-hover:opacity-100">
+    {{ rec[4] }}
+  </div>
+  {% endif %}
+</td>
+
+
+          <!-- Action Buttons (FIXED POSITION) -->
+          <td class="p-2">
+            <div class="flex justify-center gap-2">
               <a href="{{ url_for('edit_' + table|lower, **{table|lower + '_id': rec[0]}) }}"
-                 class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Edit</a>
+                 class="w-16 text-center px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
+                Edit
+              </a>
+
               <a href="{{ url_for('delete_' + table|lower, **{table|lower + '_id': rec[0]}) }}"
                  onclick="return confirm('Delete this {{ table|lower }}?');"
-                 class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">Delete</a>
-            </td>
-          </tr>
-          {% else %}
-          <tr>
-            <td colspan="5" class="text-center text-gray-500 py-4">No records found</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
+                 class="w-16 text-center px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition">
+                Delete
+              </a>
+            </div>
+          </td>
 
-    <!-- ================= PAGINATION ================= -->
-    <!--{% if total_pages > 1 %}
-    <div class="flex justify-center gap-2 mt-4 flex-wrap">
-      {% if page > 1 %}
-      <a href="{{ url_for('dashboard', page=page-1, start_date=start_date, end_date=end_date, filter=filter_type) }}"
-         class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 transition">Prev</a>
-      {% endif %}
-
-      <span class="px-3 py-1 bg-blue-500 text-white rounded shadow">{{ page }}</span>
-
-      {% if page < total_pages %}
-      <a href="{{ url_for('dashboard', page=page+1, start_date=start_date, end_date=end_date, filter=filter_type) }}"
-         class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 transition">Next</a>
-      {% endif %}
-    </div>
-    {% endif %}-->
-
-    <!---work pagination with beauty design -->
-      {% set total_pages = total_income_pages if table == 'Income' else total_expense_pages %}
-    {% if total_pages > 1 %}
-    <div class="flex justify-center gap-2 mt-4 flex-wrap">
-      {% if page > 1 %}
-      <a href="{{ url_for('dashboard', page=page-1, start_date=start_date, end_date=end_date) }}"
-         class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 transition">Prev</a>
-      {% endif %}
-      {% for p in range(1, total_pages + 1) %}
-        {% if p == page %}
-          <span class="px-3 py-1 bg-blue-500 text-white rounded shadow">{{ p }}</span>
+        </tr>
         {% else %}
-          <a href="{{ url_for('dashboard', page=p, start_date=start_date, end_date=end_date) }}"
-             class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 transition">{{ p }}</a>
-        {% endif %}
-      {% endfor %}
-      {% if page < total_pages %}
-      <a href="{{ url_for('dashboard', page=page+1, start_date=start_date, end_date=end_date) }}"
-         class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 transition">Next</a>
-      {% endif %}
-    </div>
+        <tr>
+          <td colspan="5" class="text-center text-gray-500 py-6">
+            No {{ table|lower }} records found
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+
+    </table>
+  </div>
+
+  <!-- PAGINATION (UNCHANGED, SAFE) -->
+  {% set total_pages = total_income_pages if table == 'Income' else total_expense_pages %}
+  {% if total_pages > 1 %}
+  <div class="flex justify-center gap-2 mt-4 flex-wrap">
+    {% if page > 1 %}
+    <a href="{{ url_for('dashboard', page=page-1, start_date=start_date, end_date=end_date) }}"
+       class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 transition">Prev</a>
     {% endif %}
 
+    {% for p in range(1, total_pages + 1) %}
+      {% if p == page %}
+        <span class="px-3 py-1 bg-blue-500 text-white rounded shadow">{{ p }}</span>
+      {% else %}
+        <a href="{{ url_for('dashboard', page=p, start_date=start_date, end_date=end_date) }}"
+           class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 transition">{{ p }}</a>
+      {% endif %}
+    {% endfor %}
+
+    {% if page < total_pages %}
+    <a href="{{ url_for('dashboard', page=page+1, start_date=start_date, end_date=end_date) }}"
+       class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 transition">Next</a>
+    {% endif %}
   </div>
-  {% endfor %}
+  {% endif %}
+
+</div>
+{% endfor %}
+
 
 </div>
 
 {% endblock %}
+
+
+
+
+
+
+
