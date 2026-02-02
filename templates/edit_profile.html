@@ -1,71 +1,51 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+{% block content %}
 
 <div class="max-w-md mx-auto bg-white p-6 rounded-xl shadow-lg mt-6">
-  <h1 class="text-2xl font-bold text-center mb-6">Edit Profile</h1>
+  
+  <!-- TITLE -->
+  <h1 class="text-2xl font-bold text-center mb-6">{{ t("edit_profile_title") }}</h1>
 
-  <form
-    method="POST"
-    action="{{ url_for('update_profile') }}"
-    class="space-y-4"
-  >
-    <!-- Username -->
-    <div>
-      <label class="block font-semibold mb-1">Username</label>
-      <input
-        type="text"
-        name="username"
-        value="{{ user.username }}"
-        class="w-full border p-2 rounded-lg"
-        required
-      />
-    </div>
+  <!-- PROFILE FORM -->
+  <form method="POST" action="{{ url_for('update_profile') }}" class="space-y-4">
 
-    <!-- Email -->
-    <div>
-      <label class="block font-semibold mb-1">Email</label>
-      <input
-        type="email"
-        value="{{ user.email }}"
-        readonly
-        class="w-full border p-2 rounded-lg bg-gray-100"
-      />
-    </div>
+    {% set fields = [
+      {"label": t("username"), "name": "username", "type": "text", "value": user.username, "placeholder": t("enter_username"), "required": True},
+      {"label": t("email"), "name": "email", "type": "email", "value": user.email, "placeholder": "", "readonly": True},
+      {"label": t("old_password"), "name": "old_password", "type": "password", "value": "", "placeholder": "", "required": True},
+      {"label": t("new_password"), "name": "new_password", "type": "password", "value": "", "placeholder": t("leave_blank_to_keep"), "required": False}
+    ] %}
 
-    <!-- Old Password -->
-    <div>
-      <label class="block font-semibold mb-1">Old Password</label>
-      <input
-        type="password"
-        name="old_password"
-        class="w-full border p-2 rounded-lg"
-        required
-      />
-    </div>
+    {% for field in fields %}
+      <div>
+        <label class="block font-semibold mb-1">{{ field.label }}</label>
+        <input 
+          type="{{ field.type }}" 
+          name="{{ field.name }}" 
+          value="{{ field.value }}" 
+          placeholder="{{ field.placeholder }}" 
+          {% if field.required %} required {% endif %}
+          {% if field.readonly %} readonly class="w-full border p-2 rounded-lg bg-gray-100" {% else %} class="w-full border p-2 rounded-lg" {% endif %}
+        />
+      </div>
+    {% endfor %}
 
-    <!-- New Password -->
-    <div>
-      <label class="block font-semibold mb-1">New Password</label>
-      <input
-        type="password"
-        name="new_password"
-        class="w-full border p-2 rounded-lg"
-        placeholder="Leave blank to keep current password"
-      />
-    </div>
+    <!-- BUTTONS -->
+    {% set buttons = [
+      {"text": t("update_btn"), "url": "", "type": "submit", "class": "bg-blue-500 hover:bg-blue-600 text-white"},
+      {"text": t("cancel"), "url": url_for("profile"), "type": "link", "class": "bg-gray-500 hover:bg-gray-600 text-white"}
+    ] %}
 
     <div class="flex gap-3 mt-4">
-      <button
-        class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg"
-      >
-        Update
-      </button>
-      <a
-        href="{{ url_for('profile') }}"
-        class="flex-1 text-center bg-gray-500 hover:bg-gray-600 text-white py-2 rounded-lg"
-      >
-        Cancel
-      </a>
+      {% for btn in buttons %}
+        {% if btn.type == "submit" %}
+          <button class="flex-1 py-2 rounded-lg {{ btn.class }}">{{ btn.text }}</button>
+        {% else %}
+          <a href="{{ btn.url }}" class="flex-1 text-center py-2 rounded-lg {{ btn.class }}">{{ btn.text }}</a>
+        {% endif %}
+      {% endfor %}
     </div>
+
   </form>
 </div>
 

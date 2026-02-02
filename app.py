@@ -18,6 +18,8 @@ from io import BytesIO
 import sqlite3
 from datetime import date
 
+
+
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
@@ -52,6 +54,413 @@ EXPENSE_CATEGORIES = [
     "Insurance", "Investments", "Taxes", "Others"
 ]
 
+
+# languages 
+# ================= LANGUAGE DICTIONARY =================
+LANGUAGES = {
+    "en": {
+        # ===== App =====
+        "app_title": "Expense Tracker",
+        "dashboard": "Income & Expense Dashboard",
+        "welcome":"Welcome back",
+
+        # ===== General =====
+        "welcome": "Welcome back",
+        "login_success": "Login successful!",
+        "logout_success": "Logged out!",
+        "register_success": "Registration successful! Please login.",
+        
+        # register requirement
+        "register_title": "Create Account",
+        "register_subtitle": "Start tracking your income & expenses 💰",
+        "username": "Username",
+        "username_placeholder": "Enter your username",
+        "email": "Email",
+        "email_placeholder": "example@email.com",
+        "password": "Password",
+        "password_placeholder": "Minimum 6 characters and special character",
+        "register_btn": "Register",
+        "already_account": "Already have an account?",
+        "login_here": "Login here",
+        
+        # login for requirement 
+         "login_title": "Login to Your Business Account",
+        "username": "Username",
+        "username_placeholder": "Enter your username",
+        "password": "Password",
+        "password_placeholder": "Enter your password",
+        "avatar_upload": "Update Profile Image (optional)",
+        "login": "Login",
+        "no_account": "Don't have an account?",
+        "register": "Register",
+        "login_footer": "By logging in, you agree to our",
+        "terms": "Terms & Conditions",
+
+        # ===== Income / Expense =====
+        "income_added": "Income added successfully!",
+        "expense_added": "Expense added successfully!",
+        "income_deleted": "Income deleted!",
+        "income_updated": "Income updated successfully!",
+        "exceed_balance": "Expense exceeds available balance",
+        "confirm_all_balance": "This expense will use ALL your remaining balance. Please confirm.",
+
+        # ===== Categories =====
+        "Salary": "Salary",
+        "Business": "Business",
+        "Food & Dining": "Food & Dining",
+        "Transportation": "Transportation",
+        "Others": "Others",
+
+        # ===== Dashboard UI =====
+        "start_date": "Start Date",
+        "end_date": "End Date",
+        "apply": "Apply",
+        "reset": "Reset",
+        "quick_filter": "Quick Filter",
+        "all": "All",
+        "weekly": "Weekly",
+        "monthly": "Monthly",
+        "yearly": "Yearly",
+        "total_income": "Total Income",
+        "total_expense": "Total Expense",
+        "balance": "Balance",
+        "add_income": "+ Add Income",
+        "add_expense": "+ Add Expense",
+        "charts": "Charts",
+        "pdf_report": "PDF Report",
+        "play_quiz": "🧠 Play Quiz",
+        "no_records": "No records found",
+        "edit": "Edit",
+        "delete": "Delete",
+        "delete_confirm": "Delete this record?",
+        "description": "Description",
+        "category": "Category",
+        "amount": "Amount",
+        "date": "Date",
+        
+        # pagination
+        "prev":"Prev",
+        "next":"Next",
+        
+        # action
+        "action":"Action",
+        
+        # income add/edit requirement
+        "add_income_title": "Add Income",
+        "edit_income_title": "Edit Income",
+        "date": "Date",
+        "category": "Category",
+        "select_category": "Select Category",
+        "amount": "Amount",
+        "amount_placeholder": "Enter amount",
+        "description": "Description",
+        "description_placeholder": "Enter description",
+        "description_hint": "Maximum 100 characters",
+        "update_income_btn": "Update Income",
+        "add_income_btn": "Add Income",
+        "back_dashboard": "Back to Dashboard",
+        
+        # Expense form requirement
+        "add_expense_title": "Add Expense",
+        "edit_expense_title": "Edit Expense",
+        "date": "Date",
+        "category": "Category",
+        "select_category": "Select Category",
+        "amount": "Amount",
+        "amount_placeholder": "Enter amount",
+        "description": "Description",
+        "description_placeholder": "Optional note",
+        "update_expense_btn": "Update Expense",
+        "add_expense_btn": "Add Expense",
+        "back_dashboard": "Back to Dashboard",
+
+        # ===== Warning / Confirm =====
+         "expense_warning": "Warning: This will use all your remaining balance.",
+         "confirm_continue": "Yes, I understand and want to continue",
+
+        # Category keys (already DB-safe)
+        "Salary": "Salary",
+        "Business": "Business",
+        "Food & Dining": "Food & Dining",
+        "Transportation": "Transportation",
+        "Others": "Others",
+        
+         # ===== Income Categories =====
+        "Salary": "Salary",
+        "Business": "Business",
+        "Investments": "Investments",
+        "Rental Income": "Rental Income",
+        "Gifts": "Gifts",
+        "Bonuses": "Bonuses",
+        "Refunds": "Refunds",
+        "Other": "Other",
+
+        # ===== Expense Categories =====
+        "Food & Dining": "Food & Dining",
+        "Rent / Housing": "Rent / Housing",
+        "Transportation": "Transportation",
+        "Health & Medical": "Health & Medical",
+        "Entertainment": "Entertainment",
+        "Education": "Education",
+        "Shopping": "Shopping",
+        "Travel": "Travel",
+        "Utilities": "Utilities",
+        "Insurance": "Insurance",
+        "Taxes": "Taxes",
+        "Others": "Others",
+        
+        # ===== Charts / Analysis =====
+        "analysis_title": "Income & Expense Analysis",
+        "analysis_subtitle": "Visualize your financial activity by category",
+
+        "start_date": "Start Date",
+        "end_date": "End Date",
+        "filter": "Filter",
+        "reset": "Reset",
+
+        "income_by_category": "Income by Category",
+        "expense_by_category": "Expense by Category",
+
+        "total_income": "Total Income",
+        "total_expense": "Total Expense",
+        "balance": "Balance",
+
+        "back_dashboard": "Back to Dashboard",
+        "amount_mmk": "Amount",
+        
+        
+        # Tables
+        "records": "Records",
+        "date": "Date",
+        "category": "Category",
+        "amount": "Amount",
+        "description": "Description",
+        "actions": "Actions",
+        "edit": "Edit",
+        "delete": "Delete",
+        "no_data": "No records found",
+
+        "income": "Income",
+        "expense": "Expense",
+
+        "prev": "Previous",
+        "next": "Next",
+        
+        # profile
+        "user_profile":"My Profile",
+        "edit_profile":"Edit Profile",
+        "cancel":"Home",
+        
+        # updated profile
+        "old_password":"Old",
+        "new_password":"New Password",
+        "update_btn":"Update Profile",
+        "leave_blank_to_keep":"enter match old password"
+        
+
+    },
+
+    "mm": {
+        # ===== App =====
+        "app_title": "ငွေထွက်ထိန်းခြင်း",
+        "dashboard": "ဝင်ငွေနှင့် ကုန်ကျစရိတ် ဒက်ရှ်ဘုတ်",
+        "welcome":"အားလုံးကို ကြိုဆိုပါတယ် ချစ်တို့ရေ",
+
+        # ===== General =====
+        "welcome": "ပြန်လည်ကြိုဆိုပါတယ်",
+        "login":"ဝင်ရောက်မှု",
+        "login_success": "ဝင်ရောက်မှု အောင်မြင်ပါသည်",
+        "logout":"ထွက်လိုက်ပါ",
+        "logout_success": "ထွက်ပြီးပါပြီ",
+        "register_success": "စာရင်းသွင်းမှု အောင်မြင်ပါသည်",
+        
+
+        # ===== Income / Expense =====
+        "income_added": "ဝင်ငွေ ထည့်ပြီးပါပြီ",
+        "expense_added": "အသုံးစရိတ် ထည့်ပြီးပါပြီ",
+        "income_deleted": "ဝင်ငွေ ဖျက်ပြီးပါပြီ",
+        "income_updated": "ဝင်ငွေ ပြင်ဆင်ပြီးပါပြီ",
+        "exceed_balance": "လက်ကျန်ငွေထက် ပိုများနေပါသည်",
+        "confirm_all_balance": "လက်ကျန်ငွေအားလုံး သုံးမည်ဖြစ်ပါသည်။ အတည်ပြုပါ။",
+
+        # ===== Categories =====
+        "Salary": "လစာ",
+        "Business": "လုပ်ငန်း",
+        "Food & Dining": "အစားအစာ",
+        "Transportation": "သယ်ယူပို့ဆောင်ရေး",
+        "Others": "အခြား",
+
+        # ===== Dashboard UI =====
+        "start_date": "စတင်နေ့စွဲ",
+        "end_date": "ပြီးဆုံးနေ့စွဲ",
+        "apply": "လျှောက်ထားမည်",
+        "reset": "ပြန်သတ်မှတ်မည်",
+        "quick_filter": "အမြန်စစ်ထုတ်ရန်",
+        "all": "အားလုံး",
+        "weekly": "အပတ်စဉ်",
+        "monthly": "လစဉ်",
+        "yearly": "နှစ်စဉ်",
+        "total_income": "စုစုပေါင်း ဝင်ငွေ",
+        "total_expense": "စုစုပေါင်း အသုံးစရိတ်",
+        "balance": "လက်ကျန်ငွေ",
+        "add_income": "+ ဝင်ငွေ ထည့်မည်",
+        "add_expense": "+ အသုံးစရိတ် ထည့်မည်",
+        "charts": "ဇယားများ",
+        "pdf_report": "PDF အစီရင်ခံစာ",
+        "play_quiz": "🧠 စမ်းသပ်မည်",
+        "no_records": "မှတ်တမ်း မရှိပါ",
+        "edit": "ပြင်မည်",
+        "delete": "ဖျက်မည်",
+        "delete_confirm": "ဤ မှတ်တမ်းကို ဖျက်မည်လား?",
+        "description": "ဖော်ပြချက်",
+        "category": "အမျိုးအစား",
+        "amount": "ငွေပမာဏ",
+        "date": "နေ့စွဲ",
+        
+        # register requirement
+         "register_title": "အကောင့်အသစ်ဖန်တီးရန်",
+        "register_subtitle": "သင်၏ဝင်ငွေ နှင့် အသုံးစရိတ်ကို စတင်စောင့်ကြည့်ပါ 💰",
+        "username": "အသုံးပြုသူအမည်",
+        "username_placeholder": "သင့်အသုံးပြုသူအမည် ထည့်ပါ",
+        "email": "အီးမေးလ်",
+        "email_placeholder": "ဥပမာ@email.com",
+        "password": "စကားဝှက်",
+        "password_placeholder": "အနည်းဆုံး ၆ လုံးနှင့် အထူးအက္ခရာပါဝင်ရမည်",
+        "register_btn": "စာရင်းသွင်းမည်",
+        "already_account": "အကောင့်ရှိပြီးပါသလား?",
+        "login_here": "ဒီမှာဝင်ပါ",
+        
+        
+        # login requirement
+        "login_title": "သင့်စီးပွားရေးအကောင့်သို့ ဝင်ရန်",
+        "username": "အသုံးပြုသူအမည်",
+        "username_placeholder": "သင့်အသုံးပြုသူအမည်ထည့်ပါ",
+        "password": "စကားဝှက်",
+        "password_placeholder": "သင့်စကားဝှက်ထည့်ပါ",
+        "avatar_upload": "ပရိုဖိုင်ပုံထည့်ရန် (လိုအပ်လျှင်)",
+        "login": "ဝင်မည်",
+        "no_account": "အကောင့်မရှိသေးပါက",
+        "register": "စာရင်းသွင်းပါ",
+        "login_footer": "ဝင်ရောက်ခြင်းဖြင့်၊ သင်သည် ကျွန်ုပ်တို့၏",
+        "terms": "စည်းမျဉ်းနှင့်စည်းမျဉ်းများ",
+        
+        # pagination
+        "prev":"ယခင်",
+        "next":"နောက်တစ်ခု",
+        
+        # Action
+        "action":"လုပ်ဆောင်ချက်များ",
+        
+        
+        # income add/edit requirement
+        "add_income_title": "ဝင်ငွေ ထည့်ရန်",
+        "edit_income_title":"ဝင်ငွေကို တည်းဖြတ်ပါ",
+        "date": "ရက်စွဲ",
+        "category": "အမျိုးအစား",
+        "select_category": "အမျိုးအစား ရွေးပါ",
+        "amount": "ပမာဏ",
+        "amount_placeholder": "ငွေပမာဏ ထည့်ပါ",
+        "description": "ဖော်ပြချက်",
+        "description_placeholder": "ဖော်ပြချက် ထည့်ပါ",
+        "description_hint": "စာလုံး ၁၀၀ အထိသာ ရပါသည်",
+        "add_income_btn": "ဝင်ငွေ ထည့်မည်",
+        "update_income_btn":"ဝင်ငွေကို အပ်ဒိတ်လုပ်ပါ",
+        "back_dashboard": "ဒက်ရှ်ဘုတ်သို့ ပြန်သွားရန်",
+        
+        # expense form requirement
+        "add_expense_title": "အသုံးစရိတ် ထည့်ရန်",
+        "edit_expense_title": "အသုံးစရိတ် ပြင်ဆင်ရန်",
+        "date": "ရက်စွဲ",
+        "category": "အမျိုးအစား",
+        "select_category": "အမျိုးအစား ရွေးပါ",
+        "amount": "ပမာဏ",
+        "amount_placeholder": "ငွေပမာဏ ထည့်ပါ",
+        "description": "ဖော်ပြချက်",
+        "description_placeholder": "မှတ်ချက် (မဖြစ်မနေ မလို)",
+        "update_expense_btn": "ပြင်ဆင်မည်",
+        "add_expense_btn": "ထည့်မည်",
+        "back_dashboard": "ဒက်ရှ်ဘုတ်သို့ ပြန်သွားရန်",
+
+        "expense_warning": "လက်ကျန်ငွေအားလုံး အသုံးပြုမည် ဖြစ်ပါသည်။",
+        "confirm_continue": "နားလည်ပါသည်၊ ဆက်လုပ်ပါမည်",
+
+        # Category translations
+        "Salary": "လစာ",
+        "Business": "လုပ်ငန်း",
+        "Food & Dining": "အစားအသောက်",
+        "Transportation": "သယ်ယူပို့ဆောင်ရေး",
+        "Others": "အခြား",
+        
+          # ===== Income Categories =====
+        "Salary": "လစာ",
+        "Business": "လုပ်ငန်း",
+        "Investments": "ရင်းနှီးမြှုပ်နှံမှု",
+        "Rental Income": "အိမ်ခြံမြေ ငှားရမ်း ဝင်ငွေ",
+        "Gifts": "လက်ဆောင်ငွေ",
+        "Bonuses": "ဆုကြေးငွေ",
+        "Refunds": "ပြန်လည်ရရှိငွေ",
+        "Other": "အခြား",
+
+        # ===== Expense Categories =====
+        "Food & Dining": "အစားအသောက်",
+        "Rent / Housing": "အိမ်လခ / နေအိမ်",
+        "Transportation": "သယ်ယူပို့ဆောင်ရေး",
+        "Health & Medical": "ကျန်းမာရေး / ဆေးကုသမှု",
+        "Entertainment": "ဖျော်ဖြေရေး",
+        "Education": "ပညာရေး",
+        "Shopping": "စျေးဝယ်ခြင်း",
+        "Travel": "ခရီးသွားလာရေး",
+        "Utilities": "မီး / ရေ / အင်တာနက်",
+        "Insurance": "အာမခံ",
+        "Taxes": "အခွန်",
+        "Others": "အခြား",
+        
+        # ===== Charts / Analysis =====
+        "analysis_title": "ဝင်ငွေ / အသုံးစရိတ် ခွဲခြမ်းစိတ်ဖြာခြင်း",
+        "analysis_subtitle": "အမျိုးအစားအလိုက် သင့်ငွေစာရင်းကို ကြည့်ရှုပါ",
+        "start_date": "အစ ရက်စွဲ",
+        "end_date": "အဆုံး ရက်စွဲ",
+        "filter": "စစ်ထုတ်မည်",
+        "reset": "ပြန်လည်သတ်မှတ်မည်",
+        "income_by_category": "အမျိုးအစားအလိုက် ဝင်ငွေ",
+        "expense_by_category": "အမျိုးအစားအလိုက် အသုံးစရိတ်",
+        "total_income": "စုစုပေါင်း ဝင်ငွေ",
+        "total_expense": "စုစုပေါင်း အသုံးစရိတ်",
+        "balance": "လက်ကျန်ငွေ",
+        "back_dashboard": "ဒက်ရှ်ဘုတ်သို့ ပြန်သွားရန်",
+        "amount_mmk": "ငွေပမာဏ",
+        
+        
+        #Tables
+        "records": "မှတ်တမ်းများ",
+        "date": "ရက်စွဲ",
+        "category": "အမျိုးအစား",
+        "amount": "ပမာဏ",
+        "description": "ဖော်ပြချက်",
+        "actions": "လုပ်ဆောင်ချက်များ",
+        "edit": "ပြင်ဆင်",
+        "delete": "ဖျက်ရန်",
+        "no_data": "မှတ်တမ်း မရှိပါ",
+
+        "income": "ဝင်ငွေ",
+        "expense": "အသုံးစရိတ်",
+
+        "prev": "နောက်သို့",
+        "next": "ရှေ့သို့",
+        
+                
+        # profile
+        "user_profile":"အသုံးပြုသူပရိုဖိုင်",
+        "edit_profile_title":"Profile ကို တည်းဖြတ်ပါ",
+        "cancel":"ပင်မစာမျက်နှာ",
+        
+        # update profile
+        "old_password":"စကားဝှက်အဟောင်း",
+        "new_password":"စကားဝှက်အသစ်",
+        "update_btn":"စကားဝှက်ကို အပ်ဒိတ်",
+        "leave_blank_to_keep":"စကားဝှက်ဟောင်းနှင့် ကိုက်ညီသော စကားဝှက်အသစ်ကို ရိုက်ထည့်ပါ"
+    }
+}
 
 
 # Quiz Question and Answer Option
@@ -397,6 +806,10 @@ def init_db():
 
 init_db()
 
+
+
+
+
 # ---- Home ----
 @app.route("/")
 def index():
@@ -631,8 +1044,16 @@ def login():
 # ---- Logout ----
 @app.route("/logout")
 def logout():
+    # Clear the session
     session.clear()
-    flash("Logged out!", "success")
+
+    # Get current language (default to 'en')
+    lang = session.get("lang", "en")
+
+    # Flash message using language dictionary
+    flash(LANGUAGES.get(lang, LANGUAGES["en"]).get("logout_success", "Logged out!"), "success")
+
+    # Redirect to login page
     return redirect(url_for("login"))
 
 
@@ -1245,9 +1666,10 @@ def edit_income(income_id):
 
     return render_template(
         "income_form.html",
-        mode="edit",
+         record=record,
+         mode="edit",
         categories=INCOME_CATEGORIES,
-        record=record
+
     )
 
 # ---- Delete Income ----
@@ -2046,6 +2468,29 @@ def quiz_quit():
     session.pop("quiz_start_time", None)
 
     return redirect(url_for("dashboard"))
+
+
+
+# eng myanmar version
+def t(key):
+    lang = session.get("lang", "en")
+    return LANGUAGES.get(lang, LANGUAGES["en"]).get(key, key)
+
+@app.context_processor
+def inject_lang():
+    return dict(t=t)
+
+
+@app.route("/set_language/<lang>")
+def set_language(lang):
+    # only accept 'en' or 'mm'
+    if lang not in ["en", "mm"]:
+        lang = "en"
+    session["lang"] = lang
+
+    # redirect back to the page user was on
+    return redirect(request.referrer or url_for("dashboard"))
+
 
 # ---- Run App ----
 if __name__ == "__main__":

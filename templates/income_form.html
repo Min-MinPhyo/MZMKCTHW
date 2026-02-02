@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="max-w-md mx-auto mt-10 bg-white p-8 rounded-xl shadow-lg">
+<div class="max-w-md mx-auto mt-12 bg-white p-8 rounded-2xl shadow-xl">
 
-  <!-- Title -->
-  <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">
-    {% if mode == "edit" %}
-      Edit Income
+  <!-- TITLE -->
+  <h1 class="text-3xl font-extrabold text-center text-gray-800 mb-8">
+    {% if mode|default('add') == "edit" %}
+      {{ t("edit_income_title") }}
     {% else %}
-      Add Income
+      {{ t("add_income_title") }}
     {% endif %}
   </h1>
 
@@ -16,7 +16,7 @@
 
     <!-- Date -->
     <div class="flex flex-col">
-      <label class="text-gray-700 font-semibold mb-1">Date</label>
+      <label class="text-gray-700 font-semibold mb-1">{{ t("date") }}</label>
       <input type="date" name="date"
         value="{% if mode == 'edit' %}{{ record[0] }}{% else %}{{ current_date }}{% endif %}"
         class="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400">
@@ -24,10 +24,10 @@
 
     <!-- Category -->
     <div class="flex flex-col">
-      <label class="text-gray-700 font-semibold mb-1">Category</label>
+      <label class="text-gray-700 font-semibold mb-1">{{ t("category") }}</label>
       <select name="category"
         class="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400">
-        <option value="">Select Category</option>
+        <option value="">{{ t("select_category") }}</option>
         {% for cat in categories %}
           <option value="{{ cat }}"
             {% if mode == "edit" and record[1] == cat %}selected{% endif %}>
@@ -39,19 +39,19 @@
 
     <!-- Amount -->
     <div class="flex flex-col">
-      <label class="text-gray-700 font-semibold mb-1">Amount</label>
+      <label class="text-gray-700 font-semibold mb-1">{{ t("amount") }}</label>
       <input type="number" step="0.01" name="amount"
         value="{% if mode == 'edit' %}{{ record[2] }}{% endif %}"
-        placeholder="Enter amount in MMK"
+        placeholder="{{ t('amount_placeholder') }}"
         class="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400">
     </div>
 
     <!-- Description -->
     <div class="flex flex-col">
-      <label class="text-gray-700 font-semibold mb-1">Description</label>
+      <label class="text-gray-700 font-semibold mb-1">{{ t("description") }}</label>
       <input type="text" name="description"
         value="{% if mode == 'edit' %}{{ record[3] }}{% endif %}"
-        placeholder="Optional note"
+        placeholder="{{ t('description_placeholder') }}"
         class="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400">
     </div>
 
@@ -60,9 +60,9 @@
       class="w-full py-2 rounded-lg font-semibold text-white shadow-md
       {% if mode == 'edit' %}bg-blue-500 hover:bg-blue-600{% else %}bg-green-500 hover:bg-green-600{% endif %} transition-colors">
       {% if mode == "edit" %}
-        Update Income
+        {{t("update_income_btn")}}
       {% else %}
-        Add Income
+         {{t("add_income_btn")}}
       {% endif %}
     </button>
 
