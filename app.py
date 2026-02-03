@@ -1,9 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
+import string
+import smtplib # Error အမျိုးအစား ခွဲခြားရန် လိုအပ်သည်
 import sqlite3
 from datetime import datetime, date
 import os
 import re
 import random
+
 import time
 from werkzeug.utils import secure_filename
 from datetime import datetime, timedelta
@@ -103,6 +106,7 @@ LANGUAGES = {
         "register": "Register",
         "login_footer": "By logging in, you agree to our",
         "terms": "Terms & Conditions",
+        "forgot_password":"Forgot Password",
 
         # ===== Income / Expense =====
         "income_added": "Income added successfully!",
@@ -123,7 +127,7 @@ LANGUAGES = {
         "start_date": "Start Date",
         "end_date": "End Date",
         "apply": "Apply",
-        "reset": "Reset",
+        "reset_filter": "Reset Filter",
         "quick_filter": "Quick Filter",
         "all": "All",
         "weekly": "Weekly",
@@ -147,8 +151,8 @@ LANGUAGES = {
         "date": "Date",
         
         # pagination
-        "prev":"Prev",
-        "next":"Next",
+        "prev_pagination":"Prev",
+        "next_pagination":"Next",
         
         # action
         "action":"Action",
@@ -238,7 +242,7 @@ LANGUAGES = {
         
         
         # Tables
-        "records": "Records",
+        "records_table": "Records",
         "date": "Date",
         "category": "Category",
         "amount": "Amount",
@@ -319,7 +323,7 @@ LANGUAGES = {
         "start_date": "စတင်နေ့စွဲ",
         "end_date": "ပြီးဆုံးနေ့စွဲ",
         "apply": "လျှောက်ထားမည်",
-        "reset": "ပြန်သတ်မှတ်မည်",
+        "reset_filter": "ပြန်သတ်မှတ်မည်",
         "quick_filter": "အမြန်စစ်ထုတ်ရန်",
         "all": "အားလုံး",
         "weekly": "အပတ်စဉ်",
@@ -368,10 +372,11 @@ LANGUAGES = {
         "register": "စာရင်းသွင်းပါ",
         "login_footer": "ဝင်ရောက်ခြင်းဖြင့်၊ သင်သည် ကျွန်ုပ်တို့၏",
         "terms": "စည်းမျဉ်းနှင့်စည်းမျဉ်းများ",
+        "forgot_password":"စကားဝှက်မေ့နေပါသလား",
         
         # pagination
-        "prev":"ယခင်",
-        "next":"နောက်တစ်ခု",
+        "prev_pagination":"ယခင်",
+        "next_pagination":"နောက်တစ်ခု",
         
         # Action
         "action":"လုပ်ဆောင်ချက်များ",
@@ -457,7 +462,7 @@ LANGUAGES = {
         
         
         #Tables
-        "records": "မှတ်တမ်းများ",
+        "records_table": "မှတ်တမ်းများ",
         "date": "ရက်စွဲ",
         "category": "အမျိုးအစား",
         "amount": "ပမာဏ",
@@ -945,6 +950,7 @@ def index():
 #             return render_template("register.html")
 
 #     return render_template("register.html")
+
 
 
 # test register updated
@@ -3001,6 +3007,165 @@ def inject_translate():
 def set_lang(lang):
     session['language'] = lang
     return redirect(request.referrer or url_for('dashboard'))
+
+
+# forgot password 
+# Mail Configuration
+app.config.update(
+    MAIL_SERVER='smtp.gmail.com',
+    MAIL_PORT=587,
+    MAIL_USE_TLS=True,
+    MAIL_USERNAME='minminphyo770@gmail.com',
+    MAIL_PASSWORD='fqodrfmwvygkuxdl',
+    MAIL_DEFAULT_SENDER='minminphyo770@gmail.com'
+)
+mail = Mail(app)
+
+# 1. Forgot Password Route
+# @app.route("/forgot-password", methods=["GET", "POST"])
+# def forgot_password(): # HTML ထဲက url_for('forgot_password') က ဒီနာမည်ကို လာရှာတာပါ
+#     if request.method == "POST":
+#         email = request.form.get("email")
+#         # အောက်မှာ သင့်ရဲ့ OTP ပို့တဲ့ Logic ကို ဆက်ရေးပါ...
+#         otp = ''.join(random.choices(string.digits, k=6))
+#         session['reset_otp'] = otp
+#         session['reset_email'] = email
+        
+#         # Email ပို့ခြင်း (ဥပမာ)
+#         try:
+#             msg = Message("OTP Verification", sender=app.config['MAIL_USERNAME'], recipients=[email])
+#             msg.body = f"Your OTP is {otp}"
+#             mail.send(msg)
+#             return redirect(url_for('verify_otp')) # verify_otp function ဆီသွားမယ်
+#         except:
+#             flash("Error sending email", "danger")
+            
+#     return render_template("forgot_password.html")
+
+
+# 1 updated
+@app.route("/forgot_password", methods=["GET", "POST"])
+def forgot_password():
+    if request.method == "POST":
+        email = request.form.get("email").strip()
+        
+        # OTP ထုတ်ခြင်းနှင့် Session သိမ်းခြင်း (အရင်အတိုင်း)
+        otp = ''.join(random.choices(string.digits, k=6))
+        session['reset_otp'] = otp
+        session['reset_email'] = email
+
+        # --- Email Sending Logic Start ---
+        msg = Message(
+            subject="Your Password Reset OTP",
+            sender=app.config['MAIL_USERNAME'],
+            recipients=[email]
+        )
+        msg.body = f"Hello,\n\nYour verification code is: {otp}\n\nThis code will expire in 10 minutes."
+
+        try:
+            mail.send(msg)
+            print(f"✅ Success: Email sent to {email}")
+            flash("OTP code has been sent to your email!", "success")
+            return redirect(url_for("verify_otp"))
+
+        except smtplib.SMTPAuthenticationError:
+            print("❌ Error: Gmail Authentication Failed. Check App Password.")
+            flash("Server Configuration Error: Invalid Email or App Password.", "danger")
+            
+        except smtplib.SMTPConnectError:
+            print("❌ Error: Could not connect to Gmail SMTP Server.")
+            flash("Network Error: Could not connect to the mail server.", "danger")
+            
+        except Exception as e:
+            # တခြား မထင်မှတ်ထားတဲ့ error များအတွက်
+            print(f"❌ Unexpected Error: {str(e)}")
+            flash(f"An unexpected error occurred: {str(e)}", "danger")
+        
+        # --- Email Sending Logic End ---
+
+    return render_template("forgot_password.html")
+# 3. Reset Password Route
+# @app.route("/reset-password", methods=["GET", "POST"])
+# def reset_password():
+#     if request.method == "POST":
+#         # Password update လုပ်တဲ့ logic ရေးရန်
+#         flash("Password reset successful", "success")
+#         return redirect(url_for('login'))
+#     return render_template("reset_password.html")
+
+# 3 updated reset password
+@app.route("/reset_password", methods=["GET", "POST"])
+def reset_password():
+    # Session ထဲမှာ reset_email မရှိရင် (OTP မကျော်လာရင်) လက်မခံပါ
+    if 'reset_email' not in session:
+        flash("Please verify your email first.", "warning")
+        return redirect(url_for('forgot_password'))
+
+    if request.method == "POST":
+        new_password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
+
+        # 1. Validation စစ်ဆေးခြင်း
+        if not new_password or not confirm_password:
+            flash("All fields are required.", "danger")
+            return render_template("reset_password.html")
+
+        if new_password != confirm_password:
+            flash("Passwords do not match!", "danger")
+            return render_template("reset_password.html")
+
+        if len(new_password) < 6:
+            flash("Password must be at least 6 characters long.", "danger")
+            return render_template("reset_password.html")
+
+        # 2. Password ကို Hash လုပ်ခြင်း (လုံခြုံရေးအတွက်)
+        hashed_password = generate_password_hash(new_password)
+        email = session.get('reset_email')
+
+        # 3. Database ထဲတွင် Update လုပ်ခြင်း
+        try:
+            conn = sqlite3.connect(DB_NAME)
+            cursor = conn.cursor()
+            
+            # User table ထဲက သက်ဆိုင်ရာ email ပိုင်ရှင်ရဲ့ password ကို update လုပ်မယ်
+            cursor.execute("UPDATE users SET password = ? WHERE email = ?", (hashed_password, email))
+            conn.commit()
+            
+            # Row တစ်ခုခု အမှန်တကယ် ပြောင်းလဲသွားသလား စစ်ဆေးခြင်း
+            if cursor.rowcount == 0:
+                flash("Error: User not found.", "danger")
+                return redirect(url_for('forgot_password'))
+                
+            conn.close()
+
+            # 4. အောင်မြင်ရင် Session များကို ရှင်းထုတ်ပြီး Login သို့ ပို့ခြင်း
+            session.pop('reset_email', None)
+            session.pop('reset_otp', None)
+            
+            flash("Success! Your password has been updated. Please login.", "success")
+            return redirect(url_for('login'))
+
+        except Exception as e:
+            print(f"Database Error: {e}")
+            flash("An error occurred while updating password.", "danger")
+            return render_template("reset_password.html")
+
+    return render_template("reset_password.html")
+
+@app.route("/verify-otp", methods=["GET", "POST"])
+def verify_otp():
+    if 'reset_otp' not in session:
+        return redirect(url_for('forgot_password'))
+
+    if request.method == "POST":
+        user_otp = request.form.get("otp")
+        if user_otp == session.get('reset_otp'):
+            flash("OTP Verified!", "success")
+            return redirect(url_for('reset_password')) # နောက်တစ်ဆင့် Password ပြောင်းဖို့ သွားမယ်
+        else:
+            flash("Invalid OTP code. Please try again.", "danger")
+            
+    return render_template("verify_otp.html") # 👈 ဒီဖိုင်နာမည် မှန်ဖို့ လိုပါတယ်
 
 # ---- Run App ----
 if __name__ == "__main__":

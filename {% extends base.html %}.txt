@@ -3400,3 +3400,147 @@ this ui design rewrite complete for this array requirement
 
 
 
+
+
+
+
+
+
+
+=================================Working Chartjs Ui Complet Finale================================
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-7xl mx-auto p-6 space-y-8">
+
+  <div class="text-center mb-8">
+    <h1 class="text-4xl font-bold text-gray-800 mb-2">
+      {{ t("analysis_title") }}
+    </h1>
+    <p class="text-gray-500 text-lg">
+      {{ t("analysis_subtitle") }}
+    </p>
+  </div>
+
+  <form method="POST"
+        class="flex flex-wrap justify-center items-end gap-4 mb-10">
+
+    <div class="flex flex-col">
+      <label class="text-sm font-semibold text-gray-700 mb-1">
+        {{ t("start_date") }}
+      </label>
+      <input type="date" name="start_date" value="{{ start_date or '' }}"
+        class="border p-2 rounded w-44 focus:ring-2 focus:ring-blue-400" />
+    </div>
+
+    <div class="flex flex-col">
+      <label class="text-sm font-semibold text-gray-700 mb-1">
+        {{ t("end_date") }}
+      </label>
+      <input type="date" name="end_date" value="{{ end_date or '' }}"
+        class="border p-2 rounded w-44 focus:ring-2 focus:ring-blue-400" />
+    </div>
+
+    <button type="submit"
+      class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded shadow-md transition">
+      {{ t("filter") }}
+    </button>
+
+    <a href="{{ url_for('charts') }}"
+      class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded shadow-md transition">
+      {{ t("reset") }}
+    </a>
+  </form>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <div class="bg-white p-6 rounded-xl shadow-lg">
+      <h2 class="text-center text-xl font-semibold mb-4 text-green-600">
+        {{ t("income_by_category") }}
+      </h2>
+      <canvas id="incomeChart"></canvas>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl shadow-lg">
+      <h2 class="text-center text-xl font-semibold mb-4 text-red-600">
+        {{ t("expense_by_category") }}
+      </h2>
+      <canvas id="expenseChart"></canvas>
+    </div>
+
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-10">
+
+    <div class="bg-green-50 p-6 rounded-xl shadow border-l-4 border-green-500 text-center">
+      <h3 class="font-semibold text-gray-700">{{ t("total_income") }}</h3>
+      <p class="text-3xl font-bold text-green-700">
+        {{ total_income | default(0) }}
+      </p>
+    </div>
+
+    <div class="bg-red-50 p-6 rounded-xl shadow border-l-4 border-red-500 text-center">
+      <h3 class="font-semibold text-gray-700">{{ t("total_expense") }}</h3>
+      <p class="text-3xl font-bold text-red-700">
+        {{ total_expense | default(0) }}
+      </p>
+    </div>
+
+    <div class="bg-blue-50 p-6 rounded-xl shadow border-l-4 border-blue-500 text-center">
+      <h3 class="font-semibold text-gray-700">{{ t("balance") }}</h3>
+      <p class="text-3xl font-bold text-blue-700">
+        {{ balance | default(0) }}
+      </p>
+    </div>
+
+  </div>
+
+  <div class="text-center mt-8">
+    <a href="{{ url_for('dashboard') }}"
+       class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded shadow transition">
+       ← {{ t("back_dashboard") }}
+    </a>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+ 
+  const incomeLabels = {{ income_labels | safe }};
+  const incomeValues = {{ income_values | safe }};
+  const expenseLabels = {{ expense_labels | safe }};
+  const expenseValues = {{ expense_values | safe }};
+
+  new Chart(document.getElementById('incomeChart'), {
+    type: "bar",
+    data: {
+      labels: incomeLabels,
+      datasets: [{
+        data: incomeValues,
+        backgroundColor: "#22c55e",
+        borderRadius: 8
+      }]
+    },
+    options: { plugins: { legend: { display: false } } }
+  });
+
+  new Chart(document.getElementById('expenseChart'), {
+    type: "bar",
+    data: {
+      labels: expenseLabels,
+      datasets: [{
+        data: expenseValues,
+        backgroundColor: "#ef4444",
+        borderRadius: 8
+      }]
+    },
+    options: { plugins: { legend: { display: false } } }
+  });
+</script>
+
+{% endblock %}
+
+
+
+

@@ -51,7 +51,7 @@
 
       <a href="{{ url_for('dashboard') }}"
          class="bg-gray-200 hover:bg-gray-300 px-6 py-2 rounded-lg transition">
-        {{ t("reset") }}
+        {{ t("reset_filter") }}
       </a>
     </form>
 
@@ -110,7 +110,7 @@
   ] %}
   <div class="bg-white rounded-xl shadow p-6 mb-6">
 
-    <h2 class="text-2xl font-bold mb-4">{{ table }} {{ t("records") }}</h2>
+    <h2 class="text-2xl font-bold mb-4">{{ table }} {{ t("records_table") }}</h2>
 
     <div class="overflow-x-auto">
       <table class="min-w-full table-fixed text-sm">
@@ -163,7 +163,7 @@
   <div class="flex justify-center gap-2 mt-4 flex-wrap">
     {% if page > 1 %}
     <a href="{{ url_for('dashboard', page=page-1, start_date=start_date, end_date=end_date) }}"
-       class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 transition">{{t("prev")}}</a>
+       class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 transition">{{t("prev_pagination")}}</a>
     {% endif %}
 
     {% for p in range(1, total_pages + 1) %}
@@ -177,7 +177,7 @@
 
     {% if page < total_pages %}
     <a href="{{ url_for('dashboard', page=page+1, start_date=start_date, end_date=end_date) }}"
-       class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 transition">{{t("next")}}</a>
+       class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 transition">{{t("next_pagination")}}</a>
     {% endif %}
   </div>
   {% endif %}
