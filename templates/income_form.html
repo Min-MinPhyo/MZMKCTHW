@@ -3,7 +3,6 @@
 
 <div class="max-w-md mx-auto mt-12 bg-white p-8 rounded-2xl shadow-xl">
 
-  <!-- TITLE -->
   <h1 class="text-3xl font-extrabold text-center text-gray-800 mb-8">
     {% if mode|default('add') == "edit" %}
       {{ t("edit_income_title") }}
@@ -13,8 +12,6 @@
   </h1>
 
   <form method="POST" class="space-y-5">
-
-    <!-- Date -->
     <div class="flex flex-col">
       <label class="text-gray-700 font-semibold mb-1">{{ t("date") }}</label>
       <input type="date" name="date"
@@ -22,7 +19,6 @@
         class="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400">
     </div>
 
-    <!-- Category -->
     <div class="flex flex-col">
       <label class="text-gray-700 font-semibold mb-1">{{ t("category") }}</label>
       <select name="category"
@@ -31,13 +27,11 @@
         {% for cat in categories %}
           <option value="{{ cat }}"
             {% if mode == "edit" and record[1] == cat %}selected{% endif %}>
-            {{ cat }}
-          </option>
+            {{ t(cat) }} </option>
         {% endfor %}
       </select>
     </div>
 
-    <!-- Amount -->
     <div class="flex flex-col">
       <label class="text-gray-700 font-semibold mb-1">{{ t("amount") }}</label>
       <input type="number" step="0.01" name="amount"
@@ -46,36 +40,31 @@
         class="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400">
     </div>
 
-    <!-- Description -->
     <div class="flex flex-col">
       <label class="text-gray-700 font-semibold mb-1">{{ t("description") }}</label>
       <input type="text" name="description"
-        value="{% if mode == 'edit' %}{{ record[3] }}{% endif %}"
+        value="{% if mode == 'edit' and record %}{{ t(record[3], is_user_data=True) }}{% endif %}"
         placeholder="{{ t('description_placeholder') }}"
         class="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400">
     </div>
 
-    <!-- Submit Button -->
     <button type="submit"
       class="w-full py-2 rounded-lg font-semibold text-white shadow-md
       {% if mode == 'edit' %}bg-blue-500 hover:bg-blue-600{% else %}bg-green-500 hover:bg-green-600{% endif %} transition-colors">
       {% if mode == "edit" %}
-        {{t("update_income_btn")}}
+        {{ t("update_income_btn") }}
       {% else %}
-         {{t("add_income_btn")}}
+        {{ t("add_income_btn") }}
       {% endif %}
     </button>
-
   </form>
 
-  <!-- Back Link -->
   <p class="mt-6 text-center">
     <a href="{{ url_for('dashboard') }}"
        class="text-blue-500 hover:text-blue-700 font-medium transition-colors">
-       ← Back to Dashboard
+       ← {{ t("back_dashboard") }}
     </a>
   </p>
-
 </div>
 
 {% endblock %}

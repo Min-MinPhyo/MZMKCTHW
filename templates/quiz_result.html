@@ -1,102 +1,71 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 to-blue-50 px-4 py-10">
+<div class="min-h-[70vh] flex items-center justify-center px-4">
 
-    <div class="max-w-md w-full bg-white rounded-3xl shadow-2xl overflow-hidden relative p-6">
+  <div class="max-w-md w-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
 
-        <!-- Header with confetti effect -->
-        <div class="text-center mb-6 relative">
-            <h2 class="text-4xl font-extrabold text-gray-800 mb-1 animate__animated animate__fadeInDown">🏁 Quiz Result</h2>
-            <p class="text-gray-500 text-lg animate__animated animate__fadeInDown animate__delay-1s">
-                See how well you did!
-            </p>
+    <div class="bg-gradient-to-r from-indigo-600 to-blue-600 text-white p-8 text-center">
+      <h2 class="text-3xl font-extrabold tracking-tight">
+        {{ t("quiz_result_title") }}
+      </h2>
+      <p class="text-white/80 mt-1 font-medium">
+        {{ t("quiz_result_subtitle") }}
+      </p>
+    </div>
 
-            <!-- Confetti Canvas -->
-            <canvas id="confetti-canvas" class="absolute top-0 left-0 w-full h-full pointer-events-none"></canvas>
+    <div class="p-8 text-center space-y-8">
+
+      <div class="flex justify-center">
+        <div class="w-36 h-36 rounded-full border-[10px] border-blue-500 flex items-center justify-center shadow-xl bg-blue-50/30">
+          <div class="text-center">
+            <p class="text-5xl font-black text-blue-600 leading-none">{{ score }}</p>
+            <p class="text-xs font-bold text-gray-400 mt-1 uppercase tracking-widest">/ {{ total }}</p>
+          </div>
         </div>
+      </div>
 
-        <!-- Animated Score Circle -->
-        <div class="flex justify-center mb-6">
-            <div class="w-36 h-36 rounded-full border-8 border-gray-200 flex items-center justify-center relative shadow-lg">
-                <div class="absolute inset-0 flex items-center justify-center">
-                    <svg class="w-36 h-36 transform -rotate-90" viewBox="0 0 36 36">
-                        <circle class="text-gray-300" stroke-width="4" stroke="currentColor" fill="none" cx="18" cy="18" r="16"></circle>
-                        <circle class="text-blue-500" stroke-width="4" stroke-linecap="round" fill="none" cx="18" cy="18" r="16"
-                                stroke-dasharray="100"
-                                stroke-dashoffset="{{ 100 - (score / total * 100) }}">
-                        </circle>
-                    </svg>
-                </div>
-                <div class="relative text-center">
-                    <p class="text-4xl font-bold text-blue-600">{{ score }}</p>
-                    <p class="text-sm text-gray-500">/ {{ total }}</p>
-                </div>
-            </div>
+      {% set percent = (score / total) * 100 %}
+      <div class="space-y-3">
+        <div class="flex justify-between items-center px-1">
+          <span class="text-xs font-black text-gray-400 uppercase tracking-widest">{{ t("accuracy") }}</span>
+          <span class="text-sm font-bold text-blue-600">{{ percent | round(0) }}%</span>
         </div>
-
-        <!-- Feedback Message -->
-        <div class="text-center text-xl font-semibold mb-6 animate__animated animate__fadeInUp">
-            {% if score == total %}
-                🎉 <span class="text-green-600">Excellent! Perfect Score!</span>
-            {% elif score >= total // 2 %}
-                👍 <span class="text-blue-600">Good job! Keep going!</span>
-            {% else %}
-                💪 <span class="text-red-500">Keep practicing! You’ll improve!</span>
-            {% endif %}
+        <div class="w-full bg-gray-100 rounded-full h-4 overflow-hidden shadow-inner">
+          <div class="h-4 bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-1000 ease-out shadow-sm"
+               style="width: {{ percent }}%">
+          </div>
         </div>
+      </div>
 
-        <!-- Progress Bar -->
-        {% set percent = (score / total) * 100 %}
-        <div class="w-full bg-gray-200 h-4 rounded-full overflow-hidden mb-6 animate__animated animate__fadeInUp animate__delay-1s">
-            <div class="h-4 bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-700"
-                 style="width: {{ percent }}%"></div>
-        </div>
-        <p class="text-center text-sm text-gray-500 mb-6">{{ percent|round(0) }}% correct</p>
+      <div class="py-4 px-2 rounded-2xl bg-gray-50/50 border border-gray-100">
+        <p class="text-xl font-bold tracking-tight">
+          {% if score == total %}
+            <span class="text-green-600">🎉 {{ t("quiz_excellent") }}</span>
+          {% elif score >= total // 2 %}
+            <span class="text-blue-600">👍 {{ t("quiz_good") }}</span>
+          {% else %}
+            <span class="text-red-500">💪 {{ t("quiz_keep_trying") }}</span>
+          {% endif %}
+        </p>
+      </div>
 
-        <!-- Action Buttons -->
-        <div class="flex flex-col sm:flex-row gap-4 justify-center animate__animated animate__fadeInUp animate__delay-2s">
-            <a href="{{ url_for('quiz_reset') }}"
-               class="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold shadow-lg hover:bg-blue-700 hover:scale-105 transition-all">
-               🔁 Play Again
-            </a>
+      <div class="grid grid-cols-2 gap-4 pt-4">
+        <a href="{{ url_for('quiz_reset') }}"
+           class="flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-blue-600 text-white font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 hover:scale-[1.03] active:scale-95 transition-all">
+           <span>🔁</span> {{ t("play_again") }}
+        </a>
 
-            <a href="{{ url_for('dashboard') }}"
-               class="px-6 py-3 rounded-xl bg-gray-600 text-white font-semibold shadow-lg hover:bg-gray-700 hover:scale-105 transition-all">
-               🏠 Dashboard
-            </a>
-        </div>
+        <a href="{{ url_for('dashboard') }}"
+           class="flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-gray-800 text-white font-bold shadow-lg shadow-gray-200 hover:bg-gray-900 hover:scale-[1.03] active:scale-95 transition-all">
+           <span>🏠</span> {{ t("back_dashboard") }}
+        </a>
+      </div>
 
     </div>
 
+  </div>
+
 </div>
-
-<!-- Confetti JS -->
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-<script>
-    // Trigger confetti for high score
-    const score = {{ score }};
-    const total = {{ total }};
-    if(score === total) {
-        const duration = 3 * 1000;
-        const animationEnd = Date.now() + duration;
-        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1000 };
-
-        function randomInRange(min, max) {
-            return Math.random() * (max - min) + min;
-        }
-
-        const interval = setInterval(function() {
-            const timeLeft = animationEnd - Date.now();
-
-            if(timeLeft <= 0) {
-                return clearInterval(interval);
-            }
-
-            const particleCount = 50 * (timeLeft / duration);
-            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0,1), y: Math.random() - 0.2 } }));
-        }, 250);
-    }
-</script>
 
 {% endblock %}

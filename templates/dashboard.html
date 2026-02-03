@@ -3,7 +3,6 @@
 
 <div class="max-w-7xl mx-auto px-4 py-6 space-y-10">
 
-  <!-- ================= HEADER ================= -->
   <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-6 text-white shadow-lg">
     <div class="flex flex-col md:flex-row items-center justify-between gap-6">
       <div class="flex items-center gap-4">
@@ -32,7 +31,6 @@
     </div>
   </div>
 
-  <!-- ================= FILTER ================= -->
   <div class="bg-white rounded-xl shadow p-5 flex flex-col lg:flex-row gap-6 justify-between">
     <form method="GET" action="{{ url_for('dashboard') }}" class="flex flex-wrap gap-4 items-end">
       <div>
@@ -72,7 +70,6 @@
     </form>
   </div>
 
-  <!-- ================= SUMMARY CARDS ================= -->
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
     <div class="bg-green-100 rounded-xl p-6 shadow hover:shadow-xl transition">
       <h3 class="text-gray-700 font-semibold">{{ t("total_income") }}</h3>
@@ -88,7 +85,6 @@
     </div>
   </div>
 
-  <!-- ================= ACTION BUTTONS ================= -->
   <div class="flex flex-wrap gap-4">
     <a href="{{ url_for('add_income') }}" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl shadow font-semibold transition">
       + {{ t("add_income") }}
@@ -108,7 +104,6 @@
     </a>
   </div>
 
-  <!-- ================= TABLES ================= -->
   {% for table, records, color, total_pages in [
     ('Income', income_records, 'green', total_income_pages),
     ('Expense', expense_records, 'red', total_expense_pages)
@@ -132,20 +127,12 @@
           {% for rec in records %}
           <tr class="border-b hover:bg-{{ color }}-50 transition">
             <td class="p-2">{{ rec[3] }}</td>
-            <td class="p-2">{{ rec[1] }}</td>
-            <td class="p-2 font-semibold text-{{ color }}-700">{{ rec[2] }}</td>
+            <td class="p-2">{{ t(rec[1]) }}</td> <td class="p-2 font-semibold text-{{ color }}-700">{{ rec[2] }}</td>
             <td class="p-2 max-w-[320px] relative group">
-              <div class="truncate cursor-pointer text-gray-700 hover:text-blue-600 font-medium"
-                   onclick="openDescModal(`{{ rec[4]|e }}`)">
-                {{ rec[4][:50] }}{% if rec[4]|length > 50 %}...{% endif %}
+              <div class="truncate cursor-pointer text-gray-700 hover:text-blue-600 font-medium">
+                {% set translated_desc = t(rec[4], is_user_data=True) %}
+                {{ translated_desc[:50] }}{% if translated_desc|length > 50 %}...{% endif %}
               </div>
-              {% if rec[4]|length > 50 %}
-              <div class="absolute left-0 top-full mt-1 hidden group-hover:block
-                         bg-gray-900 text-white text-sm rounded-lg px-3 py-2 shadow-lg w-64 z-50
-                         transition-all duration-200 transform scale-95 group-hover:scale-100 opacity-0 group-hover:opacity-100">
-                {{ rec[4] }}
-              </div>
-              {% endif %}
             </td>
             <td class="p-2">
               <div class="flex justify-center gap-2">
@@ -170,31 +157,32 @@
       </table>
     </div>
 
-    <!-- PAGINATION -->
-    {% if total_pages > 1 %}
-    <div class="flex justify-center gap-2 mt-4 flex-wrap">
-      {% if page > 1 %}
-      <a href="{{ url_for('dashboard', page=page-1, start_date=start_date, end_date=end_date) }}"
-         class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 transition">{{ t("prev") }}</a>
-      {% endif %}
-
-      {% for p in range(1, total_pages + 1) %}
-        {% if p == page %}
-          <span class="px-3 py-1 bg-blue-500 text-white rounded shadow">{{ p }}</span>
-        {% else %}
-          <a href="{{ url_for('dashboard', page=p, start_date=start_date, end_date=end_date) }}"
-             class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 transition">{{ p }}</a>
-        {% endif %}
-      {% endfor %}
-
-      {% if page < total_pages %}
-      <a href="{{ url_for('dashboard', page=page+1, start_date=start_date, end_date=end_date) }}"
-         class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 transition">{{ t("next") }}</a>
-      {% endif %}
-    </div>
+      <!-- PAGINATION (UNCHANGED, SAFE) -->
+  {% set total_pages = total_income_pages if table == 'Income' else total_expense_pages %}
+  {% if total_pages > 1 %}
+  <div class="flex justify-center gap-2 mt-4 flex-wrap">
+    {% if page > 1 %}
+    <a href="{{ url_for('dashboard', page=page-1, start_date=start_date, end_date=end_date) }}"
+       class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 transition">{{t("prev")}}</a>
     {% endif %}
 
+    {% for p in range(1, total_pages + 1) %}
+      {% if p == page %}
+        <span class="px-3 py-1 bg-blue-500 text-white rounded shadow">{{ p }}</span>
+      {% else %}
+        <a href="{{ url_for('dashboard', page=p, start_date=start_date, end_date=end_date) }}"
+           class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 transition">{{ p }}</a>
+      {% endif %}
+    {% endfor %}
+
+    {% if page < total_pages %}
+    <a href="{{ url_for('dashboard', page=page+1, start_date=start_date, end_date=end_date) }}"
+       class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 transition">{{t("next")}}</a>
+    {% endif %}
   </div>
+  {% endif %}
+    
+    </div>
   {% endfor %}
 
 </div>

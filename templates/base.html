@@ -1,10 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="{% if session.get('language') == 'mm' %}my{% else %}en{% endif %}">
 <head>
   <meta charset="UTF-8" />
   <title>{{ t("app_title") }}</title>
 
-  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = { darkMode: 'class' }
@@ -13,33 +12,28 @@
 
 <body class="bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors duration-300">
 
-<!-- ================= TOP BAR ================= -->
 <div class="flex justify-between items-center px-6 py-4 bg-white dark:bg-gray-800 shadow">
 
-  <!-- APP TITLE -->
   <h1 class="text-xl font-bold text-gray-800 dark:text-white">
     {{ t("app_title") }}
   </h1>
 
-  <!-- RIGHT CONTROLS -->
   <div class="flex items-center gap-3">
 
-    <!-- 🌐 LANGUAGE SWITCH -->
     <div class="flex gap-1 bg-gray-200 dark:bg-gray-700 rounded-lg p-1">
-      <a href="{{ url_for('set_language', lang='en') }}"
+      <a href="{{ url_for('set_lang', lang='en') }}"
          class="px-3 py-1 text-sm rounded-md transition
-         {% if session.get('lang','en') == 'en' %} bg-blue-600 text-white {% else %} text-gray-700 dark:text-gray-200 {% endif %}">
+         {% if session.get('language','en') == 'en' %} bg-blue-600 text-white {% else %} text-gray-700 dark:text-gray-200 {% endif %}">
         EN
       </a>
 
-      <a href="{{ url_for('set_language', lang='mm') }}"
+      <a href="{{ url_for('set_lang', lang='mm') }}"
          class="px-3 py-1 text-sm rounded-md transition
-         {% if session.get('lang') == 'mm' %} bg-blue-600 text-white {% else %} text-gray-700 dark:text-gray-200 {% endif %}">
+         {% if session.get('language') == 'mm' %} bg-blue-600 text-white {% else %} text-gray-700 dark:text-gray-200 {% endif %}">
         MM
       </a>
     </div>
 
-    <!-- 🌙 DARK MODE -->
     <button
       id="themeToggle"
       class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white transition">
@@ -49,7 +43,6 @@
   </div>
 </div>
 
-<!-- ================= FLASH MESSAGES ================= -->
 <div class="container mx-auto p-4">
   {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
@@ -58,8 +51,7 @@
         {% if category == 'success' %} bg-green-500
         {% elif category == 'warning' %} bg-yellow-500
         {% else %} bg-red-500 {% endif %}">
-        {{ msg }}
-      </div>
+        {{ t(msg) }} </div>
     {% endfor %}
   {% endif %}
   {% endwith %}
@@ -69,7 +61,6 @@
   {% endblock %}
 </div>
 
-<!-- ================= DARK MODE SCRIPT ================= -->
 <script>
   const toggleBtn = document.getElementById("themeToggle");
   const html = document.documentElement;

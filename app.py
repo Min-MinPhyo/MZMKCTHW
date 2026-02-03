@@ -8,6 +8,14 @@ import time
 from werkzeug.utils import secure_filename
 from datetime import datetime, timedelta
 
+
+# google translate for en/mm version
+from googletrans import Translator
+
+
+# mail testing and reset password 
+from flask_mail import Mail, Message
+
 # pdf download
 from flask import send_file, request
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
@@ -255,7 +263,24 @@ LANGUAGES = {
         "old_password":"Old",
         "new_password":"New Password",
         "update_btn":"Update Profile",
-        "leave_blank_to_keep":"enter match old password"
+        "leave_blank_to_keep":"enter match old password",
+        
+        
+        
+        # Quiz Result Keys
+        "quiz_result_title": "🏁 Quiz Result",
+        "quiz_result_subtitle": "See how well you did!",
+        "quiz_excellent": "Excellent! Perfect Score!",
+        "quiz_good": "Good job! Keep going!",
+        "quiz_keep_trying": "Keep practicing! You’ll improve!",
+        "accuracy": "Accuracy",
+        "play_again": "Play Again",
+        "back_dashboard": "Dashboard",
+        "next": "Next Question",
+        "play_quiz": "🧠 Quiz Game",
+        "records": "Question",
+        "cancel": "Quit Quiz",
+        "reset": "Restart Quiz"
         
 
     },
@@ -458,7 +483,23 @@ LANGUAGES = {
         "old_password":"စကားဝှက်အဟောင်း",
         "new_password":"စကားဝှက်အသစ်",
         "update_btn":"စကားဝှက်ကို အပ်ဒိတ်",
-        "leave_blank_to_keep":"စကားဝှက်ဟောင်းနှင့် ကိုက်ညီသော စကားဝှက်အသစ်ကို ရိုက်ထည့်ပါ"
+        "leave_blank_to_keep":"စကားဝှက်ဟောင်းနှင့် ကိုက်ညီသော စကားဝှက်အသစ်ကို ရိုက်ထည့်ပါ",
+        
+        
+        # Quiz Result Keys (မြန်မာဘာသာ)
+        "quiz_result_title": "🏁 ဖြေဆိုမှုရလဒ်",
+        "quiz_result_subtitle": "သင်ဘယ်လောက်ထိ တော်သလဲဆိုတာ ကြည့်လိုက်ပါဦး!",
+        "quiz_excellent": "ထူးချွန်ပါတယ်! အမှတ်ပြည့်ရပါတယ်!",
+        "quiz_good": "တော်ပါတယ်! ဒီထက်မက ကြိုးစားပါဦး!",
+        "quiz_keep_trying": "ထပ်ပြီးလေ့ကျင့်ပါဦး! မကြာခင် တိုးတက်လာမှာပါ!",
+        "accuracy": "မှန်ကန်မှုနှုန်း",
+        "play_again": "ပြန်ဖြေမယ်",
+        "back_dashboard": "ပင်မစာမျက်နှာ",
+        "next": "နောက်တစ်ပုဒ်",
+        "play_quiz": "🧠 ဉာဏ်စမ်းပဟေဠိ",
+        "records": "မေးခွန်းနံပါတ်",
+        "cancel": "ထွက်မည်",
+        "reset": "အစကပြန်စမည်"
     }
 }
 
@@ -856,55 +897,122 @@ def index():
 #     return render_template("register.html")
 
 # test register
+# EMAIL_REGEX = re.compile(r"^[\w\.-]+@[\w\.-]+\.\w+$")
+# @app.route("/register", methods=["GET", "POST"])
+# def register():
+#     if request.method == "POST":
+#         username = request.form["username"].strip()
+#         email = request.form["email"].strip()
+#         password = request.form["password"].strip()
+
+#         # ---- Validation ----
+#         if not username or not email or not password:
+#             flash("All fields are required!", "danger")
+#             return render_template("register.html")
+
+#         if not EMAIL_REGEX.match(email):
+#             flash("Invalid email format!", "danger")
+#             return render_template("register.html")
+
+#         # if len(password) < 6:
+#         #     flash("Password must be at least 6 characters long!", "danger")
+#         #     return render_template("register.html")
+        
+#         if not re.match(r"^(?=.*\d)(?=.*[!@#$%^&*(),.?\":{}|<>]).{6,}$", password):
+#               flash("Password must be at least 6 characters long and include a number and a special character!",
+#                      "danger")
+#               return render_template("register.html")
+
+
+#         # ---- Save to database with password hash ----
+#         try:
+#             hashed_password = generate_password_hash(password)  # 🔑 hash password
+#             conn = sqlite3.connect(DB_NAME)
+#             cursor = conn.cursor()
+#             cursor.execute(
+#                 "INSERT INTO users(username, email, password) VALUES (?, ?, ?)",
+#                 (username, email, hashed_password)
+#             )
+            
+#             conn.commit()
+#             conn.close()
+
+#             flash("Registration successful! Please login.", "success")
+#             return redirect(url_for("login"))
+
+#         except sqlite3.IntegrityError:
+#             flash("Username or email already exists!", "danger")
+#             return render_template("register.html")
+
+#     return render_template("register.html")
+
+
+# test register updated
 EMAIL_REGEX = re.compile(r"^[\w\.-]+@[\w\.-]+\.\w+$")
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    form_data = {}
     if request.method == "POST":
-        username = request.form["username"].strip()
-        email = request.form["email"].strip()
-        password = request.form["password"].strip()
+        # ၁။ Form data များကို ဖမ်းယူခြင်း
+        form_data = request.form
+        username = request.form.get("username", "").strip()
+        email = request.form.get("email", "").strip()
+        password = request.form.get("password", "").strip()
+        avatar_file = request.files.get("avatar")
 
-        # ---- Validation ----
+        # ၂။ အခြေခံ Validation များစစ်ဆေးခြင်း
         if not username or not email or not password:
-            flash("All fields are required!", "danger")
-            return render_template("register.html")
+            flash(t("all_fields_required"), "danger")
+            return render_template("register.html", form_data=form_data)
 
         if not EMAIL_REGEX.match(email):
-            flash("Invalid email format!", "danger")
-            return render_template("register.html")
+            flash(t("invalid_email"), "danger")
+            return render_template("register.html", form_data=form_data)
 
-        # if len(password) < 6:
-        #     flash("Password must be at least 6 characters long!", "danger")
-        #     return render_template("register.html")
-        
+        # Password Policy (အနည်းဆုံး ၆ လုံး၊ နံပါတ် နှင့် သင်္ကေတ ပါရမည်)
         if not re.match(r"^(?=.*\d)(?=.*[!@#$%^&*(),.?\":{}|<>]).{6,}$", password):
-              flash("Password must be at least 6 characters long and include a number and a special character!",
-                     "danger")
-              return render_template("register.html")
+            flash(t("password_policy_error"), "danger")
+            return render_template("register.html", form_data=form_data)
 
+        # ၃။ Avatar ဖိုင်ကို စစ်ဆေးခြင်းနှင့် သိမ်းဆည်းခြင်း
+        avatar_filename = "default_avatar.png"  # ပုံမတင်လျှင် သုံးမည့် default အမည်
 
-        # ---- Save to database with password hash ----
+        if avatar_file and avatar_file.filename != '':
+            if allowed_file(avatar_file.filename):
+                # ဖိုင်အမည်ကို လုံခြုံအောင်ပြုလုပ်ပြီး username တွဲပေးခြင်း (အမည်တူမထပ်စေရန်)
+                ext = avatar_file.filename.rsplit(".", 1)[1].lower()
+                filename = secure_filename(f"{username}_{avatar_file.filename}")
+                avatar_file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+                avatar_filename = filename
+            else:
+                flash(t("invalid_file_format"), "danger")
+                return render_template("register.html", form_data=form_data)
+
+        # ၄။ Database ထဲသို့ ထည့်သွင်းခြင်း
         try:
-            hashed_password = generate_password_hash(password)  # 🔑 hash password
+            hashed_password = generate_password_hash(password)
             conn = sqlite3.connect(DB_NAME)
             cursor = conn.cursor()
+            
             cursor.execute(
-                "INSERT INTO users(username, email, password) VALUES (?, ?, ?)",
-                (username, email, hashed_password)
+                "INSERT INTO users(username, email, password, avatar) VALUES (?, ?, ?, ?)",
+                (username, email, hashed_password, avatar_filename)
             )
             
             conn.commit()
             conn.close()
 
-            flash("Registration successful! Please login.", "success")
+            flash(t("register_success"), "success")
             return redirect(url_for("login"))
 
         except sqlite3.IntegrityError:
-            flash("Username or email already exists!", "danger")
-            return render_template("register.html")
+            flash(t("user_exists_error"), "danger")
+            return render_template("register.html", form_data=form_data)
+        except Exception as e:
+            flash(f"Error: {str(e)}", "danger")
+            return render_template("register.html", form_data=form_data)
 
-    return render_template("register.html")
-
+    return render_template("register.html", form_data={})
 
 # login data 
 # @app.route("/login", methods=["GET", "POST"])
@@ -1442,105 +1550,280 @@ def dashboard():
 
 
 # add-income
-@app.route("/add_income", methods=["GET","POST"])
+# @app.route("/add_income", methods=["GET","POST"])
+# def add_income():
+#     if "user_id" not in session:
+#         return redirect(url_for("login"))
+
+#     if request.method == "POST":
+#         category = request.form["category"]
+#         amount = float(request.form["amount"])
+#         description = request.form["description"]
+#         date_input = request.form.get("date") or datetime.now().strftime("%Y-%m-%d")
+
+#         conn = sqlite3.connect(DB_NAME)
+#         cursor = conn.cursor()
+#         cursor.execute(
+#             "INSERT INTO income(user_id,date,category,amount,description) VALUES(?,?,?,?,?)",
+#             (session["user_id"], date_input, category, amount, description)
+#         )
+#         conn.commit()
+#         conn.close()
+
+#         flash("Income added successfully!", "success")
+#         return redirect(url_for("dashboard"))
+
+#     return render_template(
+#         "income_form.html",
+#         mode="add",
+#         categories=INCOME_CATEGORIES,
+#         current_date=date.today().strftime("%Y-%m-%d")
+#     )
+
+
+# add-income updated
+@app.route("/add_income", methods=["GET", "POST"])
 def add_income():
     if "user_id" not in session:
         return redirect(url_for("login"))
 
+    # Error တက်ရင် User ရိုက်ထားတဲ့ data တွေ ပြန်ပေါ်နေဖို့ form_data ကို သုံးမယ်
+    form_data = {}
+
     if request.method == "POST":
-        category = request.form["category"]
-        amount = float(request.form["amount"])
-        description = request.form["description"]
-        date_input = request.form.get("date") or datetime.now().strftime("%Y-%m-%d")
+        form_data = request.form
+        category = request.form.get("category", "").strip()
+        amount_str = request.form.get("amount", "").strip()
+        description = request.form.get("description", "").strip()
+        date_input = request.form.get("date") or date.today().strftime("%Y-%m-%d")
 
-        conn = sqlite3.connect(DB_NAME)
-        cursor = conn.cursor()
-        cursor.execute(
-            "INSERT INTO income(user_id,date,category,amount,description) VALUES(?,?,?,?,?)",
-            (session["user_id"], date_input, category, amount, description)
-        )
-        conn.commit()
-        conn.close()
+        # 🚩 1. Input Field Required Validation (အကုန်ဖြည့်ရန် စစ်ဆေးခြင်း)
+        if not category or not amount_str:
+            flash(t("all_fields_required") if LANGUAGES else "Category and Amount are required!", "danger")
+            return render_template(
+                "income_form.html", 
+                mode="add", 
+                categories=INCOME_CATEGORIES, 
+                form_data=form_data,
+                current_date=date_input
+            )
 
-        flash("Income added successfully!", "success")
-        return redirect(url_for("dashboard"))
+        # 🚩 2. Numeric Validation (ဂဏန်းမှန်မမှန် စစ်ဆေးခြင်း)
+        try:
+            amount = float(amount_str)
+            if amount <= 0:
+                flash(t("amount_min_error") if LANGUAGES else "Amount must be greater than zero!", "danger")
+                return render_template("income_form.html", mode="add", categories=INCOME_CATEGORIES, form_data=form_data)
+        except ValueError:
+            flash(t("invalid_amount") if LANGUAGES else "Please enter a valid number for amount!", "danger")
+            return render_template("income_form.html", mode="add", categories=INCOME_CATEGORIES, form_data=form_data)
 
+        # 🚩 3. Database ထဲသို့ ထည့်သွင်းခြင်း
+        try:
+            conn = sqlite3.connect(DB_NAME)
+            cursor = conn.cursor()
+            cursor.execute(
+                "INSERT INTO income(user_id, date, category, amount, description) VALUES(?,?,?,?,?)",
+                (session["user_id"], date_input, category, amount, description)
+            )
+            conn.commit()
+            conn.close()
+
+            flash(t("income_success") if LANGUAGES else "Income added successfully!", "success")
+            return redirect(url_for("dashboard"))
+            
+        except Exception as e:
+            flash(f"Database Error: {str(e)}", "danger")
+            return render_template("income_form.html", mode="add", categories=INCOME_CATEGORIES, form_data=form_data)
+
+    # --- GET Request (Page စပွင့်ချိန်) ---
     return render_template(
         "income_form.html",
         mode="add",
         categories=INCOME_CATEGORIES,
-        current_date=date.today().strftime("%Y-%m-%d")
+        current_date=date.today().strftime("%Y-%m-%d"),
+        form_data={}
     )
 
-
 # add expense 
+# @app.route("/add_expense", methods=["GET", "POST"])
+# def add_expense():
+#     if "user_id" not in session:
+#         return redirect(url_for("login"))
+
+#     conn = sqlite3.connect(DB_NAME)
+#     cursor = conn.cursor()
+
+#     if request.method == "POST":
+#         category = request.form["category"]
+#         amount = float(request.form["amount"])
+#         description = request.form["description"]
+#         date_input = request.form.get("date")
+#         confirm = request.form.get("confirm")  # <-- confirm flag
+
+#         # Calculate balance
+#         cursor.execute("SELECT SUM(amount) FROM income WHERE user_id=?", (session["user_id"],))
+#         total_income = cursor.fetchone()[0] or 0
+
+#         cursor.execute("SELECT SUM(amount) FROM expenses WHERE user_id=?", (session["user_id"],))
+#         total_expense = cursor.fetchone()[0] or 0
+
+#         available_balance = total_income - total_expense
+
+#         # ❌ BLOCK
+#         if amount > available_balance:
+#             flash(f"Expense exceeds available balance ({available_balance})!", "danger")
+#             conn.close()
+#             return redirect(url_for("add_expense"))
+
+#         # ⚠ CONFIRM REQUIRED
+#         if amount == available_balance and confirm != "yes":
+#             flash(
+#                 "This expense will use ALL your remaining balance. Please confirm.",
+#                 "warning"
+#             )
+#             conn.close()
+#             return render_template(
+#                 "expense_form.html",
+#                 categories=EXPENSE_CATEGORIES,
+#                 current_date=date_input,
+#                 mode="add",
+#                 show_confirm=True,
+#                 form_data=request.form
+#             )
+
+#         # ✅ INSERT
+#         cursor.execute(
+#             "INSERT INTO expenses(user_id, date, category, amount, description) VALUES (?, ?, ?, ?, ?)",
+#             (session["user_id"], date_input, category, amount, description)
+#         )
+#         conn.commit()
+#         conn.close()
+
+#         flash("Expense added successfully!", "success")
+#         return redirect(url_for("dashboard"))
+
+#     conn.close()
+#     return render_template(
+#         "expense_form.html",
+#         categories=EXPENSE_CATEGORIES,
+#         current_date=date.today().strftime("%Y-%m-%d"),
+#         mode="add",
+#         show_confirm=False
+#     )
+
+
+# add expense updated
+from datetime import date
+
 @app.route("/add_expense", methods=["GET", "POST"])
 def add_expense():
     if "user_id" not in session:
         return redirect(url_for("login"))
 
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
+    # Initial values
+    form_data = {}
+    current_date = date.today().strftime("%Y-%m-%d")
 
     if request.method == "POST":
-        category = request.form["category"]
-        amount = float(request.form["amount"])
-        description = request.form["description"]
-        date_input = request.form.get("date")
-        confirm = request.form.get("confirm")  # <-- confirm flag
+        form_data = request.form
+        
+        # Form Data ဆွဲထုတ်ခြင်း
+        category = request.form.get("category", "").strip()
+        amount_str = request.form.get("amount", "").strip()
+        description = request.form.get("description", "").strip()
+        date_input = request.form.get("date") or current_date
+        confirm = request.form.get("confirm")
 
-        # Calculate balance
+        # 🚩 1. Required Fields Validation (မဖြစ်မနေ ဖြည့်ရမည့်နေရာများ စစ်ဆေးခြင်း)
+        if not category or not amount_str or not date_input:
+            flash(t("all_fields_required"), "danger")
+            return render_template("expense_form.html", 
+                                 categories=EXPENSE_CATEGORIES, 
+                                 current_date=date_input, 
+                                 mode="add", 
+                                 form_data=form_data)
+
+        # 🚩 2. Amount Validation (ဂဏန်း မှန်မမှန်နှင့် သုညထက်ကြီးမကြီး စစ်ဆေးခြင်း)
+        try:
+            amount = float(amount_str)
+            if amount <= 0:
+                flash(t("amount_min_error"), "danger")
+                return render_template("expense_form.html", 
+                                     categories=EXPENSE_CATEGORIES, 
+                                     current_date=date_input, 
+                                     mode="add", 
+                                     form_data=form_data)
+        except ValueError:
+            flash(t("invalid_amount"), "danger")
+            return render_template("expense_form.html", 
+                                 categories=EXPENSE_CATEGORIES, 
+                                 current_date=date_input, 
+                                 mode="add", 
+                                 form_data=form_data)
+
+        # 🚩 3. Balance Calculation & Check
+        conn = sqlite3.connect(DB_NAME)
+        cursor = conn.cursor()
+        
+        # Income စုစုပေါင်း
         cursor.execute("SELECT SUM(amount) FROM income WHERE user_id=?", (session["user_id"],))
         total_income = cursor.fetchone()[0] or 0
 
+        # Expense စုစုပေါင်း
         cursor.execute("SELECT SUM(amount) FROM expenses WHERE user_id=?", (session["user_id"],))
         total_expense = cursor.fetchone()[0] or 0
 
         available_balance = total_income - total_expense
 
-        # ❌ BLOCK
+        # ❌ Case: လက်ကျန်ငွေထက် ပိုသုံးခြင်း
         if amount > available_balance:
-            flash(f"Expense exceeds available balance ({available_balance})!", "danger")
+            flash(f"{t('exceed_balance_msg')} ({available_balance})!", "danger")
             conn.close()
-            return redirect(url_for("add_expense"))
+            return render_template("expense_form.html", 
+                                 categories=EXPENSE_CATEGORIES, 
+                                 current_date=date_input, 
+                                 mode="add", 
+                                 form_data=form_data)
 
-        # ⚠ CONFIRM REQUIRED
+        # ⚠ Case: Balance အကုန်သုံးမည်ဆိုပါက Confirm တောင်းခြင်း
         if amount == available_balance and confirm != "yes":
-            flash(
-                "This expense will use ALL your remaining balance. Please confirm.",
-                "warning"
-            )
+            flash(t("confirm_all_balance"), "warning")
             conn.close()
-            return render_template(
-                "expense_form.html",
-                categories=EXPENSE_CATEGORIES,
-                current_date=date_input,
-                mode="add",
-                show_confirm=True,
-                form_data=request.form
+            return render_template("expense_form.html", 
+                                 categories=EXPENSE_CATEGORIES, 
+                                 current_date=date_input, 
+                                 mode="add", 
+                                 show_confirm=True, 
+                                 form_data=form_data)
+
+        # ✅ 4. Data Insertion (ဒေတာ သိမ်းဆည်းခြင်း)
+        try:
+            cursor.execute(
+                "INSERT INTO expenses(user_id, date, category, amount, description) VALUES (?, ?, ?, ?, ?)",
+                (session["user_id"], date_input, category, amount, description)
             )
+            conn.commit()
+            flash(t("expense_success"), "success")
+            return redirect(url_for("dashboard"))
+        except Exception as e:
+            flash(f"Error: {str(e)}", "danger")
+            return render_template("expense_form.html", 
+                                 categories=EXPENSE_CATEGORIES, 
+                                 current_date=date_input, 
+                                 mode="add", 
+                                 form_data=form_data)
+        finally:
+            conn.close()
 
-        # ✅ INSERT
-        cursor.execute(
-            "INSERT INTO expenses(user_id, date, category, amount, description) VALUES (?, ?, ?, ?, ?)",
-            (session["user_id"], date_input, category, amount, description)
-        )
-        conn.commit()
-        conn.close()
+    # GET Request
+    return render_template("expense_form.html", 
+                         categories=EXPENSE_CATEGORIES, 
+                         current_date=current_date, 
+                         mode="add", 
+                         form_data={})
 
-        flash("Expense added successfully!", "success")
-        return redirect(url_for("dashboard"))
-
-    conn.close()
-    return render_template(
-        "expense_form.html",
-        categories=EXPENSE_CATEGORIES,
-        current_date=date.today().strftime("%Y-%m-%d"),
-        mode="add",
-        show_confirm=False
-    )
-
-
+  
 # add expense test // test expense not working
 # @app.route("/add_expense", methods=["GET", "POST"])
 # def add_expense():
@@ -1672,7 +1955,71 @@ def edit_income(income_id):
 
     )
 
-# ---- Delete Income ----
+# edit-income updated 
+# @app.route("/edit_income/<int:income_id>", methods=["GET", "POST"])
+# def edit_income(income_id):
+#     if "user_id" not in session:
+#         return redirect(url_for("login"))
+
+#     conn = sqlite3.connect(DB_NAME)
+#     conn.row_factory = sqlite3.Row  # Dictionary ပုံစံမျိုး ခေါ်သုံးလို့ရအောင်
+#     cursor = conn.cursor()
+
+#     if request.method == "POST":
+#         # Form ကလာတဲ့ data အသစ်များကို ဖမ်းယူခြင်း
+#         form_data = request.form
+#         date_input = request.form.get("date")
+#         category = request.form.get("category", "").strip()
+#         amount_str = request.form.get("amount", "").strip()
+#         description = request.form.get("description", "").strip()
+
+#         # Validation (Amount ပါမပါ စစ်ဆေးခြင်း)
+#         if not amount_str or not category:
+#             flash(t("all_fields_required"), "danger")
+#             return render_template("income_form.html", mode="edit", categories=INCOME_CATEGORIES, form_data=form_data)
+
+#         try:
+#             amount = float(amount_str)
+#             cursor.execute(
+#                 "UPDATE income SET date=?, category=?, amount=?, description=? WHERE id=? AND user_id=?",
+#                 (date_input, category, amount, description, income_id, session["user_id"])
+#             )
+#             conn.commit()
+#             conn.close()
+#             flash(t("update_success"), "success")
+#             return redirect(url_for("dashboard"))
+#         except ValueError:
+#             flash(t("invalid_amount"), "danger")
+#             return render_template("income_form.html", mode="edit", categories=INCOME_CATEGORIES, form_data=form_data)
+
+#     # --- GET REQUEST (Edit လုပ်ရန် Page စပွင့်ချိန်) ---
+#     cursor.execute(
+#         "SELECT date, category, amount, description FROM income WHERE id=? AND user_id=?",
+#         (income_id, session["user_id"])
+#     )
+#     record = cursor.fetchone()
+#     conn.close()
+
+#     if not record:
+#         flash("Record not found!", "danger")
+#         return redirect(url_for("dashboard"))
+
+#     # Database ကလာတဲ့ data တွေကို HTML ကနားလည်တဲ့ form_data ပုံစံသို့ ပြောင်းလဲခြင်း
+#     current_values = {
+#         "date": record["date"],
+#         "category": record["category"],
+#         "amount": record["amount"],
+#         "description": record["description"]
+#     }
+
+#     return render_template(
+#         "income_form.html",
+#         mode="edit",
+#         categories=INCOME_CATEGORIES,
+#         form_data=current_values, # အခု နာမည်ကို form_data လို့ ပေးလိုက်တဲ့အတွက် HTML နဲ့ ကွက်တိဖြစ်သွားပါပြီ
+#         income_id=income_id
+#     )
+# # ---- Delete Income ----
 @app.route("/delete_income/<int:income_id>")
 def delete_income(income_id):
     if "user_id" not in session:
@@ -1686,6 +2033,103 @@ def delete_income(income_id):
     return redirect(url_for("dashboard"))
 
 # ---- Edit Expense ----
+# @app.route("/edit_expense/<int:expense_id>", methods=["GET", "POST"])
+# def edit_expense(expense_id):
+#     if "user_id" not in session:
+#         return redirect(url_for("login"))
+
+#     conn = sqlite3.connect(DB_NAME)
+#     conn.row_factory = sqlite3.Row
+#     cursor = conn.cursor()
+
+#     if request.method == "POST":
+#         date_input = request.form.get("date")
+#         category = request.form.get("category", "").strip()
+#         amount_str = request.form.get("amount", "").strip()
+#         description = request.form.get("description", "").strip()
+       
+
+#         # ✅ VALIDATION
+#         if not amount_str:
+#             flash("Amount is required!", "danger")
+#             conn.close()
+#             return redirect(url_for("edit_expense", expense_id=expense_id))
+
+#         try:
+#             amount = float(amount_str)
+#         except ValueError:
+#             flash("Invalid amount value!", "danger")
+#             conn.close()
+#             return redirect(url_for("edit_expense", expense_id=expense_id))
+
+#         if amount <= 0:
+#             flash("Amount must be greater than zero!", "danger")
+#             conn.close()
+#             return redirect(url_for("edit_expense", expense_id=expense_id))
+
+#         # ---- BALANCE CHECK (exclude current expense) ----
+#         cursor.execute(
+#             "SELECT SUM(amount) FROM income WHERE user_id=?",
+#             (session["user_id"],)
+#         )
+#         total_income = cursor.fetchone()[0] or 0
+
+#         cursor.execute(
+#             "SELECT SUM(amount) FROM expenses WHERE user_id=? AND id<>?",
+#             (session["user_id"], expense_id)
+#         )
+#         total_expense_except_current = cursor.fetchone()[0] or 0
+
+#         available_balance = total_income - total_expense_except_current
+
+#         if amount > available_balance:
+#             flash(
+#                 f"Expense exceeds available balance ({available_balance})!",
+#                 "danger"
+#             )
+#             conn.close()
+#             return redirect(url_for("edit_expense", expense_id=expense_id))
+
+#         # ---- UPDATE EXPENSE ----
+#         cursor.execute(
+#             """
+#             UPDATE expenses
+#             SET date=?, category=?, amount=?, description=?
+#             WHERE id=? AND user_id=?
+#             """,
+#             (date_input,category, amount, description, expense_id, session["user_id"])
+#         )
+
+#         conn.commit()
+#         conn.close()
+
+#         flash("Expense updated successfully!", "success")
+#         return redirect(url_for("dashboard"))
+
+#     # ---- GET REQUEST (LOAD RECORD) ----
+#     cursor.execute(
+#         """
+#         SELECT date,category, amount, description
+#         FROM expenses
+#         WHERE id=? AND user_id=?
+#         """,
+#         (expense_id, session["user_id"])
+#     )
+#     record = cursor.fetchone()
+#     conn.close()
+
+#     if not record:
+#         flash("Record not found!", "danger")
+#         return redirect(url_for("dashboard"))
+
+#     return render_template(
+#         "expense_form.html",
+#         categories=EXPENSE_CATEGORIES,
+#         record=record,
+#         mode="edit"
+#     )
+
+# edit expense updated
 @app.route("/edit_expense/<int:expense_id>", methods=["GET", "POST"])
 def edit_expense(expense_id):
     if "user_id" not in session:
@@ -1696,76 +2140,55 @@ def edit_expense(expense_id):
     cursor = conn.cursor()
 
     if request.method == "POST":
+        # Form ကလာတဲ့ data တွေကို စုစည်းမယ် (Error တက်ရင် template ပြန်ပို့ဖို့)
+        form_data = request.form
         date_input = request.form.get("date")
         category = request.form.get("category", "").strip()
         amount_str = request.form.get("amount", "").strip()
         description = request.form.get("description", "").strip()
-       
 
-        # ✅ VALIDATION
+        # ✅ 1. VALIDATION (Amount ရှိမရှိ စစ်ဆေးခြင်း)
         if not amount_str:
-            flash("Amount is required!", "danger")
-            conn.close()
-            return redirect(url_for("edit_expense", expense_id=expense_id))
+            flash(t("amount_required") if LANGUAGES else "Amount is required!", "danger")
+            return render_template("expense_form.html", categories=EXPENSE_CATEGORIES, form_data=form_data, mode="edit", expense_id=expense_id)
 
         try:
             amount = float(amount_str)
         except ValueError:
-            flash("Invalid amount value!", "danger")
-            conn.close()
-            return redirect(url_for("edit_expense", expense_id=expense_id))
+            flash(t("invalid_amount") if LANGUAGES else "Invalid amount!", "danger")
+            return render_template("expense_form.html", categories=EXPENSE_CATEGORIES, form_data=form_data, mode="edit", expense_id=expense_id)
 
         if amount <= 0:
-            flash("Amount must be greater than zero!", "danger")
-            conn.close()
-            return redirect(url_for("edit_expense", expense_id=expense_id))
+            flash(t("amount_min_error") if LANGUAGES else "Amount must be > 0", "danger")
+            return render_template("expense_form.html", categories=EXPENSE_CATEGORIES, form_data=form_data, mode="edit", expense_id=expense_id)
 
-        # ---- BALANCE CHECK (exclude current expense) ----
-        cursor.execute(
-            "SELECT SUM(amount) FROM income WHERE user_id=?",
-            (session["user_id"],)
-        )
+        # ✅ 2. BALANCE CHECK (ယခုပြင်မည့် record ကို ချန်လှပ်၍ တွက်ချက်ခြင်း)
+        cursor.execute("SELECT SUM(amount) FROM income WHERE user_id=?", (session["user_id"],))
         total_income = cursor.fetchone()[0] or 0
 
-        cursor.execute(
-            "SELECT SUM(amount) FROM expenses WHERE user_id=? AND id<>?",
-            (session["user_id"], expense_id)
-        )
+        cursor.execute("SELECT SUM(amount) FROM expenses WHERE user_id=? AND id<>?", (session["user_id"], expense_id))
         total_expense_except_current = cursor.fetchone()[0] or 0
 
         available_balance = total_income - total_expense_except_current
 
         if amount > available_balance:
-            flash(
-                f"Expense exceeds available balance ({available_balance})!",
-                "danger"
-            )
-            conn.close()
-            return redirect(url_for("edit_expense", expense_id=expense_id))
+            flash(f"{t('exceed_balance_msg') if LANGUAGES else 'Exceeds balance!'} ({available_balance})", "danger")
+            return render_template("expense_form.html", categories=EXPENSE_CATEGORIES, form_data=form_data, mode="edit", expense_id=expense_id)
 
-        # ---- UPDATE EXPENSE ----
+        # ✅ 3. UPDATE DATABASE
         cursor.execute(
-            """
-            UPDATE expenses
-            SET date=?, category=?, amount=?, description=?
-            WHERE id=? AND user_id=?
-            """,
-            (date_input,category, amount, description, expense_id, session["user_id"])
+            "UPDATE expenses SET date=?, category=?, amount=?, description=? WHERE id=? AND user_id=?",
+            (date_input, category, amount, description, expense_id, session["user_id"])
         )
-
         conn.commit()
         conn.close()
 
-        flash("Expense updated successfully!", "success")
+        flash(t("update_success") if LANGUAGES else "Updated successfully!", "success")
         return redirect(url_for("dashboard"))
 
-    # ---- GET REQUEST (LOAD RECORD) ----
+    # --- GET REQUEST (LOAD DATA) ---
     cursor.execute(
-        """
-        SELECT date,category, amount, description
-        FROM expenses
-        WHERE id=? AND user_id=?
-        """,
+        "SELECT date, category, amount, description FROM expenses WHERE id=? AND user_id=?",
         (expense_id, session["user_id"])
     )
     record = cursor.fetchone()
@@ -1775,11 +2198,20 @@ def edit_expense(expense_id):
         flash("Record not found!", "danger")
         return redirect(url_for("dashboard"))
 
+    # record ထဲက data တွေကို form_data အဖြစ်ပြောင်းလဲပေးလိုက်ခြင်း (Template error ကင်းစေရန်)
+    current_form_data = {
+        'date': record['date'],
+        'category': record['category'],
+        'amount': record['amount'],
+        'description': record['description']
+    }
+
     return render_template(
         "expense_form.html",
         categories=EXPENSE_CATEGORIES,
-        record=record,
-        mode="edit"
+        form_data=current_form_data,
+        mode="edit",
+        expense_id=expense_id
     )
 
 # ---- Delete Expense ----
@@ -2472,25 +2904,103 @@ def quiz_quit():
 
 
 # eng myanmar version
-def t(key):
-    lang = session.get("lang", "en")
-    return LANGUAGES.get(lang, LANGUAGES["en"]).get(key, key)
+# def t(key):
+#     lang = session.get("lang", "en")
+#     return LANGUAGES.get(lang, LANGUAGES["en"]).get(key, key)
 
+# @app.context_processor
+# def inject_lang():
+#     return dict(t=t)
+
+
+# @app.route("/set_language/<lang>")
+# def set_language(lang):
+#     # only accept 'en' or 'mm'
+#     if lang not in ["en", "mm"]:
+#         lang = "en"
+#     session["lang"] = lang
+
+#     # redirect back to the page user was on
+#     return redirect(request.referrer or url_for("dashboard"))
+
+
+# --- ၂။ Hybrid Translation Logic ---
+translator = Translator()
+
+# --- t() function logic ---
+# @app.context_processor
+# def inject_translate():
+#     def t(key, is_user_data=False):
+#         lang = session.get('language', 'en') # en သို့မဟုတ် mm
+#         # ၁။ User ရိုက်ထားတဲ့ စာသား (Description) ဖြစ်လျှင် Google Translate သုံးမည်
+#         if is_user_data and key:
+#             if lang == 'mm':
+#                 try:
+#                     return translator.translate(key, dest='my').text
+#                 except:
+#                     return key # Error ဖြစ်လျှင် မူလစာသားအတိုင်းပြမည်
+#             return key
+
+#         # ၂။ Static UI စာသားဖြစ်လျှင် Dictionary ထဲမှာရှာမည်
+#         # Dictionary မှာမရှိရင် Category ဖြစ်နိုင်လို့ google translate ဆီ တစ်ခါထပ်ပို့ကြည့်မယ်
+#         translated = LANGUAGES.get(lang, LANGUAGES['en']).get(key)
+#         if translated:
+#             return translated
+#         # ၃။ Dictionary မှာမရှိတဲ့ Category မျိုးဆိုလျှင် အလိုအလျောက် ဘာသာပြန်ခိုင်းမည်
+#         if lang == 'mm' and key:
+#             try:
+#                 return translator.translate(key, dest='my').text
+#             except:
+#                 return key
+                
+#         return key
+#     return dict(t=t)
+
+# # --- Language Switcher Route ---
+# @app.route('/set_lang/<lang>')
+# def set_lang(lang):
+#     session['language'] = lang
+#     return redirect(request.referrer or url_for('dashboard'))
+
+# translated updated
+# ၁။ t function ကို Global အနေနဲ့ အပြင်မှာ အရင်ရေးပါ
+def t(key, is_user_data=False):
+    # session ထဲမှာ language မရှိရင် default 'en' ယူမယ်
+    lang = session.get('language', 'en') 
+    
+    # User ရိုက်ထားတဲ့ စာသား (Description) ဖြစ်လျှင်
+    if is_user_data and key:
+        if lang == 'mm':
+            try:
+                return translator.translate(key, dest='my').text
+            except:
+                return key
+        return key
+
+    # Static UI စာသားဖြစ်လျှင် Dictionary ထဲမှာရှာမယ်
+    translated = LANGUAGES.get(lang, LANGUAGES['en']).get(key)
+    if translated:
+        return translated
+
+    # Dictionary မှာမရှိရင် Category ဖြစ်နိုင်လို့ Google Translate သုံးမယ်
+    if lang == 'mm' and key:
+        try:
+            return translator.translate(key, dest='my').text
+        except:
+            return key
+            
+    return key
+
+# ၂။ ပြီးမှ HTML template တွေအတွက် inject လုပ်ပေးပါ
 @app.context_processor
-def inject_lang():
-    return dict(t=t)
+def inject_translate():
+    return dict(t=t) # အပေါ်က function ကိုပဲ ပြန်ညွှန်းလိုက်တာပါ
 
-
-@app.route("/set_language/<lang>")
-def set_language(lang):
-    # only accept 'en' or 'mm'
-    if lang not in ["en", "mm"]:
-        lang = "en"
-    session["lang"] = lang
-
-    # redirect back to the page user was on
-    return redirect(request.referrer or url_for("dashboard"))
-
+# ၃။ Language Switcher
+@app.route('/set_lang/<lang>')
+def set_lang(lang):
+    session['language'] = lang
+    return redirect(request.referrer or url_for('dashboard'))
 
 # ---- Run App ----
 if __name__ == "__main__":

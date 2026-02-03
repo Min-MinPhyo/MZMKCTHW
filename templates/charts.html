@@ -3,7 +3,6 @@
 
 <div class="max-w-7xl mx-auto p-6 space-y-8">
 
-  <!-- ================= HEADER ================= -->
   <div class="text-center mb-8">
     <h1 class="text-4xl font-bold text-gray-800 mb-2">
       {{ t("analysis_title") }}
@@ -13,7 +12,6 @@
     </p>
   </div>
 
-  <!-- ================= FILTER FORM ================= -->
   <form method="POST"
         class="flex flex-wrap justify-center items-end gap-4 mb-10">
 
@@ -44,7 +42,6 @@
     </a>
   </form>
 
-  <!-- ================= CHARTS ================= -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
     <div class="bg-white p-6 rounded-xl shadow-lg">
@@ -63,7 +60,6 @@
 
   </div>
 
-  <!-- ================= SUMMARY ================= -->
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-10">
 
     <div class="bg-green-50 p-6 rounded-xl shadow border-l-4 border-green-500 text-center">
@@ -89,25 +85,24 @@
 
   </div>
 
-  <!-- ================= BACK ================= -->
   <div class="text-center mt-8">
     <a href="{{ url_for('dashboard') }}"
        class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded shadow transition">
-      ← {{ t("back_dashboard") }}
+       ← {{ t("back_dashboard") }}
     </a>
   </div>
 
 </div>
 
-<!-- ================= CHART.JS ================= -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+  // Chart labels များကို app.py ကတည်းက translate လုပ်ထားရန် အကြံပြုပါသည်
   const incomeLabels = {{ income_labels | safe }};
   const incomeValues = {{ income_values | safe }};
   const expenseLabels = {{ expense_labels | safe }};
   const expenseValues = {{ expense_values | safe }};
 
-  new Chart(incomeChart, {
+  new Chart(document.getElementById('incomeChart'), {
     type: "bar",
     data: {
       labels: incomeLabels,
@@ -120,7 +115,7 @@
     options: { plugins: { legend: { display: false } } }
   });
 
-  new Chart(expenseChart, {
+  new Chart(document.getElementById('expenseChart'), {
     type: "bar",
     data: {
       labels: expenseLabels,
