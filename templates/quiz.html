@@ -15,7 +15,7 @@
     </div>
 
     <div class="flex justify-center mb-6">
-      <div class="flex items-center gap-2 px-6 py-2 bg-red-50 border border-red-200 text-red-600 font-bold rounded-full shadow-sm animate-pulse">
+      <div class="flex items-center gap-2 px-6 py-2 bg-red-50 border border-red-200 text-red-600 font-bold rounded-full shadow-sm {% if remaining_time < 10 %}animate-pulse{% endif %}">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
@@ -71,7 +71,7 @@
     <div class="mt-10">
       <div class="flex justify-between text-xs font-bold text-gray-400 mb-2 uppercase tracking-widest">
         <span>Progress</span>
-        <span>{{ percent|round(0) }}%</span>
+        <span>{{ percent|round(0)|int }}%</span>
       </div>
       <div class="h-3 bg-gray-100 rounded-full overflow-hidden shadow-inner">
         <div class="h-3 bg-gradient-to-r from-green-400 via-blue-500 to-indigo-600 shadow-sm transition-all duration-500"
@@ -88,16 +88,16 @@
   const form = document.getElementById("quizForm");
 
   const countdown = setInterval(() => {
-    timeLeft--;
-    timerEl.textContent = timeLeft;
-
     if (timeLeft <= 0) {
       clearInterval(countdown);
-      // အချိန်ကုန်သွားရင် auto-submit လုပ်မယ်၊ ဒါပေမယ့် radio check မဖြစ်ရင် validation error မတက်အောင် required ကို ခဏဖြုတ်မယ်
+      // Remove required to avoid validation popup blocking auto-submit
       const inputs = form.querySelectorAll('input[type="radio"]');
       inputs.forEach(input => input.required = false);
       form.submit();
+      return;
     }
+    timeLeft--;
+    timerEl.textContent = timeLeft;
   }, 1000);
 </script>
 

@@ -2,31 +2,40 @@
 <html lang="{% if session.get('language') == 'mm' %}my{% else %}en{% endif %}">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ t("app_title") }}</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = { darkMode: 'class' }
   </script>
+  <style>
+    /* Smooth fade-out animation */
+    .toast-fade {
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .toast-hidden {
+      opacity: 0;
+      transform: translateY(-20px);
+      pointer-events: none;
+    }
+  </style>
 </head>
 
 <body class="bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors duration-300">
 
 <div class="flex justify-between items-center px-6 py-4 bg-white dark:bg-gray-800 shadow">
-
   <h1 class="text-xl font-bold text-gray-800 dark:text-white">
     {{ t("app_title") }}
   </h1>
 
   <div class="flex items-center gap-3">
-
     <div class="flex gap-1 bg-gray-200 dark:bg-gray-700 rounded-lg p-1">
       <a href="{{ url_for('set_lang', lang='en') }}"
          class="px-3 py-1 text-sm rounded-md transition
          {% if session.get('language','en') == 'en' %} bg-blue-600 text-white {% else %} text-gray-700 dark:text-gray-200 {% endif %}">
         EN
       </a>
-
       <a href="{{ url_for('set_lang', lang='mm') }}"
          class="px-3 py-1 text-sm rounded-md transition
          {% if session.get('language') == 'mm' %} bg-blue-600 text-white {% else %} text-gray-700 dark:text-gray-200 {% endif %}">
@@ -34,34 +43,42 @@
       </a>
     </div>
 
-    <button
-      id="themeToggle"
-      class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white transition">
+    <button id="themeToggle" class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white transition">
       🌙
     </button>
-
   </div>
 </div>
 
-<div class="container mx-auto p-4">
+<div id="toast-container" class="fixed top-20 right-6 left-6 md:left-auto md:w-96 z-50 space-y-3">
   {% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    {% for category, msg in messages %}
-      <div class="mb-4 p-3 rounded-lg text-white shadow
-        {% if category == 'success' %} bg-green-500
-        {% elif category == 'warning' %} bg-yellow-500
-        {% else %} bg-red-500 {% endif %}">
-        {{ t(msg) }} </div>
-    {% endfor %}
-  {% endif %}
-  {% endwith %}
+    {% if messages %}
+      {% for category, msg in messages %}
+        <div class="toast-message toast-fade flex items-center justify-between p-4 rounded-xl shadow-lg text-white font-bold
+          {% if category == 'success' %} bg-green-500
+          {% elif category == 'warning' %} bg-yellow-500
+          {% else %} bg-red-500 {% endif %}">
+          
+          <div class="flex items-center gap-2">
+            <span>{{ t(msg) }}</span>
+          </div>
 
+          <button onclick="this.parentElement.remove()" class="text-white/70 hover:text-white font-black text-xl ml-4">
+            &times;
+          </button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+</div>
+
+<div class="container mx-auto p-4">
   {% block content %}
   <h2 class="text-lg font-semibold text-gray-800 dark:text-white">{{ t("dashboard") }}</h2>
   {% endblock %}
 </div>
 
 <script>
+  // --- THEME LOGIC ---
   const toggleBtn = document.getElementById("themeToggle");
   const html = document.documentElement;
 
@@ -79,6 +96,24 @@
       localStorage.setItem("theme", "light");
       toggleBtn.textContent = "🌙";
     }
+  });
+
+  // --- AUTO-HIDE ALERTS (3 SECONDS) ---
+  document.addEventListener('DOMContentLoaded', () => {
+    const alerts = document.querySelectorAll('.toast-message');
+    
+    alerts.forEach((alert) => {
+      // 1. Set a timeout for 3 seconds
+      setTimeout(() => {
+        // 2. Add the hide classes
+        alert.classList.add('toast-hidden');
+        
+        // 3. Remove from DOM completely after transition (0.5s)
+        setTimeout(() => {
+          alert.remove();
+        }, 500);
+      }, 3000); 
+    });
   });
 </script>
 

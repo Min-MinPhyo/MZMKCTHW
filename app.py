@@ -74,6 +74,7 @@ LANGUAGES = {
         "app_title": "Expense Tracker",
         "dashboard": "Income & Expense Dashboard",
         "welcome":"Welcome back",
+        "savings_goals":"Saving Goal",
 
         # ===== General =====
         "welcome": "Welcome back",
@@ -136,8 +137,8 @@ LANGUAGES = {
         "total_income": "Total Income",
         "total_expense": "Total Expense",
         "balance": "Balance",
-        "add_income": "+ Add Income",
-        "add_expense": "+ Add Expense",
+        "add_income": "Add Income",
+        "add_expense": "Add Expense",
         "charts": "Charts",
         "pdf_report": "PDF Report",
         "play_quiz": "🧠 Play Quiz",
@@ -261,7 +262,7 @@ LANGUAGES = {
         # profile
         "user_profile":"My Profile",
         "edit_profile":"Edit Profile",
-        "cancel":"Home",
+        "cancel_edit":"Home",
         
         # updated profile
         "old_password":"Old",
@@ -284,7 +285,25 @@ LANGUAGES = {
         "play_quiz": "🧠 Quiz Game",
         "records": "Question",
         "cancel": "Quit Quiz",
-        "reset": "Restart Quiz"
+        "reset": "Restart Quiz",
+        
+        
+        # Saving goals
+        "title": "Savings Goals 🎯",
+        "subtitle": "Plan your future and track your progress.",
+        "dashboard": "Dashboard",
+        "createNew": "Create New Goal",
+        "goalName": "Goal Name",
+        "placeholderName": "e.g. New Laptop",
+        "targetAmount": "Target (MMK)",
+        "setGoal": "SET SAVINGS GOAL",
+        "targetLabel": "Target",
+        "progress": "Progress",
+        "saved": "saved",
+        "updateLabel": "Update Current Savings",
+        "updateBtn": "UPDATE",
+        "noGoals": "No savings goals yet. Start dreaming!",
+        "deleteConfirm": "Are you sure you want to delete this goal?"
         
 
     },
@@ -294,7 +313,7 @@ LANGUAGES = {
         "app_title": "ငွေထွက်ထိန်းခြင်း",
         "dashboard": "ဝင်ငွေနှင့် ကုန်ကျစရိတ် ဒက်ရှ်ဘုတ်",
         "welcome":"အားလုံးကို ကြိုဆိုပါတယ် ချစ်တို့ရေ",
-
+        "savings_goals":"ငွေစုဆောင်းရည်မှန်းချက်",
         # ===== General =====
         "welcome": "ပြန်လည်ကြိုဆိုပါတယ်",
         "login":"ဝင်ရောက်မှု",
@@ -302,8 +321,6 @@ LANGUAGES = {
         "logout":"ထွက်လိုက်ပါ",
         "logout_success": "ထွက်ပြီးပါပြီ",
         "register_success": "စာရင်းသွင်းမှု အောင်မြင်ပါသည်",
-        
-
         # ===== Income / Expense =====
         "income_added": "ဝင်ငွေ ထည့်ပြီးပါပြီ",
         "expense_added": "အသုံးစရိတ် ထည့်ပြီးပါပြီ",
@@ -311,14 +328,12 @@ LANGUAGES = {
         "income_updated": "ဝင်ငွေ ပြင်ဆင်ပြီးပါပြီ",
         "exceed_balance": "လက်ကျန်ငွေထက် ပိုများနေပါသည်",
         "confirm_all_balance": "လက်ကျန်ငွေအားလုံး သုံးမည်ဖြစ်ပါသည်။ အတည်ပြုပါ။",
-
         # ===== Categories =====
         "Salary": "လစာ",
         "Business": "လုပ်ငန်း",
         "Food & Dining": "အစားအစာ",
         "Transportation": "သယ်ယူပို့ဆောင်ရေး",
         "Others": "အခြား",
-
         # ===== Dashboard UI =====
         "start_date": "စတင်နေ့စွဲ",
         "end_date": "ပြီးဆုံးနေ့စွဲ",
@@ -332,8 +347,8 @@ LANGUAGES = {
         "total_income": "စုစုပေါင်း ဝင်ငွေ",
         "total_expense": "စုစုပေါင်း အသုံးစရိတ်",
         "balance": "လက်ကျန်ငွေ",
-        "add_income": "+ ဝင်ငွေ ထည့်မည်",
-        "add_expense": "+ အသုံးစရိတ် ထည့်မည်",
+        "add_income": "ဝင်ငွေ ထည့်မည်",
+        "add_expense": "အသုံးစရိတ် ထည့်မည်",
         "charts": "ဇယားများ",
         "pdf_report": "PDF အစီရင်ခံစာ",
         "play_quiz": "🧠 စမ်းသပ်မည်",
@@ -345,7 +360,6 @@ LANGUAGES = {
         "category": "အမျိုးအစား",
         "amount": "ငွေပမာဏ",
         "date": "နေ့စွဲ",
-        
         # register requirement
          "register_title": "အကောင့်အသစ်ဖန်တီးရန်",
         "register_subtitle": "သင်၏ဝင်ငွေ နှင့် အသုံးစရိတ်ကို စတင်စောင့်ကြည့်ပါ 💰",
@@ -358,8 +372,6 @@ LANGUAGES = {
         "register_btn": "စာရင်းသွင်းမည်",
         "already_account": "အကောင့်ရှိပြီးပါသလား?",
         "login_here": "ဒီမှာဝင်ပါ",
-        
-        
         # login requirement
         "login_title": "သင့်စီးပွားရေးအကောင့်သို့ ဝင်ရန်",
         "username": "အသုံးပြုသူအမည်",
@@ -373,15 +385,11 @@ LANGUAGES = {
         "login_footer": "ဝင်ရောက်ခြင်းဖြင့်၊ သင်သည် ကျွန်ုပ်တို့၏",
         "terms": "စည်းမျဉ်းနှင့်စည်းမျဉ်းများ",
         "forgot_password":"စကားဝှက်မေ့နေပါသလား",
-        
         # pagination
         "prev_pagination":"ယခင်",
         "next_pagination":"နောက်တစ်ခု",
-        
         # Action
         "action":"လုပ်ဆောင်ချက်များ",
-        
-        
         # income add/edit requirement
         "add_income_title": "ဝင်ငွေ ထည့်ရန်",
         "edit_income_title":"ဝင်ငွေကို တည်းဖြတ်ပါ",
@@ -396,7 +404,6 @@ LANGUAGES = {
         "add_income_btn": "ဝင်ငွေ ထည့်မည်",
         "update_income_btn":"ဝင်ငွေကို အပ်ဒိတ်လုပ်ပါ",
         "back_dashboard": "ဒက်ရှ်ဘုတ်သို့ ပြန်သွားရန်",
-        
         # expense form requirement
         "add_expense_title": "အသုံးစရိတ် ထည့်ရန်",
         "edit_expense_title": "အသုံးစရိတ် ပြင်ဆင်ရန်",
@@ -413,14 +420,12 @@ LANGUAGES = {
 
         "expense_warning": "လက်ကျန်ငွေအားလုံး အသုံးပြုမည် ဖြစ်ပါသည်။",
         "confirm_continue": "နားလည်ပါသည်၊ ဆက်လုပ်ပါမည်",
-
         # Category translations
         "Salary": "လစာ",
         "Business": "လုပ်ငန်း",
         "Food & Dining": "အစားအသောက်",
         "Transportation": "သယ်ယူပို့ဆောင်ရေး",
         "Others": "အခြား",
-        
           # ===== Income Categories =====
         "Salary": "လစာ",
         "Business": "လုပ်ငန်း",
@@ -430,7 +435,6 @@ LANGUAGES = {
         "Bonuses": "ဆုကြေးငွေ",
         "Refunds": "ပြန်လည်ရရှိငွေ",
         "Other": "အခြား",
-
         # ===== Expense Categories =====
         "Food & Dining": "အစားအသောက်",
         "Rent / Housing": "အိမ်လခ / နေအိမ်",
@@ -444,7 +448,6 @@ LANGUAGES = {
         "Insurance": "အာမခံ",
         "Taxes": "အခွန်",
         "Others": "အခြား",
-        
         # ===== Charts / Analysis =====
         "analysis_title": "ဝင်ငွေ / အသုံးစရိတ် ခွဲခြမ်းစိတ်ဖြာခြင်း",
         "analysis_subtitle": "အမျိုးအစားအလိုက် သင့်ငွေစာရင်းကို ကြည့်ရှုပါ",
@@ -459,8 +462,6 @@ LANGUAGES = {
         "balance": "လက်ကျန်ငွေ",
         "back_dashboard": "ဒက်ရှ်ဘုတ်သို့ ပြန်သွားရန်",
         "amount_mmk": "ငွေပမာဏ",
-        
-        
         #Tables
         "records_table": "မှတ်တမ်းများ",
         "date": "ရက်စွဲ",
@@ -471,26 +472,19 @@ LANGUAGES = {
         "edit": "ပြင်ဆင်",
         "delete": "ဖျက်ရန်",
         "no_data": "မှတ်တမ်း မရှိပါ",
-
         "income": "ဝင်ငွေ",
         "expense": "အသုံးစရိတ်",
-
         "prev": "နောက်သို့",
-        "next": "ရှေ့သို့",
-        
-                
+        "next": "ရှေ့သို့",      
         # profile
         "user_profile":"အသုံးပြုသူပရိုဖိုင်",
         "edit_profile_title":"Profile ကို တည်းဖြတ်ပါ",
-        "cancel":"ပင်မစာမျက်နှာ",
-        
+        "cancel_edit":"ပင်မစာမျက်နှာ",
         # update profile
         "old_password":"စကားဝှက်အဟောင်း",
         "new_password":"စကားဝှက်အသစ်",
         "update_btn":"စကားဝှက်ကို အပ်ဒိတ်",
         "leave_blank_to_keep":"စကားဝှက်ဟောင်းနှင့် ကိုက်ညီသော စကားဝှက်အသစ်ကို ရိုက်ထည့်ပါ",
-        
-        
         # Quiz Result Keys (မြန်မာဘာသာ)
         "quiz_result_title": "🏁 ဖြေဆိုမှုရလဒ်",
         "quiz_result_subtitle": "သင်ဘယ်လောက်ထိ တော်သလဲဆိုတာ ကြည့်လိုက်ပါဦး!",
@@ -504,135 +498,26 @@ LANGUAGES = {
         "play_quiz": "🧠 ဉာဏ်စမ်းပဟေဠိ",
         "records": "မေးခွန်းနံပါတ်",
         "cancel": "ထွက်မည်",
-        "reset": "အစကပြန်စမည်"
+        "reset": "အစကပြန်စမည်",
+        # Saving goals
+        "title": "စုငွေရည်မှန်းချက်များ 🎯",
+        "subtitle": "သင့်အနာဂတ်အတွက် စနစ်တကျ စုဆောင်းပါ။",
+        "dashboard": "ပင်မစာမျက်နှာ",
+        "createNew": "ရည်မှန်းချက်အသစ်ပြုလုပ်ရန်",
+        "goalName": "အမည်",
+        "placeholderName": "ဥပမာ - ကွန်ပျူတာအသစ်",
+        "targetAmount": "ရည်မှန်းချက်ပမာဏ (ကျပ်)",
+        "setGoal": "ရည်မှန်းချက်သတ်မှတ်မည်",
+        "targetLabel": "ပမာဏ",
+        "progress": "တိုးတက်မှု",
+        "saved": "စုဆောင်းပြီး",
+        "updateLabel": "စုဆောင်းမိသော ပမာဏကိုပြင်ရန်",
+        "updateBtn": "ပြင်ဆင်မည်",
+        "noGoals": "ရည်မှန်းချက် မရှိသေးပါ။ အခုပဲ စတင်လိုက်ပါ။",
+        "deleteConfirm": "ဤရည်မှန်းချက်ကို ဖျက်ရန် သေချာပါသလား?"
     }
 }
 
-
-# Quiz Question and Answer Option
-# QUIZ_QUESTIONS = [
-
-#     # 1️⃣ Japan City
-#     {
-#         "question": "Which is a major city in Japan?",
-#         "options": [
-#             "Tokyo",
-#             "Yangon",
-#             "Bangkok",
-#             "Hanoi"
-#         ],
-#         "answer": "Tokyo"
-#     },
-
-#     # 2️⃣ Myanmar City
-#     {
-#         "question": "Which is a major city in Myanmar?",
-#         "options": [
-#             "Osaka",
-#             "Yangon",
-#             "Seoul",
-#             "Beijing"
-#         ],
-#         "answer": "Yangon"
-#     },
-
-#     # 3️⃣ Japan Favourite Place
-#     {
-#         "question": "Which place is a famous tourist attraction in Japan?",
-#         "options": [
-#             "Mount Fuji",
-#             "Bagan",
-#             "Angkor Wat",
-#             "Great Wall"
-#         ],
-#         "answer": "Mount Fuji"
-#     },
-
-#     # 4️⃣ Myanmar Favourite Place
-#     {
-#         "question": "Which place is a famous tourist attraction in Myanmar?",
-#         "options": [
-#             "Shwedagon Pagoda",
-#             "Tokyo Tower",
-#             "Inlay",
-#             "Bagan"
-#         ],
-#         "answer": "Bagan"
-#     },
-
-#     # 5️⃣ Most Income Country in the World
-#     {
-#         "question": "Which country has the largest economy (highest income) in the world?",
-#         "options": [
-#             "United States",
-#             "Japan",
-#             "Germany",
-#             "Myanmar"
-#         ],
-#         "answer": "United States"
-#     },
-
-#     # 6️⃣ Myanmar President
-#     {
-#         "question": "Who is the current President of Myanmar?",
-#         "options": [
-#             "Min Aung Hlaing",
-#             "Win Myint",
-#             "Joe Biden",
-#             "U Thein Sein"
-#         ],
-#         "answer": "Min Aung Hlaing"
-#     },
-
-#     # 7️⃣ Japan President (Prime Minister)
-#     {
-#         "question": "Who is the Prime Minister of Japan?",
-#         "options": [
-#             "Fumio Kishida",
-#             "Shinzo Abe",
-#             "Joe Biden",
-#             "Aung San Suu Kyi"
-#         ],
-#         "answer": "Fumio Kishida"
-#     },
-
-#     # 8️⃣ American President
-#     {
-#         "question": "Who is the President of the United States?",
-#         "options": [
-#             "Joe Biden",
-#             "Donald Trump",
-#             "Barack Obama",
-#             "George Bush"
-#         ],
-#         "answer": "Joe Biden"
-#     },
-
-#     # 9️⃣ Myanmar Country Below Township (Example: Ward/Village Tract)
-#     {
-#         "question": "Which administrative level is below a township in Myanmar?",
-#         "options": [
-#             "Ward / Village Tract",
-#             "Region",
-#             "State",
-#             "Country"
-#         ],
-#         "answer": "Ward / Village Tract"
-#     },
-
-#     # 🔟 Myanmar Country Above Township
-#     {
-#         "question": "Which administrative level is above a township in Myanmar?",
-#         "options": [
-#             "District",
-#             "Ward",
-#             "Village",
-#             "Street"
-#         ],
-#         "answer": "District"
-#     }
-
-# ]
 
 # timer for condition
 QUIZ_TIME_LIMIT =60  # seconds
@@ -811,9 +696,6 @@ QUIZ_QUESTIONS = [
 }
 
 ]
-
-
-
 # ---- Initialize Database ----
 def init_db():
     conn = sqlite3.connect(DB_NAME)
@@ -847,111 +729,28 @@ def init_db():
         description TEXT,
         FOREIGN KEY(user_id) REFERENCES users(id)
     )""")
+    
+    # Savings Goals Table အသစ်
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS savings_goals (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            goal_name TEXT NOT NULL,
+            target_amount REAL NOT NULL,
+            current_amount REAL DEFAULT 0,
+            target_date TEXT,
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        )
+    ''')
+    
     conn.commit()
     conn.close()
 
 init_db()
-
-
-
-
-
 # ---- Home ----
 @app.route("/")
 def index():
     return redirect(url_for("login"))
-
-#register
-# EMAIL_REGEX = re.compile(r"^[\w\.-]+@[\w\.-]+\.\w+$")
-# @app.route("/register", methods=["GET", "POST"])
-# def register():
-#     if request.method == "POST":
-#         username = request.form["username"].strip()
-#         email = request.form["email"].strip()
-#         password = request.form["password"].strip()
-
-#         # ---- Validation ----
-#         if not username or not email or not password:
-#             flash("All fields are required!", "danger")
-#             return render_template("register.html")
-
-#         if not EMAIL_REGEX.match(email):
-#             flash("Invalid email format!", "danger")
-#             return render_template("register.html")
-
-#         if len(password) < 6:
-#             flash("Password must be at least 6 characters long!", "danger")
-#             return render_template("register.html")
-
-#         # ---- Save to database ----
-#         try:
-#             conn = sqlite3.connect(DB_NAME)
-#             cursor = conn.cursor()
-#             cursor.execute(
-#                 "INSERT INTO users(username, email, password) VALUES (?, ?, ?)",
-#                 (username, email, password)
-#             )
-#             conn.commit()
-#             conn.close()
-#             flash("Registration successful! Please login.", "success")
-#             return redirect(url_for("login"))
-#         except sqlite3.IntegrityError:
-#             flash("Username or email already exists!", "danger")
-#             return render_template("register.html")
-
-#     return render_template("register.html")
-
-# test register
-# EMAIL_REGEX = re.compile(r"^[\w\.-]+@[\w\.-]+\.\w+$")
-# @app.route("/register", methods=["GET", "POST"])
-# def register():
-#     if request.method == "POST":
-#         username = request.form["username"].strip()
-#         email = request.form["email"].strip()
-#         password = request.form["password"].strip()
-
-#         # ---- Validation ----
-#         if not username or not email or not password:
-#             flash("All fields are required!", "danger")
-#             return render_template("register.html")
-
-#         if not EMAIL_REGEX.match(email):
-#             flash("Invalid email format!", "danger")
-#             return render_template("register.html")
-
-#         # if len(password) < 6:
-#         #     flash("Password must be at least 6 characters long!", "danger")
-#         #     return render_template("register.html")
-        
-#         if not re.match(r"^(?=.*\d)(?=.*[!@#$%^&*(),.?\":{}|<>]).{6,}$", password):
-#               flash("Password must be at least 6 characters long and include a number and a special character!",
-#                      "danger")
-#               return render_template("register.html")
-
-
-#         # ---- Save to database with password hash ----
-#         try:
-#             hashed_password = generate_password_hash(password)  # 🔑 hash password
-#             conn = sqlite3.connect(DB_NAME)
-#             cursor = conn.cursor()
-#             cursor.execute(
-#                 "INSERT INTO users(username, email, password) VALUES (?, ?, ?)",
-#                 (username, email, hashed_password)
-#             )
-            
-#             conn.commit()
-#             conn.close()
-
-#             flash("Registration successful! Please login.", "success")
-#             return redirect(url_for("login"))
-
-#         except sqlite3.IntegrityError:
-#             flash("Username or email already exists!", "danger")
-#             return render_template("register.html")
-
-#     return render_template("register.html")
-
-
 
 # test register updated
 EMAIL_REGEX = re.compile(r"^[\w\.-]+@[\w\.-]+\.\w+$")
@@ -959,14 +758,11 @@ EMAIL_REGEX = re.compile(r"^[\w\.-]+@[\w\.-]+\.\w+$")
 def register():
     form_data = {}
     if request.method == "POST":
-        # ၁။ Form data များကို ဖမ်းယူခြင်း
         form_data = request.form
         username = request.form.get("username", "").strip()
         email = request.form.get("email", "").strip()
         password = request.form.get("password", "").strip()
         avatar_file = request.files.get("avatar")
-
-        # ၂။ အခြေခံ Validation များစစ်ဆေးခြင်း
         if not username or not email or not password:
             flash(t("all_fields_required"), "danger")
             return render_template("register.html", form_data=form_data)
@@ -974,18 +770,12 @@ def register():
         if not EMAIL_REGEX.match(email):
             flash(t("invalid_email"), "danger")
             return render_template("register.html", form_data=form_data)
-
-        # Password Policy (အနည်းဆုံး ၆ လုံး၊ နံပါတ် နှင့် သင်္ကေတ ပါရမည်)
         if not re.match(r"^(?=.*\d)(?=.*[!@#$%^&*(),.?\":{}|<>]).{6,}$", password):
             flash(t("password_policy_error"), "danger")
             return render_template("register.html", form_data=form_data)
-
-        # ၃။ Avatar ဖိုင်ကို စစ်ဆေးခြင်းနှင့် သိမ်းဆည်းခြင်း
-        avatar_filename = "default_avatar.png"  # ပုံမတင်လျှင် သုံးမည့် default အမည်
-
+        avatar_filename = "default_avatar.png"  
         if avatar_file and avatar_file.filename != '':
             if allowed_file(avatar_file.filename):
-                # ဖိုင်အမည်ကို လုံခြုံအောင်ပြုလုပ်ပြီး username တွဲပေးခြင်း (အမည်တူမထပ်စေရန်)
                 ext = avatar_file.filename.rsplit(".", 1)[1].lower()
                 filename = secure_filename(f"{username}_{avatar_file.filename}")
                 avatar_file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
@@ -994,7 +784,6 @@ def register():
                 flash(t("invalid_file_format"), "danger")
                 return render_template("register.html", form_data=form_data)
 
-        # ၄။ Database ထဲသို့ ထည့်သွင်းခြင်း
         try:
             hashed_password = generate_password_hash(password)
             conn = sqlite3.connect(DB_NAME)
@@ -1019,87 +808,6 @@ def register():
             return render_template("register.html", form_data=form_data)
 
     return render_template("register.html", form_data={})
-
-# login data 
-# @app.route("/login", methods=["GET", "POST"])
-# def login():
-#     if request.method == "POST":
-#         username = request.form["username"]
-#         password = request.form["password"]
-#         avatar_file = request.files.get("avatar")
-
-#         conn = sqlite3.connect(DB_NAME)
-#         cursor = conn.cursor()
-#         cursor.execute(
-#             "SELECT id, username, avatar FROM users WHERE username=? AND password=?",
-#             (username, password)
-#         )
-#         user = cursor.fetchone()
-
-#         if user:
-#             user_id = user[0]
-#             filename = user[2]  # existing avatar filename
-
-#             # Handle new avatar upload
-#             if avatar_file and avatar_file.filename != "":
-#                 from werkzeug.utils import secure_filename
-#                 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
-#                 if "." in avatar_file.filename and avatar_file.filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS:
-#                     filename = secure_filename(avatar_file.filename)
-#                     avatar_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
-#                     avatar_file.save(avatar_path)
-
-#                     # Update database with new avatar filename
-#                     cursor.execute(
-#                         "UPDATE users SET avatar=? WHERE id=?",
-#                         (filename, user_id)
-#                     )
-#                     conn.commit()
-
-#             conn.close()
-
-#             # Store session info
-#             session["user_id"] = user_id
-#             session["username"] = user[1]
-#             session["avatar"] = filename
-
-#             flash(f"Welcome back, {user[1]}!", "success")
-#             return redirect(url_for("dashboard"))
-
-#         else:
-#             conn.close()
-#             flash("Invalid username or password!", "danger")
-
-#     return render_template("login.html")
-
-# test login 
-# @app.route("/login", methods=["GET", "POST"])
-# def login():
-#     if request.method == "POST":
-#         username = request.form["username"].strip()
-#         password = request.form["password"].strip()
-       
-
-#         conn = sqlite3.connect(DB_NAME)
-#         cursor = conn.cursor()
-#         cursor.execute(
-#             "SELECT id, username, avatar FROM users WHERE username=? AND password=?",
-#             (username, password)
-#         )
-#         user = cursor.fetchone()
-#         conn.close()
-
-#         if user and check_password_hash(user["password"], password):
-#             session["user_id"] = user["id"]
-#             session["username"] = user["username"]
-#             flash("Login successful!", "success")
-#             return redirect(url_for("dashboard"))
-        
-#         else:
-#             flash("Username or password incorrect!", "danger")
-#             return redirect(url_for("login"))
-
-#     return render_template("login.html")
 
 # test login update
 @app.route("/login", methods=["GET", "POST"])
@@ -1128,7 +836,7 @@ def login():
             return redirect(url_for("login"))
 
         user_id = user["id"]
-        filename = user["avatar"]  # existing avatar in DB
+        filename = user["avatar"] 
 
         # --- Handle new avatar upload ---
         if avatar_file and avatar_file.filename != "":
@@ -1160,127 +868,30 @@ def login():
 def logout():
     # Clear the session
     session.clear()
-
-    # Get current language (default to 'en')
     lang = session.get("lang", "en")
-
-    # Flash message using language dictionary
     flash(LANGUAGES.get(lang, LANGUAGES["en"]).get("logout_success", "Logged out!"), "success")
-
-    # Redirect to login page
     return redirect(url_for("login"))
-
-
-# ---- Dashboard ----
-# @app.route("/dashboard")
-# def dashboard():
+# saving goal testing dashboard
+@app.route("/dashboard")
+def dashboard():
     if "user_id" not in session:
         return redirect(url_for("login"))
     user_id = session["user_id"]
-
-    # Date filter
+    #Filter & Pagination Parameters ---
     start_date = request.args.get("start_date")
     end_date = request.args.get("end_date")
-
-    # Pagination
+    filter_type = request.args.get("filter")
     page = request.args.get("page", 1, type=int)
     per_page = 5
     offset = (page - 1) * per_page
 
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
-
-    # Total income
-    income_query = "SELECT SUM(amount) FROM income WHERE user_id=?"
-    income_params = [user_id]
-    if start_date and end_date:
-        income_query += " AND date BETWEEN ? AND ?"
-        income_params += [start_date, end_date]
-    cursor.execute(income_query, income_params)
-    total_income = cursor.fetchone()[0] or 0
-
-    # Total expense
-    expense_query = "SELECT SUM(amount) FROM expenses WHERE user_id=?"
-    expense_params = [user_id]
-    if start_date and end_date:
-        expense_query += " AND date BETWEEN ? AND ?"
-        expense_params += [start_date, end_date]
-    cursor.execute(expense_query, expense_params)
-    total_expense = cursor.fetchone()[0] or 0
-
-    balance = total_income - total_expense
-
-    # Income records
-    income_select = "SELECT id, category, amount, date, description FROM income WHERE user_id=?"
-    income_params = [user_id]
-    if start_date and end_date:
-        income_select += " AND date BETWEEN ? AND ?"
-        income_params += [start_date, end_date]
-    income_select += " ORDER BY date DESC LIMIT ? OFFSET ?"
-    income_params += [per_page, offset]
-    cursor.execute(income_select, income_params)
-    income_records = cursor.fetchall()
-
-    # Income pagination
-    count_income_query = "SELECT COUNT(*) FROM income WHERE user_id=?"
-    count_income_params = [user_id]
-    if start_date and end_date:
-        count_income_query += " AND date BETWEEN ? AND ?"
-        count_income_params += [start_date, end_date]
-    cursor.execute(count_income_query, count_income_params)
-    total_income_pages = (cursor.fetchone()[0] + per_page - 1) // per_page
-
-    # Expense records
-    expense_select = "SELECT id, category, amount, date, description FROM expenses WHERE user_id=?"
-    expense_params = [user_id]
-    if start_date and end_date:
-        expense_select += " AND date BETWEEN ? AND ?"
-        expense_params += [start_date, end_date]
-    expense_select += " ORDER BY date DESC LIMIT ? OFFSET ?"
-    expense_params += [per_page, offset]
-    cursor.execute(expense_select, expense_params)
-    expense_records = cursor.fetchall()
-
-    # Expense pagination
-    count_expense_query = "SELECT COUNT(*) FROM expenses WHERE user_id=?"
-    count_expense_params = [user_id]
-    if start_date and end_date:
-        count_expense_query += " AND date BETWEEN ? AND ?"
-        count_expense_params += [start_date, end_date]
-    cursor.execute(count_expense_query, count_expense_params)
-    total_expense_pages = (cursor.fetchone()[0] + per_page - 1) // per_page
-
-    conn.close()
-
-    return render_template(
-        "dashboard.html",
-        total_income=total_income,
-        total_expense=total_expense,
-        balance=balance,
-        income_records=income_records,
-        expense_records=expense_records,
-        page=page,
-        total_income_pages=total_income_pages,
-        total_expense_pages=total_expense_pages,
-        start_date=start_date,
-        end_date=end_date
-    )
-
-
-# test dashboard (currently use in)
-@app.route("/dashboard")
-def dashboard():
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-    user_id = session["user_id"]
-
-    # Filters
-    filter_type = request.args.get("filter")  # weekly, monthly, yearly
-    start_date = request.args.get("start_date")
-    end_date = request.args.get("end_date")
-
-    # Handle filter type
     today = datetime.today()
+    this_month = today.strftime('%Y-%m')
+    last_month = (today.replace(day=1) - timedelta(days=1)).strftime('%Y-%m')
+    
+    # Fast Filter Logic
     if filter_type == "weekly":
         start_date = (today - timedelta(days=today.weekday())).strftime("%Y-%m-%d")
         end_date = today.strftime("%Y-%m-%d")
@@ -1290,75 +901,100 @@ def dashboard():
     elif filter_type == "yearly":
         start_date = today.replace(month=1, day=1).strftime("%Y-%m-%d")
         end_date = today.strftime("%Y-%m-%d")
-    # else keep start_date and end_date from query params if provided
 
-    # Pagination
-    page = request.args.get("page", 1, type=int)
-    per_page = 5
-    offset = (page - 1) * per_page
+    # ဒီလအတွက် ဝင်ငွေ/ထွက်ငွေ (Saving Rate အတွက်)
+    cursor.execute("SELECT SUM(amount) FROM income WHERE user_id=? AND strftime('%Y-%m', date)=?", (user_id, this_month))
+    this_month_income = cursor.fetchone()[0] or 0
+    cursor.execute("SELECT SUM(amount) FROM expenses WHERE user_id=? AND strftime('%Y-%m', date)=?", (user_id, this_month))
+    this_month_expense = cursor.fetchone()[0] or 0
 
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
 
-    # Total income
-    income_query = "SELECT SUM(amount) FROM income WHERE user_id=?"
-    income_params = [user_id]
+    # ပြီးခဲ့တဲ့လအတွက် ထွက်ငွေ (Comparison အတွက်)
+    cursor.execute("SELECT SUM(amount) FROM expenses WHERE user_id=? AND strftime('%Y-%m', date)=?", (user_id, last_month))
+    last_month_expense = cursor.fetchone()[0] or 0
+    # ၁။ Saving Rate တွက်ချက်ခြင်း
+    if this_month_income > 0:
+        saving_rate = round(((this_month_income - this_month_expense) / this_month_income * 100), 1)
+    else:
+        saving_rate = 0
+
+
+
+    # expense comparison testing
+  
+# Intent: ဒီလ ဘာမှမသုံးရင် 0% ပြရန်၊ အရင်လနှင့်နှိုင်းယှဉ်၍ 100% ထက်မကျော်သော Realistic Data ပြရန်။
+    if this_month_expense == 0:
+        # ဒီလမှာ အသုံးစရိတ် တစ်ပြားမှ မရှိသေးရင် အမြဲတမ်း 0% ပဲ ပြမယ်
+        diff_percent = 0.0
+
+    elif last_month_expense > 0:
+        # အရင်လက အသုံးစရိတ် ရှိခဲ့ရင် ပုံမှန် Percent တွက်နည်းကို သုံးမယ်
+        raw_diff = ((this_month_expense - last_month_expense) / last_month_expense) * 100
+        
+        if raw_diff > 0:
+            # အသုံးစရိတ် တိုးလာတဲ့အခါမှာ အများဆုံး 100% မှာပဲ ကန့်သတ် (Cap) မယ်
+            diff_percent = min(round(raw_diff, 1), 100.0)
+        else:
+            # အသုံးစရိတ် လျော့သွားရင်တော့ (အနှုတ်တန်ဖိုးကို) အရှိအတိုင်း ပြမယ်
+            diff_percent = round(raw_diff, 1)
+
+    else:
+        # အရင်လက အသုံးစရိတ် (၀) ဖြစ်နေပြီး ဒီလမှာ စသုံးလာတဲ့ အခြေအနေ
+        if this_month_income > 0:
+            # ဝင်ငွေရှိရင် ဝင်ငွေနဲ့ နှိုင်းယှဉ်ပြီး သင့်လျော်တဲ့ Growth ကို တွက်မယ်
+            relative_usage = (this_month_expense / this_month_income) * 100
+            diff_percent = min(round(relative_usage, 1), 100.0)
+        else:
+            # ဝင်ငွေရော အရင်လစရိတ်ရော မရှိဘဲ သုံးနေရင်တော့ အမြင့်ဆုံး 100% လို့ သတ်မှတ်မယ်
+            diff_percent = 100.0
+    
+        
+ 
+
+    # --- ၃။ Total Summaries (With Date Filtering) ---
+    income_sum_query = "SELECT SUM(amount) FROM income WHERE user_id=?"
+    expense_sum_query = "SELECT SUM(amount) FROM expenses WHERE user_id=?"
+    base_params = [user_id]
+    filter_params = []
+
     if start_date and end_date:
-        income_query += " AND date BETWEEN ? AND ?"
-        income_params += [start_date, end_date]
-    cursor.execute(income_query, income_params)
+        income_sum_query += " AND date BETWEEN ? AND ?"
+        expense_sum_query += " AND date BETWEEN ? AND ?"
+        filter_params = [start_date, end_date]
+
+    cursor.execute(income_sum_query, base_params + filter_params)
     total_income = cursor.fetchone()[0] or 0
-
-    # Total expense
-    expense_query = "SELECT SUM(amount) FROM expenses WHERE user_id=?"
-    expense_params = [user_id]
-    if start_date and end_date:
-        expense_query += " AND date BETWEEN ? AND ?"
-        expense_params += [start_date, end_date]
-    cursor.execute(expense_query, expense_params)
+    cursor.execute(expense_sum_query, base_params + filter_params)
     total_expense = cursor.fetchone()[0] or 0
-
     balance = total_income - total_expense
 
-    # Income records with pagination
-    income_select = "SELECT id, category, amount, date, description FROM income WHERE user_id=?"
-    income_params = [user_id]
+    # --- ၄။ Fetch Records (Income & Expenses) ---
+    # Income Records
+    inc_select = "SELECT id, category, amount, date, description FROM income WHERE user_id=?"
     if start_date and end_date:
-        income_select += " AND date BETWEEN ? AND ?"
-        income_params += [start_date, end_date]
-    income_select += " ORDER BY date DESC LIMIT ? OFFSET ?"
-    income_params += [per_page, offset]
-    cursor.execute(income_select, income_params)
+        inc_select += " AND date BETWEEN ? AND ?"
+    inc_select += " ORDER BY date DESC LIMIT ? OFFSET ?"
+    cursor.execute(inc_select, base_params + filter_params + [per_page, offset])
     income_records = cursor.fetchall()
 
-    # Income pagination
-    count_income_query = "SELECT COUNT(*) FROM income WHERE user_id=?"
-    count_income_params = [user_id]
+    # Expense Records
+    exp_select = "SELECT id, category, amount, date, description FROM expenses WHERE user_id=?"
     if start_date and end_date:
-        count_income_query += " AND date BETWEEN ? AND ?"
-        count_income_params += [start_date, end_date]
-    cursor.execute(count_income_query, count_income_params)
-    total_income_pages = (cursor.fetchone()[0] + per_page - 1) // per_page
-
-    # Expense records with pagination
-    expense_select = "SELECT id, category, amount, date, description FROM expenses WHERE user_id=?"
-    expense_params = [user_id]
-    if start_date and end_date:
-        expense_select += " AND date BETWEEN ? AND ?"
-        expense_params += [start_date, end_date]
-    expense_select += " ORDER BY date DESC LIMIT ? OFFSET ?"
-    expense_params += [per_page, offset]
-    cursor.execute(expense_select, expense_params)
+        exp_select += " AND date BETWEEN ? AND ?"
+    exp_select += " ORDER BY date DESC LIMIT ? OFFSET ?"
+    cursor.execute(exp_select, base_params + filter_params + [per_page, offset])
     expense_records = cursor.fetchall()
 
-    # Expense pagination
-    count_expense_query = "SELECT COUNT(*) FROM expenses WHERE user_id=?"
-    count_expense_params = [user_id]
-    if start_date and end_date:
-        count_expense_query += " AND date BETWEEN ? AND ?"
-        count_expense_params += [start_date, end_date]
-    cursor.execute(count_expense_query, count_expense_params)
+    # --- ၅။ Pagination Counts ---
+    cursor.execute("SELECT COUNT(*) FROM income WHERE user_id=?", (user_id,))
+    total_income_pages = (cursor.fetchone()[0] + per_page - 1) // per_page
+    cursor.execute("SELECT COUNT(*) FROM expenses WHERE user_id=?", (user_id,))
     total_expense_pages = (cursor.fetchone()[0] + per_page - 1) // per_page
+
+    # --- ၆။ Savings Goals ---
+    
+    cursor.execute("SELECT id, user_id, goal_name, target_amount, current_amount FROM savings_goals WHERE user_id=?", (user_id,))
+    goals = cursor.fetchall()
 
     conn.close()
 
@@ -1374,218 +1010,67 @@ def dashboard():
         total_expense_pages=total_expense_pages,
         start_date=start_date,
         end_date=end_date,
-        filter_type=filter_type
+        filter_type=filter_type,
+        saving_rate=saving_rate,
+        diff_percent=diff_percent,
+        this_month_expense=this_month_expense,
+        goals=goals
     )
-
-
-# test dashboard updated
-# @app.route("/dashboard")
-# def dashboard():
-#     if "user_id" not in session:
-#         return redirect(url_for("login"))
-
-#     user_id = session["user_id"]
-
-#     # ----------------- Filters -----------------
-#     filter_type = request.args.get("filter")  # weekly, monthly, yearly
-#     start_date = request.args.get("start_date")
-#     end_date = request.args.get("end_date")
-
-#     # Handle quick filter
-#     today = datetime.today()
-#     if filter_type == "weekly":
-#         start_date = (today - timedelta(days=today.weekday())).strftime("%Y-%m-%d")
-#         end_date = today.strftime("%Y-%m-%d")
-#     elif filter_type == "monthly":
-#         start_date = today.replace(day=1).strftime("%Y-%m-%d")
-#         end_date = today.strftime("%Y-%m-%d")
-#     elif filter_type == "yearly":
-#         start_date = today.replace(month=1, day=1).strftime("%Y-%m-%d")
-#         end_date = today.strftime("%Y-%m-%d")
-
-#     # ----------------- Pagination -----------------
-#     page = request.args.get("page", 1, type=int)
-#     per_page = 5
-#     offset = (page - 1) * per_page
-
-#     conn = sqlite3.connect(DB_NAME)
-#     cursor = conn.cursor()
-
-#     # ----------------- Total Income -----------------
-#     income_query = "SELECT SUM(amount) FROM income WHERE user_id=?"
-#     income_params = [user_id]
-#     if start_date and end_date:
-#         income_query += " AND date BETWEEN ? AND ?"
-#         income_params += [start_date, end_date]
-#     cursor.execute(income_query, income_params)
-#     total_income = cursor.fetchone()[0] or 0
-
-#     # ----------------- Total Expense -----------------
-#     expense_query = "SELECT SUM(amount) FROM expenses WHERE user_id=?"
-#     expense_params = [user_id]
-#     if start_date and end_date:
-#         expense_query += " AND date BETWEEN ? AND ?"
-#         expense_params += [start_date, end_date]
-#     cursor.execute(expense_query, expense_params)
-#     total_expense = cursor.fetchone()[0] or 0
-
-#     balance = total_income - total_expense
-
-#     # ----------------- Income Records -----------------
-#     income_select = "SELECT id, category, amount, date, description FROM income WHERE user_id=?"
-#     income_params = [user_id]
-#     if start_date and end_date:
-#         income_select += " AND date BETWEEN ? AND ?"
-#         income_params += [start_date, end_date]
-#     income_select += " ORDER BY date DESC LIMIT ? OFFSET ?"
-#     income_params += [per_page, offset]
-#     cursor.execute(income_select, income_params)
-#     income_records = cursor.fetchall()
-
-#     # ----------------- Income Pagination -----------------
-#     count_income_query = "SELECT COUNT(*) FROM income WHERE user_id=?"
-#     count_income_params = [user_id]
-#     if start_date and end_date:
-#         count_income_query += " AND date BETWEEN ? AND ?"
-#         count_income_params += [start_date, end_date]
-#     cursor.execute(count_income_query, count_income_params)
-#     total_income_pages = (cursor.fetchone()[0] + per_page - 1) // per_page
-
-#     # ----------------- Expense Records -----------------
-#     expense_select = "SELECT id, category, amount, date, description FROM expenses WHERE user_id=?"
-#     expense_params = [user_id]
-#     if start_date and end_date:
-#         expense_select += " AND date BETWEEN ? AND ?"
-#         expense_params += [start_date, end_date]
-#     expense_select += " ORDER BY date DESC LIMIT ? OFFSET ?"
-#     expense_params += [per_page, offset]
-#     cursor.execute(expense_select, expense_params)
-#     expense_records = cursor.fetchall()
-
-#     # ----------------- Expense Pagination -----------------
-#     count_expense_query = "SELECT COUNT(*) FROM expenses WHERE user_id=?"
-#     count_expense_params = [user_id]
-#     if start_date and end_date:
-#         count_expense_query += " AND date BETWEEN ? AND ?"
-#         count_expense_params += [start_date, end_date]
-#     cursor.execute(count_expense_query, count_expense_params)
-#     total_expense_pages = (cursor.fetchone()[0] + per_page - 1) // per_page
-
-#     conn.close()
-
-#     return render_template(
-#         "dashboard.html",
-#         total_income=total_income,
-#         total_expense=total_expense,
-#         balance=balance,
-#         income_records=income_records,
-#         expense_records=expense_records,
-#         page=page,
-#         total_income_pages=total_income_pages,
-#         total_expense_pages=total_expense_pages,
-#         start_date=start_date,
-#         end_date=end_date,
-#         filter_type=filter_type
-#     )
-
-
-# test dashboard updated 1()
-# @app.route("/dashboard")
-# def dashboard():
-#     user_id = session.get("user_id")
-#     start_date = request.args.get("start_date")
-#     end_date = request.args.get("end_date")
-#     filter_type = request.args.get("filter")
-
-#     # Pagination parameters
-#     income_page = int(request.args.get("income_page", 1))
-#     expense_page = int(request.args.get("expense_page", 1))
-#     per_page = 5  # records per page
-
-#     # Fetch Income records
-#     income_query = "SELECT * FROM income WHERE user_id=?"
-#     params = [user_id]
-#     if start_date:
-#         income_query += " AND date >= ?"
-#         params.append(start_date)
-#     if end_date:
-#         income_query += " AND date <= ?"
-#         params.append(end_date)
-#     # execute query and get all income records
-#     income_records_all = cursor.execute(income_query, params).fetchall()
     
-#     total_income = sum(rec[2] for rec in income_records_all)  # assuming amount at index 2
-
-#     # Pagination for Income
-#     income_total_pages = (len(income_records_all) + per_page - 1) // per_page
-#     income_records = income_records_all[(income_page-1)*per_page : income_page*per_page]
-
-#     # Fetch Expense records
-#     expense_query = "SELECT * FROM expense WHERE user_id=?"
-#     params = [user_id]
-#     if start_date:
-#         expense_query += " AND date >= ?"
-#         params.append(start_date)
-#     if end_date:
-#         expense_query += " AND date <= ?"
-#         params.append(end_date)
-#     expense_records_all = cursor.execute(expense_query, params).fetchall()
     
-#     total_expense = sum(rec[2] for rec in expense_records_all)
 
-#     # Pagination for Expense
-#     expense_total_pages = (len(expense_records_all) + per_page - 1) // per_page
-#     expense_records = expense_records_all[(expense_page-1)*per_page : expense_page*per_page]
+    
+    
+#savings goals
+@app.route("/savings", methods=["GET", "POST"])
+def savings():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+    user_id = session["user_id"]
+    
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
 
-#     # Balance
-#     balance = total_income - total_expense
+    if request.method == "POST":
+        if 'add_goal' in request.form:
+            goal_name = request.form.get("goal_name")
+            target_amount = request.form.get("target_amount")
+            target_date = request.form.get("target_date")
+            
+            cursor.execute('''INSERT INTO savings_goals (user_id, goal_name, target_amount, current_amount, target_date)
+                              VALUES (?, ?, ?, 0, ?)''', (user_id, goal_name, target_amount, target_date))
+        elif 'update_amount' in request.form:
+            goal_id = request.form.get("goal_id")
+            new_amount = request.form.get("current_amount")
+            
+            cursor.execute("UPDATE savings_goals SET current_amount = ? WHERE id = ? AND user_id = ?", 
+                           (new_amount, goal_id, user_id))
+            
+        conn.commit()
+        return redirect(url_for("savings"))
+    cursor.execute("SELECT * FROM savings_goals WHERE user_id = ?", (user_id,))
+    goals = cursor.fetchall()
+    conn.close()
+    return render_template("savings.html", goals=goals) 
 
-#     return render_template("dashboard.html",
-#                            total_income=total_income,
-#                            total_expense=total_expense,
-#                            balance=balance,
-#                            income_records=income_records,
-#                            expense_records=expense_records,
-#                            income_page=income_page,
-#                            expense_page=expense_page,
-#                            income_total_pages=income_total_pages,
-#                            expense_total_pages=expense_total_pages,
-#                            start_date=start_date,
-#                            end_date=end_date,
-#                            filter_type=filter_type)
 
 
-# add-income
-# @app.route("/add_income", methods=["GET","POST"])
-# def add_income():
-#     if "user_id" not in session:
-#         return redirect(url_for("login"))
-
-#     if request.method == "POST":
-#         category = request.form["category"]
-#         amount = float(request.form["amount"])
-#         description = request.form["description"]
-#         date_input = request.form.get("date") or datetime.now().strftime("%Y-%m-%d")
-
-#         conn = sqlite3.connect(DB_NAME)
-#         cursor = conn.cursor()
-#         cursor.execute(
-#             "INSERT INTO income(user_id,date,category,amount,description) VALUES(?,?,?,?,?)",
-#             (session["user_id"], date_input, category, amount, description)
-#         )
-#         conn.commit()
-#         conn.close()
-
-#         flash("Income added successfully!", "success")
-#         return redirect(url_for("dashboard"))
-
-#     return render_template(
-#         "income_form.html",
-#         mode="add",
-#         categories=INCOME_CATEGORIES,
-#         current_date=date.today().strftime("%Y-%m-%d")
-#     )
-
+@app.route("/delete_goal/<int:goal_id>")
+def delete_goal(goal_id):
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute(
+        "DELETE FROM savings_goals WHERE id=? AND user_id=?", 
+        (goal_id, session["user_id"])
+    )
+    
+    # ၄။ ပြောင်းလဲမှုများကို သိမ်းဆည်းပြီး connection ပိတ်မည်
+    conn.commit()
+    conn.close()
+    flash("Savings goal deleted successfully!", "success")
+    return redirect(url_for("savings")) 
 
 # add-income updated
 @app.route("/add_income", methods=["GET", "POST"])
@@ -1651,77 +1136,9 @@ def add_income():
         form_data={}
     )
 
-# add expense 
-# @app.route("/add_expense", methods=["GET", "POST"])
-# def add_expense():
-#     if "user_id" not in session:
-#         return redirect(url_for("login"))
-
-#     conn = sqlite3.connect(DB_NAME)
-#     cursor = conn.cursor()
-
-#     if request.method == "POST":
-#         category = request.form["category"]
-#         amount = float(request.form["amount"])
-#         description = request.form["description"]
-#         date_input = request.form.get("date")
-#         confirm = request.form.get("confirm")  # <-- confirm flag
-
-#         # Calculate balance
-#         cursor.execute("SELECT SUM(amount) FROM income WHERE user_id=?", (session["user_id"],))
-#         total_income = cursor.fetchone()[0] or 0
-
-#         cursor.execute("SELECT SUM(amount) FROM expenses WHERE user_id=?", (session["user_id"],))
-#         total_expense = cursor.fetchone()[0] or 0
-
-#         available_balance = total_income - total_expense
-
-#         # ❌ BLOCK
-#         if amount > available_balance:
-#             flash(f"Expense exceeds available balance ({available_balance})!", "danger")
-#             conn.close()
-#             return redirect(url_for("add_expense"))
-
-#         # ⚠ CONFIRM REQUIRED
-#         if amount == available_balance and confirm != "yes":
-#             flash(
-#                 "This expense will use ALL your remaining balance. Please confirm.",
-#                 "warning"
-#             )
-#             conn.close()
-#             return render_template(
-#                 "expense_form.html",
-#                 categories=EXPENSE_CATEGORIES,
-#                 current_date=date_input,
-#                 mode="add",
-#                 show_confirm=True,
-#                 form_data=request.form
-#             )
-
-#         # ✅ INSERT
-#         cursor.execute(
-#             "INSERT INTO expenses(user_id, date, category, amount, description) VALUES (?, ?, ?, ?, ?)",
-#             (session["user_id"], date_input, category, amount, description)
-#         )
-#         conn.commit()
-#         conn.close()
-
-#         flash("Expense added successfully!", "success")
-#         return redirect(url_for("dashboard"))
-
-#     conn.close()
-#     return render_template(
-#         "expense_form.html",
-#         categories=EXPENSE_CATEGORIES,
-#         current_date=date.today().strftime("%Y-%m-%d"),
-#         mode="add",
-#         show_confirm=False
-#     )
-
 
 # add expense updated
 from datetime import date
-
 @app.route("/add_expense", methods=["GET", "POST"])
 def add_expense():
     if "user_id" not in session:
@@ -1734,14 +1151,14 @@ def add_expense():
     if request.method == "POST":
         form_data = request.form
         
-        # Form Data ဆွဲထုတ်ခြင်း
+      
         category = request.form.get("category", "").strip()
         amount_str = request.form.get("amount", "").strip()
         description = request.form.get("description", "").strip()
         date_input = request.form.get("date") or current_date
         confirm = request.form.get("confirm")
 
-        # 🚩 1. Required Fields Validation (မဖြစ်မနေ ဖြည့်ရမည့်နေရာများ စစ်ဆေးခြင်း)
+       
         if not category or not amount_str or not date_input:
             flash(t("all_fields_required"), "danger")
             return render_template("expense_form.html", 
@@ -1750,7 +1167,7 @@ def add_expense():
                                  mode="add", 
                                  form_data=form_data)
 
-        # 🚩 2. Amount Validation (ဂဏန်း မှန်မမှန်နှင့် သုညထက်ကြီးမကြီး စစ်ဆေးခြင်း)
+  
         try:
             amount = float(amount_str)
             if amount <= 0:
@@ -1768,7 +1185,7 @@ def add_expense():
                                  mode="add", 
                                  form_data=form_data)
 
-        # 🚩 3. Balance Calculation & Check
+     
         conn = sqlite3.connect(DB_NAME)
         cursor = conn.cursor()
         
@@ -1782,7 +1199,7 @@ def add_expense():
 
         available_balance = total_income - total_expense
 
-        # ❌ Case: လက်ကျန်ငွေထက် ပိုသုံးခြင်း
+      
         if amount > available_balance:
             flash(f"{t('exceed_balance_msg')} ({available_balance})!", "danger")
             conn.close()
@@ -1792,7 +1209,7 @@ def add_expense():
                                  mode="add", 
                                  form_data=form_data)
 
-        # ⚠ Case: Balance အကုန်သုံးမည်ဆိုပါက Confirm တောင်းခြင်း
+   
         if amount == available_balance and confirm != "yes":
             flash(t("confirm_all_balance"), "warning")
             conn.close()
@@ -1803,7 +1220,7 @@ def add_expense():
                                  show_confirm=True, 
                                  form_data=form_data)
 
-        # ✅ 4. Data Insertion (ဒေတာ သိမ်းဆည်းခြင်း)
+    
         try:
             cursor.execute(
                 "INSERT INTO expenses(user_id, date, category, amount, description) VALUES (?, ?, ?, ?, ?)",
@@ -1830,88 +1247,6 @@ def add_expense():
                          form_data={})
 
   
-# add expense test // test expense not working
-# @app.route("/add_expense", methods=["GET", "POST"])
-# def add_expense():
-#     if "user_id" not in session:
-#         return redirect(url_for("login"))
-
-#     conn = sqlite3.connect(DB_NAME)
-#     cursor = conn.cursor()
-
-#     if request.method == "POST":
-#         category = request.form.get("category", "").strip()
-#         amount_str = request.form.get("amount", "0").strip()
-#         description = request.form.get("description", "").strip()
-#         date_input = request.form.get("date", date.today().strftime("%Y-%m-%d"))
-#         confirm = request.form.get("confirm")  # Checkbox confirm
-
-#         # Validate amount
-#         try:
-#             amount = float(amount_str)
-#             if amount <= 0:
-#                 raise ValueError
-#         except ValueError:
-#             flash("Please enter a valid positive amount!", "danger")
-#             conn.close()
-#             return render_template(
-#                 "expense_form.html",
-#                 categories=EXPENSE_CATEGORIES,
-#                 current_date=date_input,
-#                 mode="add",
-#                 show_confirm=False,
-#                 form_data=request.form
-#             )
-
-#         # Calculate available balance
-#         cursor.execute("SELECT SUM(amount) FROM income WHERE user_id=?", (session["user_id"],))
-#         total_income = cursor.fetchone()[0] or 0
-
-#         cursor.execute("SELECT SUM(amount) FROM expenses WHERE user_id=?", (session["user_id"],))
-#         total_expense = cursor.fetchone()[0] or 0
-
-#         available_balance = total_income - total_expense
-
-#         # BLOCK if expense exceeds balance
-#         if amount > available_balance:
-#             flash(f"Expense exceeds available balance ({available_balance})!", "danger")
-#             conn.close()
-#             return redirect(url_for("add_expense"))
-
-#         # CONFIRM if using all balance
-#         if amount == available_balance and confirm != "yes":
-#             flash("This expense will use ALL your remaining balance. Please confirm.", "warning")
-#             conn.close()
-#             return render_template(
-#                 "expense_form.html",
-#                 categories=EXPENSE_CATEGORIES,
-#                 current_date=date_input,
-#                 mode="add",
-#                 show_confirm=True,
-#                 form_data=request.form
-#             )
-
-#         # INSERT expense
-#         cursor.execute(
-#             "INSERT INTO expenses(user_id, date, category, amount, description) VALUES (?, ?, ?, ?, ?)",
-#             (session["user_id"], date_input, category, amount, description)
-#         )
-#         conn.commit()
-#         conn.close()
-
-#         flash("Expense added successfully!", "success")
-#         return redirect(url_for("dashboard"))
-
-#     # GET request
-#     conn.close()
-#     return render_template(
-#         "expense_form.html",
-#         categories=EXPENSE_CATEGORIES,
-#         current_date=date.today().strftime("%Y-%m-%d"),
-#         mode="add",
-#         show_confirm=False,
-#         form_data=None
-#     )
 
 # edit-income
 @app.route("/edit_income/<int:income_id>", methods=["GET","POST"])
@@ -1961,70 +1296,6 @@ def edit_income(income_id):
 
     )
 
-# edit-income updated 
-# @app.route("/edit_income/<int:income_id>", methods=["GET", "POST"])
-# def edit_income(income_id):
-#     if "user_id" not in session:
-#         return redirect(url_for("login"))
-
-#     conn = sqlite3.connect(DB_NAME)
-#     conn.row_factory = sqlite3.Row  # Dictionary ပုံစံမျိုး ခေါ်သုံးလို့ရအောင်
-#     cursor = conn.cursor()
-
-#     if request.method == "POST":
-#         # Form ကလာတဲ့ data အသစ်များကို ဖမ်းယူခြင်း
-#         form_data = request.form
-#         date_input = request.form.get("date")
-#         category = request.form.get("category", "").strip()
-#         amount_str = request.form.get("amount", "").strip()
-#         description = request.form.get("description", "").strip()
-
-#         # Validation (Amount ပါမပါ စစ်ဆေးခြင်း)
-#         if not amount_str or not category:
-#             flash(t("all_fields_required"), "danger")
-#             return render_template("income_form.html", mode="edit", categories=INCOME_CATEGORIES, form_data=form_data)
-
-#         try:
-#             amount = float(amount_str)
-#             cursor.execute(
-#                 "UPDATE income SET date=?, category=?, amount=?, description=? WHERE id=? AND user_id=?",
-#                 (date_input, category, amount, description, income_id, session["user_id"])
-#             )
-#             conn.commit()
-#             conn.close()
-#             flash(t("update_success"), "success")
-#             return redirect(url_for("dashboard"))
-#         except ValueError:
-#             flash(t("invalid_amount"), "danger")
-#             return render_template("income_form.html", mode="edit", categories=INCOME_CATEGORIES, form_data=form_data)
-
-#     # --- GET REQUEST (Edit လုပ်ရန် Page စပွင့်ချိန်) ---
-#     cursor.execute(
-#         "SELECT date, category, amount, description FROM income WHERE id=? AND user_id=?",
-#         (income_id, session["user_id"])
-#     )
-#     record = cursor.fetchone()
-#     conn.close()
-
-#     if not record:
-#         flash("Record not found!", "danger")
-#         return redirect(url_for("dashboard"))
-
-#     # Database ကလာတဲ့ data တွေကို HTML ကနားလည်တဲ့ form_data ပုံစံသို့ ပြောင်းလဲခြင်း
-#     current_values = {
-#         "date": record["date"],
-#         "category": record["category"],
-#         "amount": record["amount"],
-#         "description": record["description"]
-#     }
-
-#     return render_template(
-#         "income_form.html",
-#         mode="edit",
-#         categories=INCOME_CATEGORIES,
-#         form_data=current_values, # အခု နာမည်ကို form_data လို့ ပေးလိုက်တဲ့အတွက် HTML နဲ့ ကွက်တိဖြစ်သွားပါပြီ
-#         income_id=income_id
-#     )
 # # ---- Delete Income ----
 @app.route("/delete_income/<int:income_id>")
 def delete_income(income_id):
@@ -2037,104 +1308,6 @@ def delete_income(income_id):
     conn.close()
     flash("Income deleted!", "success")
     return redirect(url_for("dashboard"))
-
-# ---- Edit Expense ----
-# @app.route("/edit_expense/<int:expense_id>", methods=["GET", "POST"])
-# def edit_expense(expense_id):
-#     if "user_id" not in session:
-#         return redirect(url_for("login"))
-
-#     conn = sqlite3.connect(DB_NAME)
-#     conn.row_factory = sqlite3.Row
-#     cursor = conn.cursor()
-
-#     if request.method == "POST":
-#         date_input = request.form.get("date")
-#         category = request.form.get("category", "").strip()
-#         amount_str = request.form.get("amount", "").strip()
-#         description = request.form.get("description", "").strip()
-       
-
-#         # ✅ VALIDATION
-#         if not amount_str:
-#             flash("Amount is required!", "danger")
-#             conn.close()
-#             return redirect(url_for("edit_expense", expense_id=expense_id))
-
-#         try:
-#             amount = float(amount_str)
-#         except ValueError:
-#             flash("Invalid amount value!", "danger")
-#             conn.close()
-#             return redirect(url_for("edit_expense", expense_id=expense_id))
-
-#         if amount <= 0:
-#             flash("Amount must be greater than zero!", "danger")
-#             conn.close()
-#             return redirect(url_for("edit_expense", expense_id=expense_id))
-
-#         # ---- BALANCE CHECK (exclude current expense) ----
-#         cursor.execute(
-#             "SELECT SUM(amount) FROM income WHERE user_id=?",
-#             (session["user_id"],)
-#         )
-#         total_income = cursor.fetchone()[0] or 0
-
-#         cursor.execute(
-#             "SELECT SUM(amount) FROM expenses WHERE user_id=? AND id<>?",
-#             (session["user_id"], expense_id)
-#         )
-#         total_expense_except_current = cursor.fetchone()[0] or 0
-
-#         available_balance = total_income - total_expense_except_current
-
-#         if amount > available_balance:
-#             flash(
-#                 f"Expense exceeds available balance ({available_balance})!",
-#                 "danger"
-#             )
-#             conn.close()
-#             return redirect(url_for("edit_expense", expense_id=expense_id))
-
-#         # ---- UPDATE EXPENSE ----
-#         cursor.execute(
-#             """
-#             UPDATE expenses
-#             SET date=?, category=?, amount=?, description=?
-#             WHERE id=? AND user_id=?
-#             """,
-#             (date_input,category, amount, description, expense_id, session["user_id"])
-#         )
-
-#         conn.commit()
-#         conn.close()
-
-#         flash("Expense updated successfully!", "success")
-#         return redirect(url_for("dashboard"))
-
-#     # ---- GET REQUEST (LOAD RECORD) ----
-#     cursor.execute(
-#         """
-#         SELECT date,category, amount, description
-#         FROM expenses
-#         WHERE id=? AND user_id=?
-#         """,
-#         (expense_id, session["user_id"])
-#     )
-#     record = cursor.fetchone()
-#     conn.close()
-
-#     if not record:
-#         flash("Record not found!", "danger")
-#         return redirect(url_for("dashboard"))
-
-#     return render_template(
-#         "expense_form.html",
-#         categories=EXPENSE_CATEGORIES,
-#         record=record,
-#         mode="edit"
-#     )
-
 # edit expense updated
 @app.route("/edit_expense/<int:expense_id>", methods=["GET", "POST"])
 def edit_expense(expense_id):
@@ -2146,14 +1319,11 @@ def edit_expense(expense_id):
     cursor = conn.cursor()
 
     if request.method == "POST":
-        # Form ကလာတဲ့ data တွေကို စုစည်းမယ် (Error တက်ရင် template ပြန်ပို့ဖို့)
         form_data = request.form
         date_input = request.form.get("date")
         category = request.form.get("category", "").strip()
         amount_str = request.form.get("amount", "").strip()
         description = request.form.get("description", "").strip()
-
-        # ✅ 1. VALIDATION (Amount ရှိမရှိ စစ်ဆေးခြင်း)
         if not amount_str:
             flash(t("amount_required") if LANGUAGES else "Amount is required!", "danger")
             return render_template("expense_form.html", categories=EXPENSE_CATEGORIES, form_data=form_data, mode="edit", expense_id=expense_id)
@@ -2167,8 +1337,6 @@ def edit_expense(expense_id):
         if amount <= 0:
             flash(t("amount_min_error") if LANGUAGES else "Amount must be > 0", "danger")
             return render_template("expense_form.html", categories=EXPENSE_CATEGORIES, form_data=form_data, mode="edit", expense_id=expense_id)
-
-        # ✅ 2. BALANCE CHECK (ယခုပြင်မည့် record ကို ချန်လှပ်၍ တွက်ချက်ခြင်း)
         cursor.execute("SELECT SUM(amount) FROM income WHERE user_id=?", (session["user_id"],))
         total_income = cursor.fetchone()[0] or 0
 
@@ -2499,90 +1667,6 @@ def edit_profile():
 
     return render_template("edit_profile.html", user=user)
 
-# update profile
-# @app.route("/profile/update", methods=["POST"])
-# def update_profile():
-#     if "user_id" not in session:
-#         return redirect(url_for("login"))
-
-#     user_id = session["user_id"]
-
-#     username = request.form["username"]
-#     old_password = request.form["old_password"]
-#     new_password = request.form["new_password"]
-
-#     conn = sqlite3.connect(DB_NAME)
-#     conn.row_factory = sqlite3.Row
-#     cursor = conn.cursor()
-
-#     cursor.execute(
-#         "SELECT password FROM users WHERE id=?",
-#         (user_id,)
-#     )
-#     user = cursor.fetchone()
-
-#     if not user or not check_password_hash(user["password"], old_password):
-#         conn.close()
-#         flash("Old password is incorrect!", "danger")
-#         return redirect(url_for("edit_profile"))
-
-#     # Update username
-#     cursor.execute(
-#         "UPDATE users SET username=? WHERE id=?",
-#         (username, user_id)
-#     )
-
-#     # Update password only if new password entered
-#     if new_password.strip():
-#         hashed_password = generate_password_hash(new_password)
-#         cursor.execute(
-#             "UPDATE users SET password=? WHERE id=?",
-#             (hashed_password, user_id)
-#         )
-
-#     conn.commit()
-#     conn.close()
-
-#     flash("Profile updated successfully!", "success")
-#     return redirect(url_for("profile"))
-
-# update profile test this is real world test but this in error working currently use in (no)
-# @app.route("/profile/update", methods=["POST"])
-# def update_profile():
-#     if "user_id" not in session:
-#         return redirect(url_for("login"))
-
-#     user_id = session["user_id"]
-#     username = request.form["username"].strip()
-#     old_password = request.form["old_password"].strip()
-#     new_password = request.form["new_password"].strip()
-
-#     conn = sqlite3.connect(DB_NAME)
-#     conn.row_factory = sqlite3.Row
-#     cursor = conn.cursor()
-#     cursor.execute("SELECT password FROM users WHERE id=?", (user_id,))
-#     user = cursor.fetchone()
-
-#     if not user or not check_password_hash(user["password"], old_password):
-#         conn.close()
-#         flash("Old password is incorrect!", "danger")
-#         return redirect(url_for("edit_profile"))
-
-#     # Update username
-#     cursor.execute("UPDATE users SET username=? WHERE id=?", (username, user_id))
-
-#     # Update password if new one entered
-#     if new_password:
-#         hashed_password = generate_password_hash(new_password)
-#         cursor.execute("UPDATE users SET password=? WHERE id=?", (hashed_password, user_id))
-
-#     conn.commit()
-#     conn.close()
-
-#     flash("Profile updated successfully!", "success")
-#     return redirect(url_for("profile"))
-
-
 # updated profile test rehersal (currently use in(yes) working )
 @app.route("/profile/update", methods=["POST"])
 def update_profile():
@@ -2630,128 +1714,6 @@ def update_profile():
     return redirect(url_for("profile"))
 
 
-# Quiz Option Adding Route
-# @app.route("/quiz", methods=["GET", "POST"])
-# def quiz():
-#     if "user_id" not in session:
-#         return redirect(url_for("login"))
-
-#     if "quiz_index" not in session:
-#         session["quiz_index"] = 0
-#         session["quiz_score"] = 0
-
-#     index = session["quiz_index"]
-
-#     if request.method == "POST":
-#         selected = request.form.get("option")
-#         correct = QUIZ_QUESTIONS[index]["answer"]
-
-#         if selected == correct:
-#             session["quiz_score"] += 1
-
-#         session["quiz_index"] += 1
-#         return redirect(url_for("quiz"))
-
-#     if index >= len(QUIZ_QUESTIONS):
-#         return redirect(url_for("quiz_result"))
-
-#     return render_template(
-#         "quiz.html",
-#         question=QUIZ_QUESTIONS[index],
-#         current=index + 1,
-#         total=len(QUIZ_QUESTIONS)
-#     )
-
-
-# quiz updated (currently use in yes)
-# @app.route("/quiz", methods=["GET", "POST"])
-# def quiz():
-#     if "user_id" not in session:
-#         return redirect(url_for("login"))
-
-#     # Initialize quiz session
-#     if "quiz_index" not in session or "quiz_questions" not in session:
-#         # Pick 10 random questions from the pool
-#         session["quiz_questions"] = random.sample(QUIZ_QUESTIONS, 10)
-#         session["quiz_index"] = 0
-#         session["quiz_score"] = 0
-
-#     index = session["quiz_index"]
-#     quiz_questions = session["quiz_questions"]
-
-#     # If POST, check answer
-#     if request.method == "POST":
-#         selected = request.form.get("option")
-#         correct = quiz_questions[index]["answer"]
-
-#         if selected == correct:
-#             session["quiz_score"] += 1
-
-#         session["quiz_index"] += 1
-#         index = session["quiz_index"]
-
-#         if index >= len(quiz_questions):
-#             return redirect(url_for("quiz_result"))
-
-#         return redirect(url_for("quiz"))
-
-#     # Show current question
-#     if index < len(quiz_questions):
-#         question = quiz_questions[index]
-#         return render_template(
-#             "quiz.html",
-#             question=question,
-#             current=index + 1,
-#             total=len(quiz_questions)
-#         )
-
-#     return redirect(url_for("quiz_result"))
-
-
-# quiz updated 1(currently use in no)
-# @app.route("/quiz", methods=["GET", "POST"])
-# def quiz():
-#     if "user_id" not in session:
-#         return redirect(url_for("login"))
-
-#     # Initialize quiz session
-#     if "quiz_index" not in session or "quiz_questions" not in session:
-#         session["quiz_questions"] = random.sample(QUIZ_QUESTIONS, 10)
-#         session["quiz_index"] = 0
-#         session["quiz_score"] = 0
-
-#     index = session["quiz_index"]
-#     quiz_questions = session["quiz_questions"]
-
-#     # If user tries to go back manually
-#     if index >= len(quiz_questions):
-#         return redirect(url_for("quiz_result"))
-
-#     # Handle POST answer
-#     if request.method == "POST":
-#         selected = request.form.get("option")
-#         correct = quiz_questions[index]["answer"]
-
-#         if selected == correct:
-#             session["quiz_score"] += 1
-
-#         session["quiz_index"] += 1
-#         index = session["quiz_index"]
-
-#         if index >= len(quiz_questions):
-#             return redirect(url_for("quiz_result"))
-
-#         return redirect(url_for("quiz"))
-
-#     # Show current question
-#     question = quiz_questions[index]
-#     return render_template(
-#         "quiz.html",
-#         question=question,
-#         current=index + 1,
-#         total=len(quiz_questions),
-#         timestamp=datetime.now().timestamp() ) # For cache-busting
-
 
 # quiz updated 2
 @app.route("/quiz", methods=["GET", "POST"])
@@ -2759,50 +1721,49 @@ def quiz():
     if "user_id" not in session:
         return redirect(url_for("login"))
 
-    # 🔐 Initialize quiz safely
-    if (
-        "quiz_questions" not in session
-        or "quiz_start_time" not in session
-        or "quiz_index" not in session
-    ):
-        # session.clear()  # optional but safe
-        session["quiz_questions"] = random.sample(QUIZ_QUESTIONS, QUIZ_TOTAL_QUESTIONS)
+    # 1. Initialize session if missing
+    if "quiz_questions" not in session or "quiz_index" not in session:
+        session["quiz_questions"] = random.sample(QUIZ_QUESTIONS, min(len(QUIZ_QUESTIONS), QUIZ_TOTAL_QUESTIONS))
         session["quiz_index"] = 0
         session["quiz_score"] = 0
         session["quiz_start_time"] = time.time()
 
-    # ⏱ Safe timer check
-    start_time = session.get("quiz_start_time")
+    quiz_questions = session.get("quiz_questions", [])
+    index = session.get("quiz_index", 0)
+    # If the index is out of bounds, finish the quiz immediately
+    if index >= len(quiz_questions):
+        return redirect(url_for("quiz_result"))
 
-    if not start_time:
-        return redirect(url_for("quiz_reset"))
-
+    # 3. Timer Logic
+    start_time = session.get("quiz_start_time", time.time())
     elapsed_time = int(time.time() - start_time)
     remaining_time = QUIZ_TIME_LIMIT - elapsed_time
 
     if remaining_time <= 0:
         return redirect(url_for("quiz_result"))
 
-    index = session["quiz_index"]
-    quiz_questions = session["quiz_questions"]
-
-    # POST → Answer submitted
+    # 4. POST: Answer Submission
     if request.method == "POST":
         selected = request.form.get("option")
-
+        
+        # Double check index before grading
         if index < len(quiz_questions):
             correct = quiz_questions[index]["answer"]
             if selected == correct:
                 session["quiz_score"] += 1
-
+            
+            # Increment index
             session["quiz_index"] += 1
+            session.modified = True # Ensure session saves
 
+        # Check if that was the last question
         if session["quiz_index"] >= len(quiz_questions):
             return redirect(url_for("quiz_result"))
 
         return redirect(url_for("quiz"))
 
-    # GET → Show question
+
+    # Since we performed the safety check in step 2, this is now safe
     question = quiz_questions[index]
 
     return render_template(
@@ -2812,50 +1773,6 @@ def quiz():
         total=len(quiz_questions),
         remaining_time=remaining_time
     )
-# @app.route("/quiz/result")
-# def quiz_result():
-#     if "user_id" not in session:
-#         return redirect(url_for("login"))
-
-#     score = session.get("quiz_score", 0)
-#     total = len(QUIZ_QUESTIONS)
-
-#     return render_template(
-#         "quiz_result.html",
-#         score=score,
-#         total=total
-#     )
-
-# quiz result updated (currently use in yes)
-# @app.route("/quiz/result")
-# def quiz_result():
-#     if "user_id" not in session:
-#         return redirect(url_for("login"))
-
-#     score = session.get("quiz_score", 0)
-#     total = len(session.get("quiz_questions", []))
-
-#     # Clear quiz session after showing result
-#     session.pop("quiz_index", None)
-#     session.pop("quiz_score", None)
-#     session.pop("quiz_questions", None)
-
-#     return render_template(
-#         "quiz_result.html",
-#         score=score,
-#         total=total
-#     )
-
-
-
-# # @app.route("/quiz/reset")
-# # def quiz_reset():
-#     if "user_id" not in session:
-#         return redirect(url_for("login"))
-
-#     session.pop("quiz_index", None)
-#     session.pop("quiz_score", None)
-#     return redirect(url_for("quiz"))
 
 
 # quiz updated 2
@@ -2870,18 +1787,6 @@ def quiz_result():
     return render_template("quiz_result.html", score=score, total=total)
 
 
-# quiz reset updated (currently use in yes )
-# @app.route("/quiz/reset")
-# def quiz_reset():
-#     if "user_id" not in session:
-#         return redirect(url_for("login"))
-
-#     # Reset quiz session
-#     session.pop("quiz_index", None)
-#     session.pop("quiz_score", None)
-#     session.pop("quiz_questions", None)
-
-#     return redirect(url_for("quiz"))
 
 # quiz updated 2
 @app.route("/quiz/reset")
@@ -2909,72 +1814,14 @@ def quiz_quit():
 
 
 
-# eng myanmar version
-# def t(key):
-#     lang = session.get("lang", "en")
-#     return LANGUAGES.get(lang, LANGUAGES["en"]).get(key, key)
 
-# @app.context_processor
-# def inject_lang():
-#     return dict(t=t)
-
-
-# @app.route("/set_language/<lang>")
-# def set_language(lang):
-#     # only accept 'en' or 'mm'
-#     if lang not in ["en", "mm"]:
-#         lang = "en"
-#     session["lang"] = lang
-
-#     # redirect back to the page user was on
-#     return redirect(request.referrer or url_for("dashboard"))
-
-
-# --- ၂။ Hybrid Translation Logic ---
 translator = Translator()
 
-# --- t() function logic ---
-# @app.context_processor
-# def inject_translate():
-#     def t(key, is_user_data=False):
-#         lang = session.get('language', 'en') # en သို့မဟုတ် mm
-#         # ၁။ User ရိုက်ထားတဲ့ စာသား (Description) ဖြစ်လျှင် Google Translate သုံးမည်
-#         if is_user_data and key:
-#             if lang == 'mm':
-#                 try:
-#                     return translator.translate(key, dest='my').text
-#                 except:
-#                     return key # Error ဖြစ်လျှင် မူလစာသားအတိုင်းပြမည်
-#             return key
-
-#         # ၂။ Static UI စာသားဖြစ်လျှင် Dictionary ထဲမှာရှာမည်
-#         # Dictionary မှာမရှိရင် Category ဖြစ်နိုင်လို့ google translate ဆီ တစ်ခါထပ်ပို့ကြည့်မယ်
-#         translated = LANGUAGES.get(lang, LANGUAGES['en']).get(key)
-#         if translated:
-#             return translated
-#         # ၃။ Dictionary မှာမရှိတဲ့ Category မျိုးဆိုလျှင် အလိုအလျောက် ဘာသာပြန်ခိုင်းမည်
-#         if lang == 'mm' and key:
-#             try:
-#                 return translator.translate(key, dest='my').text
-#             except:
-#                 return key
-                
-#         return key
-#     return dict(t=t)
-
-# # --- Language Switcher Route ---
-# @app.route('/set_lang/<lang>')
-# def set_lang(lang):
-#     session['language'] = lang
-#     return redirect(request.referrer or url_for('dashboard'))
 
 # translated updated
-# ၁။ t function ကို Global အနေနဲ့ အပြင်မှာ အရင်ရေးပါ
 def t(key, is_user_data=False):
     # session ထဲမှာ language မရှိရင် default 'en' ယူမယ်
     lang = session.get('language', 'en') 
-    
-    # User ရိုက်ထားတဲ့ စာသား (Description) ဖြစ်လျှင်
     if is_user_data and key:
         if lang == 'mm':
             try:
@@ -2997,10 +1844,10 @@ def t(key, is_user_data=False):
             
     return key
 
-# ၂။ ပြီးမှ HTML template တွေအတွက် inject လုပ်ပေးပါ
+
 @app.context_processor
 def inject_translate():
-    return dict(t=t) # အပေါ်က function ကိုပဲ ပြန်ညွှန်းလိုက်တာပါ
+    return dict(t=t)
 
 # ၃။ Language Switcher
 @app.route('/set_lang/<lang>')
@@ -3020,27 +1867,6 @@ app.config.update(
     MAIL_DEFAULT_SENDER='minminphyo770@gmail.com'
 )
 mail = Mail(app)
-
-# 1. Forgot Password Route
-# @app.route("/forgot-password", methods=["GET", "POST"])
-# def forgot_password(): # HTML ထဲက url_for('forgot_password') က ဒီနာမည်ကို လာရှာတာပါ
-#     if request.method == "POST":
-#         email = request.form.get("email")
-#         # အောက်မှာ သင့်ရဲ့ OTP ပို့တဲ့ Logic ကို ဆက်ရေးပါ...
-#         otp = ''.join(random.choices(string.digits, k=6))
-#         session['reset_otp'] = otp
-#         session['reset_email'] = email
-        
-#         # Email ပို့ခြင်း (ဥပမာ)
-#         try:
-#             msg = Message("OTP Verification", sender=app.config['MAIL_USERNAME'], recipients=[email])
-#             msg.body = f"Your OTP is {otp}"
-#             mail.send(msg)
-#             return redirect(url_for('verify_otp')) # verify_otp function ဆီသွားမယ်
-#         except:
-#             flash("Error sending email", "danger")
-            
-#     return render_template("forgot_password.html")
 
 
 # 1 updated
@@ -3084,19 +1910,10 @@ def forgot_password():
         # --- Email Sending Logic End ---
 
     return render_template("forgot_password.html")
-# 3. Reset Password Route
-# @app.route("/reset-password", methods=["GET", "POST"])
-# def reset_password():
-#     if request.method == "POST":
-#         # Password update လုပ်တဲ့ logic ရေးရန်
-#         flash("Password reset successful", "success")
-#         return redirect(url_for('login'))
-#     return render_template("reset_password.html")
 
 # 3 updated reset password
 @app.route("/reset_password", methods=["GET", "POST"])
 def reset_password():
-    # Session ထဲမှာ reset_email မရှိရင် (OTP မကျော်လာရင်) လက်မခံပါ
     if 'reset_email' not in session:
         flash("Please verify your email first.", "warning")
         return redirect(url_for('forgot_password'))
@@ -3161,11 +1978,12 @@ def verify_otp():
         user_otp = request.form.get("otp")
         if user_otp == session.get('reset_otp'):
             flash("OTP Verified!", "success")
-            return redirect(url_for('reset_password')) # နောက်တစ်ဆင့် Password ပြောင်းဖို့ သွားမယ်
+            return redirect(url_for('reset_password')) 
         else:
             flash("Invalid OTP code. Please try again.", "danger")
             
-    return render_template("verify_otp.html") # 👈 ဒီဖိုင်နာမည် မှန်ဖို့ လိုပါတယ်
+    return render_template("verify_otp.html") 
+
 
 # ---- Run App ----
 if __name__ == "__main__":
