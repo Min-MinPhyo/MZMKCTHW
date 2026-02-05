@@ -1,54 +1,117 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
-  <div class="w-full max-w-md bg-white rounded-3xl shadow-2xl p-10 border border-white">
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-indigo-100 p-6">
+  <div class="w-full max-w-md bg-white rounded-[2.5rem] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.1)] p-10 border border-white relative overflow-hidden">
     
-    <div class="text-center mb-8">
-      <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      </div>
-      <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Verify OTP</h1>
-      <p class="text-gray-500 mt-3 text-sm leading-relaxed">
-        {{ t("enter_otp_hint") if LANGUAGES else "Please enter the 6-digit verification code we sent to your email." }}
-      </p>
-    </div>
-
-    <form action="{{ url_for('verify_otp') }}" method="POST" class="space-y-6">
-      <div class="group text-center">
-        <label class="block text-sm font-bold text-gray-700 mb-4 group-focus-within:text-green-600 transition-colors">
-          Verification Code
-        </label>
-        
-        <input 
-          type="text" 
-          name="otp" 
-          maxlength="6" 
-          required 
-          autofocus
-          placeholder="000000"
-          class="w-full text-center text-4xl tracking-[0.8rem] font-mono py-4 bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl focus:outline-none focus:ring-4 focus:ring-green-100 focus:border-green-500 transition-all"
-        >
+    <div class="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-blue-50 rounded-full blur-3xl opacity-60"></div>
+    
+    <div class="relative z-10">
+      <div class="text-center mb-10">
+        <div class="w-20 h-20 bg-blue-600 rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-200 rotate-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+        </div>
+        <h1 class="text-3xl font-black text-slate-900 tracking-tight mb-2">Verify OTP</h1>
+        <p class="text-slate-500 text-sm font-medium px-6 leading-relaxed">
+          {{ t("enter_otp_hint") if LANGUAGES else "We've sent a 6-digit verification code to your email. Enter it below to continue." }}
+        </p>
       </div>
 
-      <button type="submit" 
-        class="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-4 rounded-2xl font-bold shadow-xl hover:from-green-700 hover:to-emerald-700 transition transform active:scale-95">
-        Verify & Continue
-      </button>
-    </form>
+      <form action="{{ url_for('verify_otp') }}" method="POST" class="space-y-8">
+        <div class="text-center">
+          <label class="block text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] mb-4">
+            Verification Code
+          </label>
+          
+          <div class="relative group">
+            <input 
+              type="text" 
+              name="otp" 
+              maxlength="6" 
+              required 
+              autofocus
+              placeholder="000000"
+              pattern="\d{6}"
+              inputmode="numeric"
+              autocomplete="one-time-code"
+              class="w-full text-center text-5xl tracking-[0.6rem] font-mono font-black py-6 bg-slate-50 border-2 border-slate-100 rounded-3xl focus:outline-none focus:ring-8 focus:ring-blue-50 focus:border-blue-500 focus:bg-white transition-all duration-300 placeholder-slate-200"
+            >
+          </div>
+        </div>
 
-    <div class="mt-8 text-center border-t border-gray-100 pt-6">
-      <p class="text-sm text-gray-500">
-        Didn't receive the code? 
-        <a href="{{ url_for('forgot_password') }}" class="text-blue-600 font-bold hover:underline">
-          Resend OTP
-        </a>
-      </p>
+        <button type="submit" 
+          class="w-full bg-slate-900 text-white py-5 rounded-[1.8rem] font-bold shadow-xl hover:bg-blue-600 transition-all duration-300 transform active:scale-95 flex items-center justify-center gap-3 group">
+          <span>Verify & Proceed</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          </svg>
+        </button>
+      </form>
+
+      <div class="mt-10 pt-8 border-t border-slate-50 text-center">
+        <div id="timer-status" class="flex flex-col items-center gap-3">
+          <div class="flex items-center gap-2 text-slate-400 font-bold text-[11px] uppercase tracking-widest">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 animate-spin-slow text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Expiring in: <span id="timer" class="text-red-500 font-black">60</span>s
+          </div>
+          
+          <p id="resend-container" class="text-sm text-slate-400 font-medium opacity-0 pointer-events-none transition-all duration-500 translate-y-2">
+            Didn't receive code? 
+            <a href="{{ url_for('forgot_password') }}" class="text-blue-600 font-black hover:text-blue-800 underline decoration-2 underline-offset-4">
+              Resend OTP
+            </a>
+          </p>
+        </div>
+      </div>
     </div>
-
   </div>
 </div>
+
+
+
+<script>
+  let timeLeft = 60; // Backend logic နှင့် ကိုက်ညီသော ၁ မိနစ်
+  const timerDisplay = document.getElementById('timer');
+  const resendContainer = document.getElementById('resend-container');
+  const timerStatus = document.getElementById('timer-status');
+
+  const countdown = setInterval(() => {
+    timeLeft--;
+    timerDisplay.textContent = timeLeft;
+
+    if (timeLeft <= 0) {
+      clearInterval(countdown);
+      
+      // Timer နေရာတွင် Expired စာသားပြောင်းရန်
+      timerStatus.firstElementChild.innerHTML = `
+        <span class="text-red-600 font-black tracking-tighter">TIME EXPIRED</span>
+      `;
+      
+      // Resend Link ကို ပေါ်လာစေရန်
+      resendContainer.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-2');
+      resendContainer.classList.add('opacity-100', 'translate-y-0');
+    }
+  }, 1000);
+</script>
+
+<style>
+  /* Custom Animation for Timer Icon */
+  .animate-spin-slow {
+    animation: spin-slow 3s linear infinite;
+  }
+  @keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* Font Mono for OTP input to keep numbers aligned */
+  input[name="otp"] {
+    font-variant-numeric: tabular-nums;
+  }
+</style>
 
 {% endblock %}

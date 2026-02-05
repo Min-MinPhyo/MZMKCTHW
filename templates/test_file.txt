@@ -1,0 +1,9 @@
+route forgot/password
+route verify-otp
+
+Change page is verift-otp.html file(this old data is git final commit in included)
+
+
+
+
+

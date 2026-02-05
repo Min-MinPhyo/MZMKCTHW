@@ -1,84 +1,97 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-2xl mt-10 border border-gray-200">
+{% set is_mm = (request.cookies.get('language') == 'mm') or (session.get('language') == 'mm') %}
 
-  <!-- TITLE -->
-  <h1 class="text-3xl font-extrabold mb-8 text-center text-gray-900">
-    {{ t("user_profile") }}
-  </h1>
+<div class="min-h-screen py-12 px-4 bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
+    <div class="max-w-3xl mx-auto">
+        
+        <div class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-white dark:border-slate-800">
+            
+            <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-10 dark:opacity-20"></div>
 
-  <!-- AVATAR -->
-  <div class="flex flex-col items-center mb-8 relative group">
-    {% if user[2] %}
-      <img src="{{ url_for('static', filename='uploads/' + user[2]) }}"
-           class="w-32 h-32 rounded-full mb-3 border-4 border-blue-400 shadow-xl transition-transform duration-300 transform hover:scale-105" />
-    {% else %}
-      <div class="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center mb-3 border-4 border-gray-300 shadow-xl text-gray-500 font-bold text-lg transition-transform duration-300 group-hover:scale-105">
-        N/A
-      </div>
-    {% endif %}
-  </div>
+            <div class="relative p-8 md:p-12">
+                <div class="flex flex-col items-center mb-10">
+                    <div class="relative group mb-6">
+                        <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-500"></div>
+                        
+                        {% if user[2] %}
+                        <img src="{{ url_for('static', filename='uploads/' + user[2]) }}"
+                             class="relative w-36 h-36 rounded-full border-4 border-white dark:border-slate-800 object-cover shadow-2xl transition-transform duration-500 group-hover:scale-105" />
+                        {% else %}
+                        <div class="relative w-36 h-36 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center border-4 border-white dark:border-slate-800 shadow-xl">
+                            <span class="text-4xl font-black text-slate-300">{{ user[0][0]|upper }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <h1 class="text-3xl font-black text-slate-900 dark:text-white tracking-tight text-center">
+                        {{ t("user_profile") }}
+                    </h1>
+                </div>
 
-  <!-- USER INFO FORM -->
-  <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest ml-1">
+                            {{ t("username") }}
+                        </label>
+                        <div class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 p-4 rounded-2xl">
+                            <span class="text-slate-900 dark:text-slate-100 font-bold">{{ user[0] }}</span>
+                        </div>
+                    </div>
 
-    <!-- USERNAME -->
-    <div>
-      <label class="block font-semibold mb-2 text-gray-700">{{ t("username") }}</label>
-      <input type="text" name="username"
-             value="{{ user[0] }}"
-             placeholder="{{ t('enter_username') }}"
-             class="w-full border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm transition"
-             required />
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+                            {{ t("email") }}
+                        </label>
+                        <div class="w-full bg-slate-100/50 dark:bg-slate-800/30 border border-slate-200/50 p-4 rounded-2xl flex items-center gap-2">
+                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            <span class="text-slate-500 font-medium truncate">{{ user[1] }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12">
+                    <div class="group bg-emerald-50/50 dark:bg-emerald-900/10 p-6 rounded-[2rem] border border-emerald-100 dark:border-emerald-800/30 transition-all hover:shadow-lg">
+                        <span class="block text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-3">{{ t("total_income") }}</span>
+                        <div class="flex items-baseline gap-1">
+                            <span class="text-2xl font-black text-emerald-700 dark:text-emerald-300">{{ "{:,.0f}".format(total_income | default(0)) }}</span>
+                            <span class="text-[10px] font-bold text-emerald-400">MMK</span>
+                        </div>
+                    </div>
+
+                    <div class="group bg-rose-50/50 dark:bg-rose-900/10 p-6 rounded-[2rem] border border-rose-100 dark:border-rose-800/30 transition-all hover:shadow-lg">
+                        <span class="block text-[10px] font-black text-rose-600 dark:text-rose-400 uppercase tracking-widest mb-3">{{ t("total_expense") }}</span>
+                        <div class="flex items-baseline gap-1">
+                            <span class="text-2xl font-black text-rose-700 dark:text-rose-300">{{ "{:,.0f}".format(total_expense | default(0)) }}</span>
+                            <span class="text-[10px] font-bold text-rose-400">MMK</span>
+                        </div>
+                    </div>
+
+                    <div class="group bg-slate-900 dark:bg-slate-800 p-6 rounded-[2rem] border border-slate-800 transition-all hover:shadow-xl hover:shadow-slate-200 dark:hover:shadow-none">
+                        <span class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">{{ t("total_balance") }}</span>
+                        <div class="flex items-baseline gap-1">
+                            <span class="text-2xl font-black text-white">{{ "{:,.0f}".format(balance | default(0)) }}</span>
+                            <span class="text-[10px] font-bold text-slate-500">MMK</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="{{ url_for('edit_profile') }}"
+                       class="flex-1 group relative flex items-center justify-center gap-3 bg-slate-900 dark:bg-blue-600 text-white py-5 rounded-2xl font-black shadow-xl hover:bg-blue-600 dark:hover:bg-blue-500 transition-all duration-300 active:scale-95">
+                        <span>{{ t("edit_profile") }}</span>
+                        <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </a>
+
+                    <a href="{{ url_for('dashboard') }}"
+                       class="flex-1 flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 py-5 rounded-2xl font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-all active:scale-95">
+                        {{ t("cancel_edit") }}
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <!-- EMAIL (readonly) -->
-    <div>
-      <label class="block font-semibold mb-2 text-gray-700">{{ t("email") }}</label>
-      <input type="email"
-             value="{{ user[1] }}"
-             readonly
-             class="w-full border p-3 rounded-xl bg-gray-100 cursor-not-allowed shadow-inner" />
-    </div>
-
-    <!-- SUMMARY CARDS -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-      <!-- Total Income -->
-      <div class="bg-green-50 p-5 rounded-2xl shadow-lg hover:shadow-2xl transition transform hover:-translate-y-1 hover:scale-105 cursor-pointer border-l-4 border-green-500">
-        <h3 class="text-gray-700 font-semibold mb-2">{{ t("total_income") }}</h3>
-        <p class="text-2xl font-bold text-green-700">{{ total_income | default(0) }}</p>
-      </div>
-
-      <!-- Total Expense -->
-      <div class="bg-red-50 p-5 rounded-2xl shadow-lg hover:shadow-2xl transition transform hover:-translate-y-1 hover:scale-105 cursor-pointer border-l-4 border-red-500">
-        <h3 class="text-gray-700 font-semibold mb-2">{{ t("total_expense") }}</h3>
-        <p class="text-2xl font-bold text-red-700">{{ total_expense | default(0) }}</p>
-      </div>
-
-      <!-- Total Balance -->
-      <div class="bg-gray-50 p-5 rounded-2xl shadow-lg hover:shadow-2xl transition transform hover:-translate-y-1 hover:scale-105 cursor-pointer border-l-4 border-gray-500">
-        <h3 class="text-gray-700 font-semibold mb-2">{{ t("total_balance") }}</h3>
-        <p class="text-2xl font-bold text-gray-800">{{ balance | default(0) }}</p>
-      </div>
-    </div>
-
-    <!-- BUTTONS -->
-    <div class="flex flex-col sm:flex-row gap-4 mt-8">
-      <!-- Edit Profile -->
-      <a href="{{ url_for('edit_profile') }}"
-         class="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-3 rounded-2xl text-center font-semibold shadow-lg transition transform hover:-translate-y-1 hover:scale-105">
-         {{ t("edit_profile") }}
-      </a>
-
-      <!-- Cancel -->
-      <a href="{{ url_for('dashboard') }}"
-         class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 rounded-2xl text-center font-semibold shadow-md transition transform hover:-translate-y-1 hover:scale-105">
-         {{ t("cancel_edit") }}
-      </a>
-    </div>
-
-  </form>
 </div>
 
 {% endblock %}

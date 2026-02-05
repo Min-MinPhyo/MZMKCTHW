@@ -75,6 +75,7 @@ LANGUAGES = {
         "dashboard": "Income & Expense Dashboard",
         "welcome":"Welcome back",
         "savings_goals":"Saving Goal",
+        "forgot_password_title":"Forgot Password",
 
         # ===== General =====
         "welcome": "Welcome back",
@@ -89,6 +90,7 @@ LANGUAGES = {
         "username_placeholder": "Enter your username",
         "email": "Email",
         "email_placeholder": "example@email.com",
+        "email_address":"Email Address",
         "password": "Password",
         "password_placeholder": "Minimum 6 characters and special character",
         "register_btn": "Register",
@@ -286,6 +288,7 @@ LANGUAGES = {
         "records": "Question",
         "cancel": "Quit Quiz",
         "reset": "Restart Quiz",
+        "edit_profile_title":"Edit Profile",
         
         
         # Saving goals
@@ -328,6 +331,7 @@ LANGUAGES = {
         "income_updated": "ဝင်ငွေ ပြင်ဆင်ပြီးပါပြီ",
         "exceed_balance": "လက်ကျန်ငွေထက် ပိုများနေပါသည်",
         "confirm_all_balance": "လက်ကျန်ငွေအားလုံး သုံးမည်ဖြစ်ပါသည်။ အတည်ပြုပါ။",
+        "email_address":"အီးမေးလ် လိပ်စာ",
         # ===== Categories =====
         "Salary": "လစာ",
         "Business": "လုပ်ငန်း",
@@ -420,6 +424,7 @@ LANGUAGES = {
 
         "expense_warning": "လက်ကျန်ငွေအားလုံး အသုံးပြုမည် ဖြစ်ပါသည်။",
         "confirm_continue": "နားလည်ပါသည်၊ ဆက်လုပ်ပါမည်",
+        "forgot_password_title":"စကားဝှက် ပြန်လည်သတ်မှတ်ရန်",
         # Category translations
         "Salary": "လစာ",
         "Business": "လုပ်ငန်း",
@@ -917,11 +922,19 @@ def dashboard():
         saving_rate = round(((this_month_income - this_month_expense) / this_month_income * 100), 1)
     else:
         saving_rate = 0
+        
+        
+        # --- ၆။ Savings Goals Summary ---
+    # စုစုပေါင်း စုမိငွေ (Total Amount Saved in Goals)
+    cursor.execute("SELECT SUM(current_amount) FROM savings_goals WHERE user_id=?", (user_id,))
+    total_saved_in_goals = cursor.fetchone()[0] or 0
+
+    # Goal တစ်ခုချင်းစီရဲ့ အချက်အလက်များကို ဆွဲထုတ်ခြင်း
+    cursor.execute("SELECT id, goal_name, target_amount, current_amount FROM savings_goals WHERE user_id=?", (user_id,))
+    currentgoals = cursor.fetchall()    
 
 
-
-    # expense comparison testing
-  
+ # expense comparison testing
 # Intent: ဒီလ ဘာမှမသုံးရင် 0% ပြရန်၊ အရင်လနှင့်နှိုင်းယှဉ်၍ 100% ထက်မကျော်သော Realistic Data ပြရန်။
     if this_month_expense == 0:
         # ဒီလမှာ အသုံးစရိတ် တစ်ပြားမှ မရှိသေးရင် အမြဲတမ်း 0% ပဲ ပြမယ်
@@ -1014,7 +1027,8 @@ def dashboard():
         saving_rate=saving_rate,
         diff_percent=diff_percent,
         this_month_expense=this_month_expense,
-        goals=goals
+        goals=goals,
+        currentgoals=currentgoals
     )
     
     
@@ -1868,49 +1882,6 @@ app.config.update(
 )
 mail = Mail(app)
 
-
-# 1 updated
-@app.route("/forgot_password", methods=["GET", "POST"])
-def forgot_password():
-    if request.method == "POST":
-        email = request.form.get("email").strip()
-        
-        # OTP ထုတ်ခြင်းနှင့် Session သိမ်းခြင်း (အရင်အတိုင်း)
-        otp = ''.join(random.choices(string.digits, k=6))
-        session['reset_otp'] = otp
-        session['reset_email'] = email
-
-        # --- Email Sending Logic Start ---
-        msg = Message(
-            subject="Your Password Reset OTP",
-            sender=app.config['MAIL_USERNAME'],
-            recipients=[email]
-        )
-        msg.body = f"Hello,\n\nYour verification code is: {otp}\n\nThis code will expire in 10 minutes."
-
-        try:
-            mail.send(msg)
-            print(f"✅ Success: Email sent to {email}")
-            flash("OTP code has been sent to your email!", "success")
-            return redirect(url_for("verify_otp"))
-
-        except smtplib.SMTPAuthenticationError:
-            print("❌ Error: Gmail Authentication Failed. Check App Password.")
-            flash("Server Configuration Error: Invalid Email or App Password.", "danger")
-            
-        except smtplib.SMTPConnectError:
-            print("❌ Error: Could not connect to Gmail SMTP Server.")
-            flash("Network Error: Could not connect to the mail server.", "danger")
-            
-        except Exception as e:
-            # တခြား မထင်မှတ်ထားတဲ့ error များအတွက်
-            print(f"❌ Unexpected Error: {str(e)}")
-            flash(f"An unexpected error occurred: {str(e)}", "danger")
-        
-        # --- Email Sending Logic End ---
-
-    return render_template("forgot_password.html")
-
 # 3 updated reset password
 @app.route("/reset_password", methods=["GET", "POST"])
 def reset_password():
@@ -1969,21 +1940,160 @@ def reset_password():
 
     return render_template("reset_password.html")
 
+
+# 1 updated
+# @app.route("/forgot_password", methods=["GET", "POST"])
+# def forgot_password():
+#     if request.method == "POST":
+#         email = request.form.get("email").strip()
+        
+#         # OTP ထုတ်ခြင်းနှင့် Session သိမ်းခြင်း (အရင်အတိုင်း)
+#         otp = ''.join(random.choices(string.digits, k=6))
+#         session['reset_otp'] = otp
+#         session['reset_email'] = email
+
+#         # --- Email Sending Logic Start ---
+#         msg = Message(
+#             subject="Your Password Reset OTP",
+#             sender=app.config['MAIL_USERNAME'],
+#             recipients=[email]
+#         )
+#         msg.body = f"Hello,\n\nYour verification code is: {otp}\n\nThis code will expire in 10 minutes."
+
+#         try:
+#             mail.send(msg)
+#             print(f"✅ Success: Email sent to {email}")
+#             flash("OTP code has been sent to your email!", "success")
+#             return redirect(url_for("verify_otp"))
+
+#         except smtplib.SMTPAuthenticationError:
+#             print("❌ Error: Gmail Authentication Failed. Check App Password.")
+#             flash("Server Configuration Error: Invalid Email or App Password.", "danger")
+            
+#         except smtplib.SMTPConnectError:
+#             print("❌ Error: Could not connect to Gmail SMTP Server.")
+#             flash("Network Error: Could not connect to the mail server.", "danger")
+            
+#         except Exception as e:
+#             # တခြား မထင်မှတ်ထားတဲ့ error များအတွက်
+#             print(f"❌ Unexpected Error: {str(e)}")
+#             flash(f"An unexpected error occurred: {str(e)}", "danger")
+        
+#         # --- Email Sending Logic End ---
+
+#     return render_template("forgot_password.html")
+
+
+# @app.route("/verify-otp", methods=["GET", "POST"])
+# def verify_otp():
+#     if 'reset_otp' not in session:
+#         return redirect(url_for('forgot_password'))
+
+#     if request.method == "POST":
+#         user_otp = request.form.get("otp")
+#         if user_otp == session.get('reset_otp'):
+#             flash("OTP Verified!", "success")
+#             return redirect(url_for('reset_password')) 
+#         else:
+#             flash("Invalid OTP code. Please try again.", "danger")
+            
+#     return render_template("verify_otp.html") 
+
+
+# otp expire testing
+from flask_mail import Message
+@app.route("/forgot-password", methods=["GET", "POST"])
+def forgot_password():
+    if request.method == "POST":
+        email = request.form.get("email").strip()
+        
+        # ၁။ Database ထဲတွင် User ရှိမရှိ အမှန်တကယ် စစ်ဆေးခြင်း
+        try:
+            conn = sqlite3.connect(DB_NAME)
+            cursor = conn.cursor()
+            cursor.execute("SELECT id FROM users WHERE email = ?", (email,))
+            user = cursor.fetchone()
+            conn.close()
+        except Exception as e:
+            flash("Database Connection Error: " + str(e), "danger")
+            return redirect(url_for('forgot_password'))
+
+        if not user:
+            # User မရှိပါက Error ပြမည်
+            flash("ဤအီးမေးလ်ဖြင့် အကောင့်ဖွင့်ထားခြင်း မရှိပါ။", "danger")
+            return redirect(url_for('forgot_password'))
+
+        # ၂။ User ရှိပါက ၆ လုံးပါသော OTP နှင့် Session/Timestamp သိမ်းခြင်း
+        otp = ''.join(random.choices(string.digits, k=6))
+        session['reset_email'] = email
+        session['reset_otp'] = otp
+        session['otp_created_at'] = time.time()  # ၁ မိနစ်သက်တမ်းအတွက် လက်ရှိအချိန်မှတ်ခြင်း
+
+        # ၃။ Flask-Mail ဖြင့် Email ပို့သည့် Logic
+        msg = Message(
+            subject="Password Reset Verification Code",
+            sender=app.config['MAIL_USERNAME'],
+            recipients=[email]
+        )
+        msg.body = f"မင်္ဂလာပါ၊\n\nစကားဝှက်အသစ်လဲလှယ်ရန် သင်၏ OTP ကုဒ်မှာ: {otp} ဖြစ်ပါသည်။\n\nဤကုဒ်သည် ၁ မိနစ်အတွင်းသာ အကျုံးဝင်ပါသည်။"
+
+        try:
+            mail.send(msg)
+            print(f"✅ Success: Email sent to {email} | OTP: {otp}")
+            flash("OTP ကုဒ်ကို အီးမေးလ်သို့ ပို့လိုက်ပါပြီ။ (သက်တမ်း ၁ မိနစ်)", "success")
+            return redirect(url_for('verify_otp'))
+
+        except smtplib.SMTPAuthenticationError:
+            print("❌ Error: Gmail Authentication Failed.")
+            flash("Server Configuration Error: အီးမေးလ်ပို့ရန် စနစ်ချို့ယွင်းနေပါသည်။", "danger")
+            
+        except smtplib.SMTPConnectError:
+            print("❌ Error: SMTP Server Connection Failed.")
+            flash("Network Error: အီးမေးလ်ဆာဗာနှင့် ချိတ်ဆက်၍မရပါ။", "danger")
+            
+        except Exception as e:
+            print(f"❌ Unexpected Error: {str(e)}")
+            flash(f"မထင်မှတ်ထားသော အမှားတစ်ခု ဖြစ်ပေါ်ခဲ့သည်: {str(e)}", "danger")
+        
+    return render_template("forgot_password.html")
+
 @app.route("/verify-otp", methods=["GET", "POST"])
 def verify_otp():
-    if 'reset_otp' not in session:
+    # ၁။ Session ထဲမှာ OTP ရှိမရှိ အရင်စစ်ဆေးမည်
+    if 'reset_otp' not in session or 'otp_created_at' not in session:
+        flash("ကျေးဇူးပြု၍ OTP အရင်တောင်းခံပါ။", "warning")
         return redirect(url_for('forgot_password'))
 
     if request.method == "POST":
         user_otp = request.form.get("otp")
-        if user_otp == session.get('reset_otp'):
-            flash("OTP Verified!", "success")
-            return redirect(url_for('reset_password')) 
-        else:
-            flash("Invalid OTP code. Please try again.", "danger")
-            
-    return render_template("verify_otp.html") 
+        current_time = time.time()
+        created_at = session.get('otp_created_at', 0)
 
+        # ၂။ ၁ မိနစ် (၆၀ စက္ကန့်) သက်တမ်းကုန်မကုန် စစ်ဆေးခြင်း
+        # (current_time - created_at) သည် OTP ထုတ်ပေးခဲ့စဉ်ကအချိန်နှင့် ယခုအချိန် ကွာခြားချက်ဖြစ်သည်
+        if current_time - created_at > 60:
+            # သက်တမ်းကုန်သွားပါက Session ဒေတာများကို ဖျက်ပစ်မည်
+            session.pop('reset_otp', None)
+            session.pop('otp_created_at', None)
+            flash("OTP သက်တမ်းကုန်ဆုံးသွားပါပြီ။ အသစ်ပြန်တောင်းပါ။", "danger")
+            return redirect(url_for('forgot_password'))
+
+        # ၃။ OTP ကုဒ် မှန်မမှန် စစ်ဆေးခြင်း
+        if user_otp == session.get('reset_otp'):
+            # လုံခြုံရေးအတွက် OTP ကို session ထဲမှ ဖျက်ထုတ်မည် (တစ်ခါသုံးဖြစ်စေရန်)
+            session.pop('reset_otp', None)
+            session.pop('otp_created_at', None)
+            
+            # Password Reset လုပ်ခွင့်ပြုရန် Flag တစ်ခုသတ်မှတ်ခြင်း
+            session['otp_verified'] = True 
+            
+            flash("OTP အောင်မြင်ပါသည်။ စကားဝှက်အသစ် ပြောင်းလဲနိုင်ပါပြီ။", "success")
+            return redirect(url_for('reset_password'))
+        else:
+            # ကုဒ်မှားယွင်းပါက Error ပြမည်
+            flash("ကုဒ်နံပါတ် မှားယွင်းနေပါသည်။ ပြန်လည်စစ်ဆေးပါ။", "danger")
+
+    return render_template("verify_otp.html")
 
 # ---- Run App ----
 if __name__ == "__main__":
