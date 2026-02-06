@@ -39,6 +39,24 @@ app.secret_key = "supersecretkey"
 DB_NAME = "database.db"
 
 
+import os
+
+if __name__ == "__main__":
+    # Render က ပေးတဲ့ PORT ကို ယူသုံးမယ်၊ မရှိရင် 5000 ကို သုံးမယ်
+    port = int(os.environ.get("PORT", 5000))
+    # host='0.0.0.0' က အပြင်ကနေ လှမ်းဝင်လို့ရအောင် လုပ်ပေးတာပါ
+    app.run(host='0.0.0.0', port=port)
+    
+    
+basedir = os.path.abspath(os.path.dirname(__file__))
+db_path = os.path.join(basedir, 'database.db')
+
+def get_db_connection():
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
 # profile upload data 
 UPLOAD_FOLDER = "static/uploads"
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
@@ -1051,8 +1069,10 @@ def savings():
         return redirect(url_for("login"))
     user_id = session["user_id"]
     
+    
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
+
 
     if request.method == "POST":
         if 'add_goal' in request.form:
