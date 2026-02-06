@@ -5,101 +5,120 @@
 <!--user session-->
 {% set is_mm = (request.cookies.get('language') == 'mm') or (session.get('language') == 'mm') %}
 
-<div class="relative overflow-hidden bg-slate-950 rounded-[3rem] p-1 shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-slate-800 transition-all duration-700 hover:border-blue-500/30 group">
-    
-    <div class="absolute -right-20 -top-20 w-96 h-96 bg-blue-600/10 rounded-full blur-[100px] group-hover:bg-blue-600/20 transition-all duration-700"></div>
-    <div class="absolute -left-20 -bottom-20 w-80 h-80 bg-indigo-600/10 rounded-full blur-[100px]"></div>
+<div class="relative group perspective-1000">
+    <div class="absolute -inset-1 bg-gradient-to-r from-blue-600/20 via-indigo-600/20 to-emerald-600/20 rounded-[3.5rem] blur-2xl opacity-50 group-hover:opacity-100 transition duration-1000"></div>
 
-    <div class="relative bg-slate-900/40 backdrop-blur-xl rounded-[2.8rem] p-8 md:p-10">
-        <div class="flex flex-col lg:flex-row items-center justify-between gap-10">
-            
-            <div class="flex flex-col md:flex-row items-center gap-8">
+    <div class="relative overflow-hidden bg-slate-950/80 backdrop-blur-2xl rounded-[3rem] border border-white/10 p-1 shadow-2xl transition-all duration-500 hover:shadow-blue-500/20">
+        
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+            <div class="absolute -top-[30%] -right-[10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] animate-pulse"></div>
+            <div class="absolute -bottom-[30%] -left-[10%] w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px] animate-pulse" style="animation-delay: 2s;"></div>
+        </div>
+
+        <div class="relative px-8 py-10 md:px-12">
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-12">
                 
-                <div class="relative">
-                    <div class="absolute -inset-1.5 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-full blur-sm opacity-25 group-hover:opacity-60 group-hover:animate-spin-slow transition duration-1000"></div>
-                    
-                    <a href="{{ url_for('profile') }}" class="relative block group/avatar">
-                        {% if session.avatar %}
-                            <img src="{{ url_for('static', filename='uploads/' + session.avatar) }}"
-                                 class="w-28 h-28 rounded-full border-4 border-slate-900 object-cover shadow-2xl transition-transform duration-500 group-hover/avatar:scale-105" />
-                        {% else %}
-                            <div class="w-28 h-28 rounded-full bg-slate-800 flex items-center justify-center border-4 border-slate-900 shadow-2xl">
-                                <span class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br from-blue-400 to-indigo-400">
-                                    {{ session.username[0]|upper }}
-                                </span>
-                            </div>
-                        {% endif %}
+                <div class="flex flex-col md:flex-row items-center gap-10">
+                    <div class="relative group/avatar cursor-pointer">
+                        <div class="absolute -inset-4 border border-dashed border-blue-500/30 rounded-full animate-spin-slow opacity-0 group-hover/avatar:opacity-100 transition-opacity duration-700"></div>
+                        <div class="absolute -inset-2 bg-gradient-to-tr from-blue-500 to-indigo-500 rounded-full blur opacity-20 group-hover/avatar:opacity-40 transition duration-500"></div>
                         
-                        <div class="absolute -bottom-1 -right-1 bg-white p-2 rounded-2xl text-slate-900 shadow-xl transform scale-0 group-hover/avatar:scale-100 transition-all duration-300 hover:bg-blue-500 hover:text-white">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                        <a href="{{ url_for('profile') }}" class="relative block">
+                            {% if session.avatar %}
+                                <div class="w-32 h-32 rounded-[2.5rem] rotate-3 group-hover/avatar:rotate-0 transition-all duration-500 overflow-hidden border-4 border-slate-900 shadow-2xl">
+                                    <img src="{{ url_for('static', filename='uploads/' + session.avatar) }}" class="w-full h-full object-cover" />
+                                </div>
+                            {% else %}
+                                <div class="w-32 h-32 rounded-[2.5rem] rotate-3 group-hover/avatar:rotate-0 bg-slate-800 flex items-center justify-center border-4 border-slate-700 shadow-2xl transition-all duration-500">
+                                    <span class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-blue-400 to-indigo-400">
+                                        {{ session.username[0]|upper }}
+                                    </span>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="absolute -top-2 -right-2 w-8 h-8 bg-emerald-500 rounded-2xl border-4 border-slate-950 flex items-center justify-center shadow-lg shadow-emerald-500/50">
+                                <div class="w-2 h-2 bg-white rounded-full animate-ping"></div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="text-center md:text-left space-y-4">
+                        <div class="flex flex-wrap justify-center md:justify-start gap-3">
+                            <span class="px-4 py-1 bg-white/5 backdrop-blur-md text-blue-400 text-[9px] font-black uppercase tracking-[0.3em] rounded-full border border-white/10 flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 bg-blue-500 rounded-full shadow-[0_0_8px_#3b82f6]"></span>
+                                {{ "Premium Member" if not is_mm else "ပရီမီယံ အဖွဲ့ဝင်" }}
+                            </span>
+                        </div>
+
+                        <div class="space-y-1">
+                            <h2 class="text-slate-400 font-medium text-lg md:text-xl tracking-tight opacity-80">{{ t("welcome") }},</h2>
+                            <h1 class="text-5xl md:text-7xl font-black text-white tracking-tighter leading-none">
+                                <span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-slate-500">
+                                    {{ session.username }}
+                                </span>
+                            </h1>
+                        </div>
+
+                        <p class="{% if is_mm %}font-medium text-slate-400 text-base{% else %}font-mono text-[11px] tracking-[0.2em] text-blue-500/60 uppercase{% endif %}">
+                            {% if is_mm %}
+                                <span class="inline-block w-8 h-[1px] bg-blue-500 align-middle mr-2"></span> သင်၏ ဘဏ္ဍာရေး အချက်အလက်များ
+                            {% else %}
+                                // System_Online: Monitoring financial assets
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center gap-6 w-full lg:w-auto">
+                    
+                    <div class="relative group/chip overflow-hidden px-8 py-5 bg-white/5 rounded-[2rem] border border-white/10 w-full sm:w-auto transition-all duration-300 hover:bg-white/10">
+                        <div class="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-transparent translate-x-[-100%] group-hover/chip:translate-x-[100%] transition-transform duration-1000"></div>
+                        <span class="block text-[9px] font-black text-slate-500 uppercase tracking-widest mb-2">{{ t("status") if LANGUAGES else "Cloud Sync" }}</span>
+                        <div class="flex items-center gap-3">
+                            <div class="flex -space-x-2">
+                                <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                                <div class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></div>
+                            </div>
+                            <span class="text-sm font-bold text-slate-200 tracking-tight">
+                                {{ "Operational" if not is_mm else "ကောင်းမွန်ပါသည်" }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <a href="{{ url_for('logout') }}" 
+                       class="group/logout relative w-full sm:w-auto overflow-hidden bg-white text-slate-950 px-10 py-5 rounded-[1.8rem] font-black transition-all duration-500 hover:bg-rose-600 hover:text-white shadow-[0_10px_30px_rgba(255,255,255,0.1)] hover:shadow-rose-600/40">
+                        <div class="relative z-10 flex items-center justify-center gap-4">
+                            <span class="{% if is_mm %}text-lg{% else %}text-xs uppercase tracking-[0.2em]{% endif %}">
+                                {{ t("logout") }}
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-transform duration-500 group-hover/logout:translate-x-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4-4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                             </svg>
                         </div>
                     </a>
                 </div>
 
-                <div class="text-center md:text-left space-y-3">
-                    <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-500/5 rounded-full border border-blue-500/10">
-                        <span class="relative flex h-2 w-2">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-                        </span>
-                        <span class="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em]">
-                            {{ "Premium Account" if not is_mm else "ပရီမီယံ အကောင့်" }}
-                        </span>
-                    </div>
-
-                    <h1 class="text-4xl md:text-6xl font-black text-white tracking-tighter leading-tight">
-                        <span class="opacity-70 font-light">{{ t("welcome") }},</span><br/>
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-emerald-300">
-                            {{ session.username }}
-                        </span>
-                    </h1>
-
-                    <p class="{% if is_mm %}font-medium text-slate-400{% else %}font-mono text-xs tracking-widest text-slate-500 uppercase{% endif %}">
-                        {% if is_mm %}
-                            <span class="text-blue-500">●</span> သင်၏ ငွေကြေးစီမံမှုများကို တစ်နေရာတည်းတွင် ကြည့်ရှုပါ။
-                        {% else %}
-                            // Managing wealth with precision and efficiency
-                        {% endif %}
-                    </p>
-                </div>
             </div>
-
-            <div class="flex flex-col sm:flex-row items-center gap-6 w-full lg:w-auto">
-                
-                <div class="flex flex-col items-center lg:items-end px-8 py-4 bg-slate-800/30 rounded-3xl border border-white/5 w-full sm:w-auto">
-                    <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{{ t("status") if LANGUAGES else "Network" }}</span>
-                    <div class="flex items-center gap-2">
-                        <div class="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]"></div>
-                        <span class="text-sm font-bold text-white tracking-tight">
-                            {{ "Live Synced" if not is_mm else "ချိတ်ဆက်ထားသည်" }}
-                        </span>
-                    </div>
-                </div>
-
-                <a href="{{ url_for('logout') }}" 
-                   class="group/btn relative w-full sm:w-auto flex items-center justify-center gap-4 bg-white text-slate-950 px-10 py-5 rounded-[2rem] font-black transition-all duration-300 hover:bg-rose-500 hover:text-white shadow-xl hover:shadow-rose-500/20 active:scale-95">
-                    <span class="{% if is_mm %}text-base{% else %}text-sm uppercase tracking-widest{% endif %}">
-                        {{ t("logout") }}
-                    </span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-transform duration-300 group-hover/btn:translate-x-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4-4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                </a>
-            </div>
-
         </div>
     </div>
 </div>
 
 <style>
     .animate-spin-slow {
-        animation: spin 8s linear infinite;
+        animation: spin 12s linear infinite;
+    }
+    .perspective-1000 {
+        perspective: 1000px;
     }
     @keyframes spin {
         from { transform: rotate(0deg); }
         to { transform: rotate(360deg); }
+    }
+    
+    /* Smooth transition for text gradients */
+    .bg-clip-text {
+        -webkit-background-clip: text;
+        background-clip: text;
     }
 </style>
 <!--user session-->
@@ -279,74 +298,115 @@
 </div>
 <!--end date-->
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <div class="bg-green-100 rounded-xl p-6 shadow-sm border border-green-200">
-      <h3 class="text-gray-700 font-semibold">{{ t("total_income") }}</h3>
-      <p class="text-4xl font-bold text-green-700 mt-2">{{ "{:,.0f}".format(total_income) }}</p>
-    </div>
-    <div class="bg-red-100 rounded-xl p-6 shadow-sm border border-red-200">
-      <h3 class="text-gray-700 font-semibold">{{ t("total_expense") }}</h3>
-      <p class="text-4xl font-bold text-red-700 mt-2">{{ "{:,.0f}".format(total_expense) }}</p>
-    </div>
-   <div class="bg-blue-100 dark:bg-blue-900/30 rounded-xl p-6 shadow-sm border border-blue-200 dark:border-blue-800 transition-all hover:shadow-md">
-    <div class="flex items-center justify-between mb-4">
-        <h3 class="text-blue-800 dark:text-blue-300 font-bold uppercase tracking-wider text-xs">{{ t("balance") }}</h3>
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z" />
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2a10 10 0 100 20 10 10 0 000-20z" />
-        </svg>
-    </div>
 
-    <p class="text-4xl font-black text-blue-700 dark:text-blue-400">
-        {{ "{:,.0f}".format(balance) }} <span class="text-sm font-medium opacity-70">MMK</span>
-    </p>
 
-    <div class="mt-6 pt-6 border-t border-gray-100 dark:border-gray-800">
-    <div class="grid grid-cols-2 gap-4">
+<!--in / exp / balance-->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <div class="relative group overflow-hidden bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-100 dark:border-slate-800 shadow-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-emerald-500/10">
+        <div class="absolute -right-8 -top-8 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-colors"></div>
         
-        {% set total_saved = goals|sum(attribute=4) if goals else 0 %}
-        <div class="relative overflow-hidden bg-blue-50/50 dark:bg-blue-900/20 p-4 rounded-2xl border border-blue-100 dark:border-blue-800/50 transition-all hover:shadow-md group">
-            <div class="relative z-10 flex flex-col gap-1">
-                <div class="flex items-center gap-1.5">
-                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
-                    <span class="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest leading-none">
-                        {{ t("total_saved") }}
-                    </span>
+        <div class="relative z-10">
+            <div class="flex items-center justify-between mb-8">
+                <div class="p-3 bg-emerald-50 dark:bg-emerald-900/30 rounded-2xl">
+                    <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                    </svg>
                 </div>
-                <div class="flex items-baseline gap-1">
-                    <span class="text-xl font-black text-blue-900 dark:text-blue-100 tracking-tight">
-                        {{ "{:,.0f}".format(total_saved) }}
-                    </span>
-                    <span class="text-[9px] font-bold text-blue-400 uppercase">MMK</span>
-                </div>
+                <span class="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-[0.2em] bg-emerald-50 dark:bg-emerald-900/20 px-3 py-1 rounded-full">
+                    +{{ "Growth" if not is_mm else "တိုးတက်မှု" }}
+                </span>
             </div>
-            <div class="absolute -right-2 -bottom-2 w-12 h-12 bg-blue-500/5 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
-        </div>
-
-        <div class="relative overflow-hidden bg-indigo-50/50 dark:bg-indigo-900/20 p-4 rounded-2xl border border-indigo-100 dark:border-indigo-800/50 transition-all hover:shadow-md group">
-            <div class="relative z-10 flex flex-col gap-1">
-                <div class="flex items-center gap-1.5">
-                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-                    <span class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest leading-none">
-                        {{ t("total_balance") }}
-                    </span>
-                </div>
-                <div class="flex items-baseline gap-1">
-                    <span class="text-xl font-black text-indigo-900 dark:text-indigo-100 tracking-tight">
-                        {{ "{:,.0f}".format(balance) }}
-                    </span>
-                    <span class="text-[9px] font-bold text-indigo-400 uppercase">MMK</span>
-                </div>
+            
+            <h3 class="text-slate-500 dark:text-slate-400 font-bold text-xs uppercase tracking-widest">{{ t("total_income") }}</h3>
+            <div class="flex items-baseline gap-2 mt-2">
+                <p class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">
+                    {{ "{:,.0f}".format(total_income) }}
+                </p>
+                <span class="text-xs font-bold text-slate-400">MMK</span>
             </div>
-            <div class="absolute -right-2 -bottom-2 w-12 h-12 bg-indigo-500/5 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
         </div>
-
     </div>
+
+    <div class="relative group overflow-hidden bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-100 dark:border-slate-800 shadow-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-rose-500/10">
+        <div class="absolute -right-8 -top-8 w-32 h-32 bg-rose-500/10 rounded-full blur-3xl group-hover:bg-rose-500/20 transition-colors"></div>
+        
+        <div class="relative z-10">
+            <div class="flex items-center justify-between mb-8">
+                <div class="p-3 bg-rose-50 dark:bg-rose-900/30 rounded-2xl">
+                    <svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path>
+                    </svg>
+                </div>
+                <span class="text-[10px] font-black text-rose-600 dark:text-rose-400 uppercase tracking-[0.2em] bg-rose-50 dark:bg-rose-900/20 px-3 py-1 rounded-full">
+                    {{ "Spending" if not is_mm else "အသုံးစရိတ်" }}
+                </span>
+            </div>
+            
+            <h3 class="text-slate-500 dark:text-slate-400 font-bold text-xs uppercase tracking-widest">{{ t("total_expense") }}</h3>
+            <div class="flex items-baseline gap-2 mt-2">
+                <p class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">
+                    {{ "{:,.0f}".format(total_expense) }}
+                </p>
+                <span class="text-xs font-bold text-slate-400">MMK</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="relative group overflow-hidden bg-slate-900 rounded-[2.5rem] p-8 shadow-2xl transition-all duration-500 hover:shadow-blue-500/20 border border-white/5">
+        <div class="absolute top-0 right-0 w-40 h-40 bg-blue-600/20 rounded-full blur-[80px] animate-pulse"></div>
+        
+        <div class="relative z-10 h-full flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-blue-400 font-black text-[10px] uppercase tracking-[0.3em]">{{ t("balance") }}</h3>
+                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/40">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="flex items-baseline gap-2">
+                    <p class="text-5xl font-black text-white tracking-tighter">
+                        {{ "{:,.0f}".format(balance) }}
+                    </p>
+                    <span class="text-sm font-bold text-blue-500 tracking-widest">MMK</span>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-white/10 grid grid-cols-2 gap-4">
+                {% set total_saved = goals|sum(attribute=4) if goals else 0 %}
+                
+                <div class="space-y-1">
+                    <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">{{ t("total_saved") }}</p>
+                    <p class="text-lg font-bold text-blue-100 tracking-tight">{{ "{:,.0f}".format(total_saved) }}</p>
+                </div>
+
+              <!--  <div class="space-y-1 text-right">
+                    <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Efficiency</p>
+                    <p class="text-lg font-bold text-emerald-400 tracking-tight">
+                        {% if total_income > 0 %}
+                            {{ "{:.1f}%".format((balance / total_income) * 100) }}
+                        {% else %}
+                            0%
+                        {% endif %}
+                    </p>
+                </div>-->
+            </div>
+        </div>
+    </div>
+
 </div>
 
-   
-</div>
-  </div>
+
+<!--end in/exp/balance-->
+
+ 
+
+
+
+
 
 <!--all button-->
 <div class="bg-white/50 backdrop-blur-md rounded-[2.5rem] p-4 border border-gray-100 shadow-sm">

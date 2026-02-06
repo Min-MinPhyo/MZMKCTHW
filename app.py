@@ -76,6 +76,7 @@ LANGUAGES = {
         "welcome":"Welcome back",
         "savings_goals":"Saving Goal",
         "forgot_password_title":"Forgot Password",
+        "update_success":"Expense Updated Successful",
 
         # ===== General =====
         "welcome": "Welcome back",
@@ -152,7 +153,7 @@ LANGUAGES = {
         "category": "Category",
         "amount": "Amount",
         "date": "Date",
-        
+        "all_fields_required":"All Fields are required",
         # pagination
         "prev_pagination":"Prev",
         "next_pagination":"Next",
@@ -317,6 +318,8 @@ LANGUAGES = {
         "dashboard": "ဝင်ငွေနှင့် ကုန်ကျစရိတ် ဒက်ရှ်ဘုတ်",
         "welcome":"အားလုံးကို ကြိုဆိုပါတယ် ချစ်တို့ရေ",
         "savings_goals":"ငွေစုဆောင်းရည်မှန်းချက်",
+        "all_fields_required":"အချက်အလက်အားလုံး ဖြည့်စွက်ရန် လိုအပ်သည်",
+        "update_success":"အသုံးစရိတ် ပြင်ဆင်မှု အောင်မြင်ပါသည်",
         # ===== General =====
         "welcome": "ပြန်လည်ကြိုဆိုပါတယ်",
         "login":"ဝင်ရောက်မှု",
@@ -1263,38 +1266,55 @@ def add_expense():
   
 
 # edit-income
-@app.route("/edit_income/<int:income_id>", methods=["GET","POST"])
+@app.route("/edit_income/<int:income_id>", methods=["GET", "POST"])
 def edit_income(income_id):
     if "user_id" not in session:
         return redirect(url_for("login"))
 
     conn = sqlite3.connect(DB_NAME)
+    conn.row_factory = sqlite3.Row  # Column name ဖြင့် data ခေါ်ယူနိုင်ရန်
     cursor = conn.cursor()
 
     if request.method == "POST":
-        category = request.form["category"]
-        amount = float(request.form["amount"])
-        description = request.form["description"]
+        form_data = request.form
         date_input = request.form.get("date")
+        category = request.form.get("category", "").strip()
+        amount_str = request.form.get("amount", "").strip()
+        description = request.form.get("description", "").strip()
 
+        # ✅ 1. VALIDATION
+        if not amount_str:
+            flash(t("amount_required") if LANGUAGES else "Amount is required!", "danger")
+            return render_template("income_form.html", categories=INCOME_CATEGORIES, form_data=form_data, mode="edit", income_id=income_id)
+
+        try:
+            amount = float(amount_str)
+        except ValueError:
+            flash(t("invalid_amount") if LANGUAGES else "Invalid amount!", "danger")
+            return render_template("income_form.html", categories=INCOME_CATEGORIES, form_data=form_data, mode="edit", income_id=income_id)
+
+        if amount <= 0:
+            flash(t("amount_min_error") if LANGUAGES else "Amount must be > 0", "danger")
+            return render_template("income_form.html", categories=INCOME_CATEGORIES, form_data=form_data, mode="edit", income_id=income_id)
+
+        # ✅ 2. UPDATE DATABASE
         cursor.execute("""
-            UPDATE income
-            SET date=?, category=?, amount=?, description=?
+            UPDATE income 
+            SET date=?, category=?, amount=?, description=? 
             WHERE id=? AND user_id=?
         """, (date_input, category, amount, description, income_id, session["user_id"]))
-
+        
         conn.commit()
         conn.close()
 
-        flash("Income updated successfully!", "success")
+        flash(t("income_updated") if LANGUAGES else "Income updated successfully!", "success")
         return redirect(url_for("dashboard"))
 
-    cursor.execute("""
-        SELECT date, category, amount, description
-        FROM income
-        WHERE id=? AND user_id=?
-    """, (income_id, session["user_id"]))
-
+    # --- GET REQUEST (LOAD DATA) ---
+    cursor.execute(
+        "SELECT date, category, amount, description FROM income WHERE id=? AND user_id=?",
+        (income_id, session["user_id"])
+    )
     record = cursor.fetchone()
     conn.close()
 
@@ -1302,14 +1322,21 @@ def edit_income(income_id):
         flash("Record not found!", "danger")
         return redirect(url_for("dashboard"))
 
+    # Template error ကင်းစေရန် လက်ရှိ data ကို dictionary အဖြစ်ပြောင်းလဲခြင်း
+    current_form_data = {
+        'date': record['date'],
+        'category': record['category'],
+        'amount': record['amount'],
+        'description': record['description']
+    }
+
     return render_template(
         "income_form.html",
-         record=record,
-         mode="edit",
         categories=INCOME_CATEGORIES,
-
+        form_data=current_form_data,
+        mode="edit",
+        income_id=income_id
     )
-
 # # ---- Delete Income ----
 @app.route("/delete_income/<int:income_id>")
 def delete_income(income_id):
