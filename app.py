@@ -42,11 +42,11 @@ DB_NAME = "database.db"
 import os
 
 if __name__ == "__main__":
-    # Render က ပေးတဲ့ PORT ကို ယူသုံးမယ်၊ မရှိရင် 5000 ကို သုံးမယ်
+    import os
+    # PORT ကို Environment ကနေ ယူမယ်၊ မရှိရင် 5000 ကို သုံးမယ်
     port = int(os.environ.get("PORT", 5000))
-    # host='0.0.0.0' က အပြင်ကနေ လှမ်းဝင်လို့ရအောင် လုပ်ပေးတာပါ
+    # host ကို '0.0.0.0' ပေးမှသာ Render က အပြင်ကို ပေးထွက်မှာပါ
     app.run(host='0.0.0.0', port=port)
-    
     
 basedir = os.path.abspath(os.path.dirname(__file__))
 db_path = os.path.join(basedir, 'database.db')
