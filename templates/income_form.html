@@ -1,90 +1,107 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="max-w-md mx-auto mt-12 relative group">
-    <div class="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-[2.5rem] blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
+<div class="max-w-md mx-auto mt-12 relative group p-4 sm:p-0">
+    <div class="absolute -inset-1 bg-gradient-to-r 
+        {% if mode == 'delete' %} from-red-600 via-rose-500 to-orange-500 
+        {% else %} from-emerald-500 via-teal-500 to-blue-500 {% endif %} 
+        rounded-[2.5rem] blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
 
-    <div class="relative bg-white dark:bg-slate-900 p-8 md:p-10 rounded-[2rem] shadow-2xl border border-slate-100 dark:border-slate-800">
+    <div class="relative bg-white dark:bg-slate-900 p-8 md:p-10 rounded-[2.5rem] shadow-2xl border border-slate-100 dark:border-slate-800">
         
-        <h1 class="text-3xl font-black text-center tracking-tighter mb-8">
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-500 dark:from-white dark:to-slate-400">
-                {% if mode == "edit" %}
-                    {{ t("edit_income_title") }}
-                {% else %}
-                    {{ t("add_income_title") }}
-                {% endif %}
-            </span>
-        </h1>
+        <div class="text-center mb-10">
+            <h1 class="text-3xl font-black tracking-tighter">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r 
+                    {% if mode == 'delete' %} from-red-600 to-rose-500 {% else %} from-slate-800 to-slate-500 dark:from-white dark:to-slate-400 {% endif %}">
+                    {% if mode == "edit" %} {{ t("edit_income_title") }}
+                    {% elif mode == "delete" %} {{ t("confirm_delete_title") if LANGUAGES else "Confirm Delete" }}
+                    {% else %} {{ t("add_income_title") }} {% endif %}
+                </span>
+            </h1>
+            {% if mode == "delete" %}
+                <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-rose-500 mt-2">{{ t("permanent_action") if LANGUAGES else "Action cannot be undone" }}</p>
+            {% endif %}
+        </div>
 
         <form method="POST" class="space-y-6">
-            <div class="flex flex-col space-y-2">
-                <label class="text-xs font-black uppercase tracking-widest text-slate-500 ml-1">{{ t("date") }}</label>
-                <input type="date" name="date" required
-                    value="{{ form_data.date if form_data else current_date }}"
-                    class="w-full p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all text-slate-700 dark:text-slate-200">
-            </div>
-
-            <div class="flex flex-col space-y-2">
-                <label class="text-xs font-black uppercase tracking-widest text-slate-500 ml-1">{{ t("category") }}</label>
+            
+            <div class="space-y-2">
+                <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">{{ t("date") }}</label>
                 <div class="relative">
-                    <select name="category" required
-                        class="w-full p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all appearance-none text-slate-700 dark:text-slate-200">
-                        <option value="" disabled selected>{{ t("select_category") }}</option>
-                        {% for cat in categories %}
-                            <option value="{{ cat }}"
-                                {% if form_data and form_data.category == cat %}selected{% endif %}>
-                                {{ t(cat) }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                    <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </div>
+                    <input type="date" name="date" required
+                        value="{{ form_data.date if form_data else current_date }}"
+                        {% if mode == 'delete' %} readonly {% endif %}
+                        class="w-full p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all text-slate-600 dark:text-slate-300 {% if mode == 'delete' %} cursor-not-allowed {% endif %}">
                 </div>
             </div>
 
-            <div class="flex flex-col space-y-2">
-                <label class="text-xs font-black uppercase tracking-widest text-slate-500 ml-1">{{ t("amount") }}</label>
+            <div class="space-y-2">
+                <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">{{ t("category") }}</label>
                 <div class="relative">
-                    <input type="number" step="0.01" name="amount" required
-                        value="{{ form_data.amount if form_data else '' }}"
+                    {% if mode == 'delete' %}
+                        <input type="text" value="{{ t(form_data.category) }}" readonly
+                            class="w-full p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-600 cursor-not-allowed">
+                        <input type="hidden" name="category" value="{{ form_data.category }}">
+                    {% else %}
+                        <select name="category" required
+                            class="w-full p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 appearance-none text-slate-600 dark:text-slate-300 transition-all">
+                            <option value="" disabled selected>{{ t("select_category") }}</option>
+                            {% for cat in categories %}
+                                <option value="{{ cat }}" {% if form_data and form_data.category == cat %}selected{% endif %}>{{ t(cat) }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">{{ t("amount") }}</label>
+                <div class="relative">
+                    <input type="{% if mode == 'delete' %}text{% else %}number{% endif %}" step="0.01" name="amount" required
+                        value="{{ form_data.amount }}{% if mode == 'delete' %} Ks{% endif %}"
+                        {% if mode == 'delete' %} readonly {% endif %}
                         placeholder="{{ t('amount_placeholder') }}"
-                        class="w-full p-4 pl-12 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all text-slate-700 dark:text-slate-200 font-bold">
+                        class="w-full p-4 pl-12 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all text-slate-700 dark:text-slate-200 font-bold {% if mode == 'delete' %} cursor-not-allowed {% endif %}">
                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">Ks</span>
                 </div>
             </div>
 
-              <div class="flex flex-col">
-      <label class="text-gray-700 font-semibold mb-1">{{ t("description") }}</label>
-      <input type="text" name="description"
-        value="{{ t((form_data|default({})).get('description', ''), is_user_data=True) }}"
-        placeholder="{{ t('description_placeholder') }}"
-        class="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-400">
-      <p class="text-xs text-gray-400 mt-1">{{ t("description_hint") }}</p>
-    </div>
+            <div class="space-y-2">
+                <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">{{ t("description") }}</label>
+                <textarea name="description" rows="2"
+                    {% if mode == 'delete' %} readonly {% endif %}
+                    placeholder="{{ t('description_placeholder') }}"
+                    class="w-full p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-rose-500/20 transition-all text-slate-600 dark:text-slate-300 resize-none {% if mode == 'delete' %} opacity-70 cursor-not-allowed {% endif %}"
+                >{% if form_data %}{{ t(form_data['description'], is_user_data=True) }}{% endif %}</textarea>
+            </div>
 
-
-            <button type="submit"
-                class="w-full py-5 rounded-2xl font-black text-white shadow-xl transform transition-all active:scale-[0.98]
-                {% if mode == 'edit' %}
-                    bg-gradient-to-r from-blue-600 to-indigo-600 hover:shadow-blue-500/25
+            <div class="pt-4 space-y-3">
+                {% if mode == "delete" %}
+                    <button type="submit"
+                        class="w-full py-5 rounded-2xl font-black text-white shadow-xl bg-gradient-to-r from-red-600 to-rose-600 hover:shadow-red-500/40 transform transition-all active:scale-[0.98]">
+                        {{ t("confirm_delete_btn") if LANGUAGES else "Delete Forever" }}
+                    </button>
+                    <a href="{{ url_for('dashboard') }}" 
+                       class="block w-full py-5 text-center rounded-2xl font-black text-slate-400 hover:text-slate-600 transition-all tracking-widest text-[10px] uppercase">
+                        {{ t("cancel_btn") if LANGUAGES else "Back to Safety" }}
+                    </a>
                 {% else %}
-                    bg-gradient-to-r from-emerald-600 to-teal-600 hover:shadow-emerald-500/25
-                {% endif %}">
-                {% if mode == "edit" %}
-                    {{ t("update_income_btn") }}
-                {% else %}
-                    {{ t("add_income_btn") }}
+                    <button type="submit"
+                        class="w-full py-5 rounded-2xl font-black text-white shadow-xl transform transition-all active:scale-[0.98]
+                        {% if mode == 'edit' %} bg-gradient-to-r from-blue-600 to-indigo-600 hover:shadow-blue-500/30
+                        {% else %} bg-gradient-to-r from-emerald-600 to-teal-600 hover:shadow-emerald-500/30 {% endif %}">
+                        {{ t("update_income_btn") if mode == "edit" else t("add_income_btn") }}
+                    </button>
+                    <a href="{{ url_for('dashboard') }}" 
+                       class="block w-full text-center text-slate-400 hover:text-slate-600 transition-all tracking-widest text-[10px] uppercase font-bold pt-2">
+                        ← {{ t("back_dashboard") }}
+                    </a>
                 {% endif %}
-            </button>
+            </div>
         </form>
-
-        <div class="mt-8 text-center">
-            <a href="{{ url_for('dashboard') }}"
-               class="text-xs font-black uppercase tracking-widest text-slate-400 hover:text-blue-500 transition-colors">
-               ← {{ t("back_dashboard") }}
-            </a>
-        </div>
     </div>
 </div>
 

@@ -922,7 +922,13 @@ def dashboard():
     last_month_expense = cursor.fetchone()[0] or 0
     # ၁။ Saving Rate တွက်ချက်ခြင်း
     if this_month_income > 0:
-        saving_rate = round(((this_month_income - this_month_expense) / this_month_income * 100), 1)
+       # ပထမဦးစွာ ရာခိုင်နှုန်းကို တွက်ပါ
+        calculated_rate = ((this_month_income - this_month_expense) / this_month_income) * 100
+        
+        # min() ထဲမှာ တွက်လို့ရတဲ့နှုန်း နဲ့ 100 ကို နှိုင်းယှဉ်ပြီး အနည်းဆုံးကို ယူပါ
+        # ပြီးမှ round() နဲ့ ဒသမ ၁ နေရာ ဖြတ်ပါ
+        saving_rate = round(min(calculated_rate, 100), 1)
+       
     else:
         saving_rate = 0
         
@@ -1338,17 +1344,56 @@ def edit_income(income_id):
         income_id=income_id
     )
 # # ---- Delete Income ----
-@app.route("/delete_income/<int:income_id>")
+# @app.route("/delete_income/<int:income_id>")
+# def delete_income(income_id):
+#     if "user_id" not in session:
+#         return redirect(url_for("login"))
+#     conn = sqlite3.connect(DB_NAME)
+#     cursor = conn.cursor()
+#     cursor.execute("DELETE FROM income WHERE id=? AND user_id=?", (income_id, session["user_id"]))
+#     conn.commit()
+#     conn.close()
+#     flash("Income deleted!", "success")
+#     return redirect(url_for("dashboard"))
+
+# delete updated 1
+@app.route("/delete_income/<int:income_id>", methods=["GET", "POST"])
 def delete_income(income_id):
     if "user_id" not in session:
         return redirect(url_for("login"))
+
     conn = sqlite3.connect(DB_NAME)
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM income WHERE id=? AND user_id=?", (income_id, session["user_id"]))
-    conn.commit()
+
+    # --- POST: User က 'Confirm Delete' ခလုတ်ကို နှိပ်လိုက်သောအခါ ---
+    if request.method == "POST":
+        cursor.execute("DELETE FROM income WHERE id=? AND user_id=?", (income_id, session["user_id"]))
+        conn.commit()
+        conn.close()
+        flash(t("delete_success") if LANGUAGES else "Income deleted successfully!", "success")
+        return redirect(url_for("dashboard"))
+
+    # --- GET: ဖျက်ရမည့် အချက်အလက်ကို အရင်ပြရန် ---
+    cursor.execute("SELECT date, category, amount, description FROM income WHERE id=? AND user_id=?", 
+                   (income_id, session["user_id"]))
+    record = cursor.fetchone()
     conn.close()
-    flash("Income deleted!", "success")
-    return redirect(url_for("dashboard"))
+
+    if not record:
+        flash("Record not found!", "danger")
+        return redirect(url_for("dashboard"))
+
+    # ဤနေရာတွင် mode="delete" ဟု သတ်မှတ်ပြီး ပို့ပေးပါမည်
+    return render_template(
+        "income_form.html",
+        mode="delete",
+        income_id=income_id,
+        form_data=record,
+        categories=INCOME_CATEGORIES
+    )
+
+
 # edit expense updated
 @app.route("/edit_expense/<int:expense_id>", methods=["GET", "POST"])
 def edit_expense(expense_id):
@@ -1430,20 +1475,58 @@ def edit_expense(expense_id):
     )
 
 # ---- Delete Expense ----
-@app.route("/delete_expense/<int:expense_id>")
+# @app.route("/delete_expense/<int:expense_id>")
+# def delete_expense(expense_id):
+#     if "user_id" not in session:
+#         return redirect(url_for("login"))
+#     conn = sqlite3.connect(DB_NAME)
+#     cursor = conn.cursor()
+#     cursor.execute("DELETE FROM expenses WHERE id=? AND user_id=?", (expense_id, session["user_id"]))
+#     conn.commit()
+#     conn.close()
+#     flash("Expense deleted!", "success")
+#     return redirect(url_for("dashboard"))
+
+# delete updated 1
+from datetime import datetime
+
+@app.route("/delete_expense/<int:expense_id>", methods=["GET", "POST"])
 def delete_expense(expense_id):
     if "user_id" not in session:
         return redirect(url_for("login"))
+
     conn = sqlite3.connect(DB_NAME)
+    conn.row_factory = sqlite3.Row  # Dictionary ကဲ့သို့ သုံးနိုင်ရန်
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM expenses WHERE id=? AND user_id=?", (expense_id, session["user_id"]))
-    conn.commit()
+
+    if request.method == "POST":
+        cursor.execute("DELETE FROM expenses WHERE id=? AND user_id=?", (expense_id, session["user_id"]))
+        conn.commit()
+        conn.close()
+        flash("Expense deleted successfully!", "success")
+        return redirect(url_for("dashboard"))
+
+    # GET: အချက်အလက်များကို ဆွဲထုတ်ခြင်း
+    cursor.execute("SELECT date, category, amount, description FROM expenses WHERE id=? AND user_id=?", 
+                   (expense_id, session["user_id"]))
+    record = cursor.fetchone()
     conn.close()
-    flash("Expense deleted!", "success")
-    return redirect(url_for("dashboard"))
 
+    if not record:
+        flash("Expense not found!", "danger")
+        return redirect(url_for("dashboard"))
 
+    # Today's date for fallback
+    today = datetime.now().strftime('%Y-%m-%d')
 
+    return render_template(
+        "expense_form.html",
+        mode="delete",
+        expense_id=expense_id,
+        form_data=record,      # sqlite3.Row object
+        current_date=today,    # Variable name current_date ဟု ပေးထားပါ
+        categories=EXPENSE_CATEGORIES
+    )
 # view by chart
 @app.route("/charts", methods=["GET", "POST"])
 def charts():

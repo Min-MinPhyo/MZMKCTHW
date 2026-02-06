@@ -15,9 +15,17 @@
         </div>
         <h1 class="text-3xl font-black text-slate-900 tracking-tight mb-2">Verify OTP</h1>
         <p class="text-slate-500 text-sm font-medium px-6 leading-relaxed">
-          {{ t("enter_otp_hint") if LANGUAGES else "We've sent a 6-digit verification code to your email. Enter it below to continue." }}
+          {{ t("enter_otp_hint") if LANGUAGES else "Enter the 6-digit verification code below." }}
         </p>
       </div>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div id="flash-type" data-category="{{ category }}" class="hidden"></div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
 
       <form action="{{ url_for('verify_otp') }}" method="POST" class="space-y-8">
         <div class="text-center">
@@ -25,10 +33,11 @@
             Verification Code
           </label>
           
-          <div class="relative group">
+          <div class="relative group" id="otp-container">
             <input 
               type="text" 
               name="otp" 
+              id="otp-input"
               maxlength="6" 
               required 
               autofocus
@@ -36,7 +45,7 @@
               pattern="\d{6}"
               inputmode="numeric"
               autocomplete="one-time-code"
-              class="w-full text-center text-5xl tracking-[0.6rem] font-mono font-black py-6 bg-slate-50 border-2 border-slate-100 rounded-3xl focus:outline-none focus:ring-8 focus:ring-blue-50 focus:border-blue-500 focus:bg-white transition-all duration-300 placeholder-slate-200"
+              class="w-full text-center text-5xl tracking-[0.6rem] font-mono font-black py-6 bg-slate-50 border-2 border-slate-100 rounded-3xl focus:outline-none transition-all duration-300 placeholder-slate-200"
             >
           </div>
         </div>
@@ -52,7 +61,7 @@
 
       <div class="mt-10 pt-8 border-t border-slate-50 text-center">
         <div id="timer-status" class="flex flex-col items-center gap-3">
-          <div class="flex items-center gap-2 text-slate-400 font-bold text-[11px] uppercase tracking-widest">
+          <div id="countdown-timer" class="flex items-center gap-2 text-slate-400 font-bold text-[11px] uppercase tracking-widest">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 animate-spin-slow text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -71,27 +80,34 @@
   </div>
 </div>
 
-
-
 <script>
-  let timeLeft = 60; // Backend logic နှင့် ကိုက်ညီသော ၁ မိနစ်
+  // OTP Wrong Input Animation (TikTok Style)
+  const otpInput = document.getElementById('otp-input');
+  const flashData = document.getElementById('flash-type');
+
+  if (flashData && flashData.dataset.category === 'danger') {
+    // Error တက်လာပါက input ကို အနီရောင်ပြောင်းပြီး တုန်ခါသွားစေရန်
+    otpInput.classList.add('otp-error');
+    
+    // Animation ပြီးရင် (0.5s) error effect ကို ဖျောက်ရန် (Optional)
+    setTimeout(() => {
+        otpInput.classList.remove('otp-error');
+    }, 1000);
+  }
+
+  // Timer Logic
+  let timeLeft = 60;
   const timerDisplay = document.getElementById('timer');
   const resendContainer = document.getElementById('resend-container');
-  const timerStatus = document.getElementById('timer-status');
+  const countdownTimer = document.getElementById('countdown-timer');
 
   const countdown = setInterval(() => {
     timeLeft--;
-    timerDisplay.textContent = timeLeft;
+    if(timerDisplay) timerDisplay.textContent = timeLeft;
 
     if (timeLeft <= 0) {
       clearInterval(countdown);
-      
-      // Timer နေရာတွင် Expired စာသားပြောင်းရန်
-      timerStatus.firstElementChild.innerHTML = `
-        <span class="text-red-600 font-black tracking-tighter">TIME EXPIRED</span>
-      `;
-      
-      // Resend Link ကို ပေါ်လာစေရန်
+      countdownTimer.innerHTML = `<span class="text-red-600 font-black tracking-tighter">TIME EXPIRED</span>`;
       resendContainer.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-2');
       resendContainer.classList.add('opacity-100', 'translate-y-0');
     }
@@ -99,7 +115,28 @@
 </script>
 
 <style>
-  /* Custom Animation for Timer Icon */
+  /* Shake and Red Glow Animation (TikTok Style) */
+  .otp-error {
+    animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+    border-color: #ef4444 !important; /* Red-500 */
+    box-shadow: 0 0 0 8px rgba(239, 68, 68, 0.1) !important;
+    color: #ef4444 !important;
+  }
+
+  @keyframes shake {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+    40%, 60% { transform: translate3d(4px, 0, 0); }
+  }
+
+  /* Focus States */
+  #otp-input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 8px rgba(37, 99, 235, 0.1);
+    background-color: white;
+  }
+
   .animate-spin-slow {
     animation: spin-slow 3s linear infinite;
   }
@@ -108,7 +145,6 @@
     to { transform: rotate(360deg); }
   }
 
-  /* Font Mono for OTP input to keep numbers aligned */
   input[name="otp"] {
     font-variant-numeric: tabular-nums;
   }
