@@ -52,10 +52,10 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 db_path = os.path.join(basedir, 'database.db')
 
 def get_db_connection():
-    conn = sqlite3.connect(db_path)
+    # 20 seconds ထိ စောင့်ခိုင်းထားတာ ဖြစ်ပါတယ် (ပုံမှန်က 5 seconds ပဲရှိလို့ Lock ခဏခဏ ဖြစ်တာပါ)
+    conn = sqlite3.connect(db_path, timeout=20) 
     conn.row_factory = sqlite3.Row
     return conn
-
 
 # profile upload data 
 UPLOAD_FOLDER = "static/uploads"
