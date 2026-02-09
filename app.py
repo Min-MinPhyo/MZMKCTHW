@@ -327,7 +327,9 @@ LANGUAGES = {
         "noGoals": "No savings goals yet. Start dreaming!",
         "deleteConfirm": "Are you sure you want to delete this goal?",
         
-        "reset_chart":"Reset Data"
+        "reset_chart":"Reset Data",
+        "income_success":"Income Successfully Data",
+        "expense_success":"Expense Successfully Data",
         
 
     },
@@ -340,6 +342,8 @@ LANGUAGES = {
         "savings_goals":"ငွေစုဆောင်းရည်မှန်းချက်",
         "all_fields_required":"အချက်အလက်အားလုံး ဖြည့်စွက်ရန် လိုအပ်သည်",
         "update_success":"အသုံးစရိတ် ပြင်ဆင်မှု အောင်မြင်ပါသည်",
+         "income_success":"ဝင်ငွေအချက်အလက်များကို အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ",
+         "expense_success":"အသုံးစရိတ်အချက်အလက်များကို အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ",
         # ===== General =====
         "welcome": "ပြန်လည်ကြိုဆိုပါတယ်",
         "login":"ဝင်ရောက်မှု",
@@ -930,6 +934,18 @@ def dashboard():
     elif filter_type == "yearly":
         start_date = today.replace(month=1, day=1).strftime("%Y-%m-%d")
         end_date = today.strftime("%Y-%m-%d")
+        
+        #start date is not greater than end date 
+    if start_date and end_date:
+        # String ကနေ Date Object ပြောင်းလဲခြင်း
+        start_date = datetime.strptime(start_date, '%Y-%m-%d')
+        end_date = datetime.strptime(end_date, '%Y-%m-%d')
+
+        # Condition: Start date က End date ထက် ကြီးနေပါက
+        if start_date > end_date:
+            # Error Message ပြသခြင်း (Option)
+            flash("စတင်သည့်ရက်စွဲသည် ပြီးဆုံးသည့်ရက်စွဲထက်မကြီးရပါ။", "error")
+            return redirect(request.referrer) # သို့မဟုတ် သင့်တော်ရာ Page သို့ပြန်လွှတ်ပါ 
 
     # ဒီလအတွက် ဝင်ငွေ/ထွက်ငွေ (Saving Rate အတွက်)
     cursor.execute("SELECT SUM(amount) FROM income WHERE user_id=? AND strftime('%Y-%m', date)=?", (user_id, this_month))
