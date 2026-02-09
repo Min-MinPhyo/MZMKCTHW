@@ -38,7 +38,7 @@ app = Flask(__name__)
 app.secret_key = "supersecretkey"
 DB_NAME = "database.db"
 
-
+# 
 import os
 
 if __name__ == "__main__":
@@ -325,7 +325,9 @@ LANGUAGES = {
         "updateLabel": "Update Current Savings",
         "updateBtn": "UPDATE",
         "noGoals": "No savings goals yet. Start dreaming!",
-        "deleteConfirm": "Are you sure you want to delete this goal?"
+        "deleteConfirm": "Are you sure you want to delete this goal?",
+        
+        "reset_chart":"Reset Data"
         
 
     },
@@ -385,6 +387,7 @@ LANGUAGES = {
         "category": "အမျိုးအစား",
         "amount": "ငွေပမာဏ",
         "date": "နေ့စွဲ",
+        "reset_chart":"အချက်အလက်အားလုံးကို ဖျက်ပစ်ခြင်း",
         # register requirement
          "register_title": "အကောင့်အသစ်ဖန်တီးရန်",
         "register_subtitle": "သင်၏ဝင်ငွေ နှင့် အသုံးစရိတ်ကို စတင်စောင့်ကြည့်ပါ 💰",
@@ -889,7 +892,7 @@ def login():
 
     return render_template("login.html")
 
-# ---- Logout ----
+# ---- Logout ---
 @app.route("/logout")
 def logout():
     # Clear the session
