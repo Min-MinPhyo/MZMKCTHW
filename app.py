@@ -53,7 +53,7 @@ db_path = os.path.join(basedir, 'database.db')
 
 def get_db_connection():
     # 20 seconds ထိ စောင့်ခိုင်းထားတာ ဖြစ်ပါတယ် (ပုံမှန်က 5 seconds ပဲရှိလို့ Lock ခဏခဏ ဖြစ်တာပါ)
-    conn = sqlite3.connect(db_path, timeout=20) 
+    conn = sqlite3.connect(db_path, timeout=10) 
     conn.row_factory = sqlite3.Row
     return conn
 
