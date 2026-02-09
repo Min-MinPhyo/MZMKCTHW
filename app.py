@@ -101,6 +101,8 @@ LANGUAGES = {
         "login_success": "Login successful!",
         "logout_success": "Logged out!",
         "register_success": "Registration successful! Please login.",
+        "user_exists_error":"This user already is already exit",
+        "password_policy_error":"Password must be at least 6 characters",
         
         # register requirement
         "register_title": "Create Account",
@@ -344,6 +346,8 @@ LANGUAGES = {
         "update_success":"အသုံးစရိတ် ပြင်ဆင်မှု အောင်မြင်ပါသည်",
          "income_success":"ဝင်ငွေအချက်အလက်များကို အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ",
          "expense_success":"အသုံးစရိတ်အချက်အလက်များကို အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ",
+          "user_exists_error":"ဤအသုံးပြုသူအမည်ဖြင့် အကောင့်ရှိပြီးသားဖြစ်သည်",
+          "password_policy_error":"လျှို့ဝှက်နံပါတ်သည် အနည်းဆုံး စာလုံး (၆) လုံး ရှိရပါမည်",
         # ===== General =====
         "welcome": "ပြန်လည်ကြိုဆိုပါတယ်",
         "login":"ဝင်ရောက်မှု",
