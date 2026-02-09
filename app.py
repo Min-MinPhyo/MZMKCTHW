@@ -929,6 +929,7 @@ def dashboard():
     last_month = (today.replace(day=1) - timedelta(days=1)).strftime('%Y-%m')
     
     # Fast Filter Logic
+    # 1. Quick Filter Logic (String အဖြစ် အရင်သတ်မှတ်ပါ)
     if filter_type == "weekly":
         start_date = (today - timedelta(days=today.weekday())).strftime("%Y-%m-%d")
         end_date = today.strftime("%Y-%m-%d")
@@ -938,19 +939,24 @@ def dashboard():
     elif filter_type == "yearly":
         start_date = today.replace(month=1, day=1).strftime("%Y-%m-%d")
         end_date = today.strftime("%Y-%m-%d")
-        
-        #start date is not greater than end date 
+
+    # 2. Date Validation (Indentation ကို အပြင်ထုတ်လိုက်ပါ)
     if start_date and end_date:
-        # String ကနေ Date Object ပြောင်းလဲခြင်း
-        start_date = datetime.strptime(start_date, '%Y-%m-%d')
-        end_date = datetime.strptime(end_date, '%Y-%m-%d')
+        try:
+            # String ဖြစ်နေရင် နှိုင်းယှဉ်ဖို့အတွက် Date Object ခေတ္တပြောင်းပါ
+            s_dt = datetime.strptime(start_date, '%Y-%m-%d') if isinstance(start_date, str) else start_date
+            e_dt = datetime.strptime(end_date, '%Y-%m-%d') if isinstance(end_date, str) else end_date
 
-        # Condition: Start date က End date ထက် ကြီးနေပါက
-        if start_date > end_date:
-            # Error Message ပြသခြင်း (Option)
-            flash("စတင်သည့်ရက်စွဲသည် ပြီးဆုံးသည့်ရက်စွဲထက်မကြီးရပါ။", "error")
-            return redirect(request.referrer) # သို့မဟုတ် သင့်တော်ရာ Page သို့ပြန်လွှတ်ပါ 
+            if s_dt > e_dt:
+                flash("စတင်သည့်ရက်စွဲသည် ပြီးဆုံးသည့်ရက်စွဲထက် မကြီးရပါ။", "error")
+                return redirect(url_for("dashboard"))
 
+            # SQL Query အတွက် String Format ပြန်ပြောင်းထားရန် (အရေးကြီးဆုံး)
+            start_date = s_dt.strftime("%Y-%m-%d")
+            end_date = e_dt.strftime("%Y-%m-%d")
+        except (ValueError, TypeError):
+            # Date format မှားယွင်းပါက Error မတက်အောင် ကျော်သွားပါ
+            pass
     # ဒီလအတွက် ဝင်ငွေ/ထွက်ငွေ (Saving Rate အတွက်)
     cursor.execute("SELECT SUM(amount) FROM income WHERE user_id=? AND strftime('%Y-%m', date)=?", (user_id, this_month))
     this_month_income = cursor.fetchone()[0] or 0
