@@ -2035,9 +2035,10 @@ app.config.update(
     MAIL_SERVER='smtp.gmail.com',
     MAIL_PORT=587,
     MAIL_USE_TLS=True,
-    MAIL_USERNAME='minminphyo770@gmail.com',
-    MAIL_PASSWORD='fqodrfmwvygkuxdl',
-    MAIL_DEFAULT_SENDER='minminphyo770@gmail.com'
+    # Render environment variables ထဲကနေ လှမ်းဖတ်မယ်
+    MAIL_USERNAME=os.environ.get('MAIL_USERNAME'),
+    MAIL_PASSWORD=os.environ.get('MAIL_PASSWORD'),
+    MAIL_DEFAULT_SENDER=os.environ.get('MAIL_USERNAME')
 )
 mail = Mail(app)
 
